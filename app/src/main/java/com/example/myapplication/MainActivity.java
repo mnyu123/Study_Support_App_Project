@@ -416,9 +416,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public class prime {
+    public class prime{
 
-        double platitude = 0;
+        double platitude =0;
         double plongtitude = 0;
     }
 
