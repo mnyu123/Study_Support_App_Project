@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                }
 //        );
 
+        // 삭제 가능한 주석이면 삭제 부탁드립니다 가독성 떨어짐
 
         final Bundle bundle = new Bundle();
         Button login_btn = findViewById(R.id.login_btn);    //로그인버튼 선언
@@ -285,6 +286,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
     }*/
 
+    // 마찬가지 삭제 가능한 주석이면 삭제 부탁드립니다 가독성이 떨어집니다
+    
     public void radibtn() {
         GSRadioButton = (RadioButton) findViewById(R.id.GSradibtn);
         STRadioButton = (RadioButton) findViewById(R.id.STDradibtn);
