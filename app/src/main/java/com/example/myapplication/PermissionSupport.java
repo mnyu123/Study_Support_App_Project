@@ -13,25 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PermissionSupport {
-    private Context context;
-    private Activity activity;
-
+    private final Context context;
+    private final Activity activity;
     // Manifset에 권한을 작성 후
     // 요청할 권한을 배열로 저장
-    private String[] permissions = {
+    private final String[] permissions = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.SYSTEM_ALERT_WINDOW,
-
-
     };
 
     // 권한 요청을 할 때 발생하는 창에 대한 결과값
     private List<Object> permissionList;
-
     private final int MULTIPLE_PERMISSIONS = 1023;
-
 
     public PermissionSupport(Activity _activity, Context _context) {
         this.activity = _activity;
@@ -50,7 +45,6 @@ public class PermissionSupport {
                 permissionList.add(pm);
             }
         }
-
         return permissionList.isEmpty();
     }
 
@@ -62,11 +56,8 @@ public class PermissionSupport {
 
     // 권한 요청에 대한 결과 처리
     public boolean permissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-
         if (requestCode == MULTIPLE_PERMISSIONS && (grantResults.length > 0)) {
             for (int i = 0; i < grantResults.length; i++) {
-
                 // grantResults == 0 사용자가 허용한 것
                 // grantResults == -1 사용자가 거부한 것
                 if (grantResults[i] == -1) {
