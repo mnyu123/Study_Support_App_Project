@@ -1,21 +1,16 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 
 import android.Manifest;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -23,10 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,23 +31,17 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.GpsTracker;
 import com.google.android.material.navigation.NavigationView;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -66,14 +52,11 @@ import android.view.View;
 import android.view.Menu;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 
@@ -131,6 +114,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
 
+        initNavigationMenu();
+
+
+
+        final Bundle bundle = new Bundle();
+        Button login_btn = findViewById(R.id.login_btn);    //로그인버튼 선언
+        login_btn.setOnClickListener(this);
+
+
+        radibtn();
+        loginButton = findViewById(R.id.login_btn);
+        loginButton.setOnClickListener(new View.OnClickListener() {     //로그인 페이지 넘김
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    private void initNavigationMenu() {
         //사이드 메뉴바
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -153,55 +158,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-//        navigationView.setNavigationItemSelectedListener(
-//                new navigationView.OnNavigationItemSelectedListener() {
-//                    public MenuItem item;
-//
-//                    public boolean onNavigationItemSelected(MenuItem item) {
-//                        this.item = item;
-//                        int id = item.getItemId();
-//
-//                        switch (id) {
-//                            case R.id.nav_home:
-//                                // nav_home Fragment로 이동
-//                                Log.d("MainActivity", "Home menu item clicked");
-//                                navController.navigate(R.id.nav_home);
-//                                break;
-//                            case R.id.menu_item2:
-//                                // menu_item2 Fragment로 이동
-//                                Log.d("MainActivity", "Gallery menu item clicked");
-//                                navController.navigate(R.id.menu_item2);
-//                                break;
-//                            case R.id.menu_item3:
-//                                // menu_item3 Fragment로 이동
-//                                navController.navigate(R.id.menu_item3);
-//                                break;
-//                        }
-//
-//                        // Navigation Drawer 닫기
-//                        drawerLayout.closeDrawer(GravityCompat.START);
-//                        return true;
-//                    }
-//                }
-//        );
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    public MenuItem item;
 
-        // 삭제 가능한 주석이면 삭제 부탁드립니다 가독성 떨어짐
+                    public boolean onNavigationItemSelected(MenuItem item) {
+                        this.item = item;
+                        int id = item.getItemId();
 
-        final Bundle bundle = new Bundle();
-        Button login_btn = findViewById(R.id.login_btn);    //로그인버튼 선언
-        login_btn.setOnClickListener(this);
+                        switch (id) {
+                            case R.id.nav_home:
+                                // nav_home Fragment로 이동
+                                Log.d("MainActivity", "Home menu item clicked");
+                                navController.navigate(R.id.nav_home);
+                                break;
+                            case R.id.menu_item2:
+                                // menu_item2 Fragment로 이동
+                                Log.d("MainActivity", "Gallery menu item clicked");
+                                navController.navigate(R.id.menu_item2);
+                                break;
+                            case R.id.menu_item3:
+                                // menu_item3 Fragment로 이동
+                                navController.navigate(R.id.menu_item3);
+                                break;
+                            case R.id.menu_item4:
+                                // menu_item4 Fragment로 이동
+                                navController.navigate(R.id.menu_item4);
+                                break;
+                        }
 
-
-        radibtn();
-        loginButton = findViewById(R.id.login_btn);
-        loginButton.setOnClickListener(new View.OnClickListener() {     //로그인 페이지 넘김
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-
-            }
-        });
+                        // Navigation Drawer 닫기
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
+                    }
+                }
+        );
     }
 
     @Override

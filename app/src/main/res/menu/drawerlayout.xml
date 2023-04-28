@@ -14,5 +14,8 @@
         <item
             android:id="@+id/menu_item3"
             android:title="메뉴 아이템 3" />
+        <item
+            android:id="@+id/menu_item4"
+            android:title="메뉴 아이템 4" />
     </group>
 </menu>

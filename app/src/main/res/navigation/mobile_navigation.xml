@@ -22,4 +22,10 @@
         android:name="com.example.myapplication.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/menu_item4"
+        android:name="com.example.myapplication.ui.QRcode.QRcodeFragment"
+        android:label="@string/menu_QRcode"
+        tools:layout="@layout/fragment_qrcode" />
 </navigation>

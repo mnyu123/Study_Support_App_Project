@@ -8,44 +8,23 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-        android:id="@+id/app_bar"
-        layout="@layout/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/header"
-        app:menu="@menu/drawerlayout" />
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        tools:context=".MainActivity">
+        android:id="@+id/fragmentFrame">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:text="시간"
-            android:textSize="18sp" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.myapplication.MainActivity">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center" tools:context=".MainActivity">
 
-        <TextView
-            android:id="@+id/latitudevie"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:text="latitude"
-            android:textSize="18sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/textView" android:text="시간" android:textSize="18sp" android:layout_marginBottom="14dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/latitudevie" android:text="latitude" android:textSize="18sp" android:layout_marginBottom="14dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/nlatitudevie" android:text="원광대 위치 35.9684 / 클릭시 현재위치 - 원광대위치" android:textSize="18sp" android:layout_marginBottom="14dp"/>
 
         <TextView
             android:id="@+id/nlatitudevie"
@@ -97,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:text="교수" />
 
-        </RadioGroup>
+            </RadioGroup>
 
 
         <FrameLayout
@@ -119,7 +98,7 @@
                 android:text="출석시작"
                 android:visibility="invisible" />
 
-        </FrameLayout>
+            </FrameLayout>
 
 
         <LinearLayout
@@ -169,5 +148,22 @@
             android:layout_height="wrap_content"
             android:text="@string/gotologin" />
 
-    </LinearLayout>
+        </LinearLayout>
+        <include
+            android:id="@+id/app_bar"
+            layout="@layout/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/header"
+        app:menu="@menu/drawerlayout" />
 </androidx.drawerlayout.widget.DrawerLayout>

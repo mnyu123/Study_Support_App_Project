@@ -6,6 +6,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_QRcode">QRcode</string>
 
     <string name="gotologin">로그인 하러 가기</string>
 </resources>
