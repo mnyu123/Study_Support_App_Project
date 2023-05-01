@@ -10,12 +10,12 @@
             android:title="@string/menu_home" />
         <item
             android:id="@+id/menu_item2"
-            android:title="메뉴 아이템 2" />
+            android:title="게시판" />
         <item
             android:id="@+id/menu_item3"
-            android:title="메뉴 아이템 3" />
+            android:title="캘린더" />
         <item
             android:id="@+id/menu_item4"
-            android:title="메뉴 아이템 4" />
+            android:title="QR 출석" />
     </group>
 </menu>
