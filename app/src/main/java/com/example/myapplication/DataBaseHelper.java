@@ -39,18 +39,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void createDataBase() throws IOException {
-        //데이터베이스가 없으면 asset폴더에서 복사해온다.
-        boolean mDataBaseExist = checkDataBase();
-        if (!mDataBaseExist) {
-            this.getReadableDatabase();
-            this.close();
-            try {
-                //Copy the database from assests
-                copyDataBase();
-                Log.e(TAG, "createDatabase database created");
-            } catch (IOException mIOException) {
-                throw new Error("ErrorCopyingDataBase");
-            }
+        this.getReadableDatabase();
+        this.close();
+        try {
+            //Copy the database from assests
+            copyDataBase();
+            Log.e(TAG, "createDatabase database created");
+        } catch (IOException mIOException) {
+            throw new Error("ErrorCopyingDataBase");
         }
     }
 
@@ -101,19 +97,4 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
-
-    // 로그인을 위한 메소드
-    public boolean authenticateUser(String username, String password) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("users", new String[]{"username", "password"},
-                "username = ? AND password = ?", new String[]{username, password},
-                null, null, null);
-
-        boolean authenticated = cursor.moveToFirst();
-        cursor.close();
-        db.close();
-
-        return authenticated;
-    }
-
 }
