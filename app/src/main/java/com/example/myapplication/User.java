@@ -2,24 +2,26 @@ package com.example.myapplication;
 
 public class User {
     public String Username;
-    public int Student_id;
+    public String Student_id;
     public String ID;
     public String Password;
     public String Email;
-    public int is_professor;
-    public int Time;
-    public int CsCheck;
+    public String is_professor;
+    public String Time;
+    public String Cs;
+
+
 
     public void Username(String username) {
         this.Username = username;
     }
 
-    public void Student_id(int sid) {
+    public void Student_id(String sid) {
         this.Student_id = sid;
     }
 
     public void ID(String id) {
-        this.ID = id;
+        this.ID=id;
     }
 
     public void Password(String pwd) {
@@ -30,17 +32,24 @@ public class User {
         this.Email = email;
     }
 
-    public void is_professor(int isp) {
-        this.is_professor = isp;
+    public void is_professor(String isp) {
+        this.is_professor=isp;
     }
 
-    public void Time(int time) {
+    public void Time(String time) {
         this.Time = time;
     }
 
-    public void CsCheck(int csc) {
-        this.CsCheck = csc;
+    public void CsCheck(String csc) {
+        this.Cs=csc;
     }
+
+//    public User(String ID, String Username, String Time, String Cs){
+//        this.ID = ID;
+//        this.Username = Username;
+//        this.Time = Time;
+//        this.Cs = Cs;
+//    }
 
    /* public User(String Username,int Student_id,String ID,String Password,String Email,int is_professor,int Time,int CsCheck){
         this.Username =Username;
@@ -52,4 +61,16 @@ public class User {
         this.Time=Time;
         this.CsCheck=CsCheck;
     }*/
+    public String getUsername(){
+        return this.Username;
+    }
+    public String getStudent_id(){
+        return this.Student_id;
+    }
+    public String getCs(){
+        return  this.Cs;
+    }
+    public String getTime(){
+        return this.Time;
+    }
 }
