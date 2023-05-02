@@ -4,13 +4,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.myapplication.User;
+
 public class GalleryViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
     public GalleryViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        String firstUser = User.getUsername();
+        mText.setValue(String.valueOf(firstUser));
     }
 
     public LiveData<String> getText() {

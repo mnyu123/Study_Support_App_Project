@@ -68,13 +68,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     TextView mTextView;
     Button mRefreshBtn;
-    Button CSstart;
 
     Button button1;
     Button csstart;
 
     private Button loginButton;
-    private Button login_result_btn;
 
 
     TextView longitudevie;
@@ -83,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView nlongitudevie;
     TextView nlatitudevie;
     TextView name;
+
+    static TextView navheader;
 
 
     RadioGroup radioGroup;
@@ -99,24 +99,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-
-    private EditText editTextId, editTextPw;
-    private Button btnLogin;
-
-    private Cursor cursor;
-
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
+    String firstUser = User.getUsername();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         initNavigationMenu();
 
-
+//        setHeader();
 
         final Bundle bundle = new Bundle();
         Button login_btn = findViewById(R.id.login_btn);    //로그인버튼 선언
@@ -161,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     public MenuItem item;
-
                     public boolean onNavigationItemSelected(MenuItem item) {
                         this.item = item;
                         int id = item.getItemId();
@@ -193,6 +186,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
+        View headerView = navigationView.getHeaderView(0);
+        TextView headerTextView = headerView.findViewById(R.id.header_text);
+        headerTextView.setText(firstUser);
     }
 
     @Override
@@ -336,34 +332,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-
-
-
-
-
-/* float val=0;
-
-
-    public void getVal() {
-
-
-
-        Cursor cursor = userList.rawQuery("SELECT * FROM Studnet_id where Username = 김경호",null);
-        //" and name = ?",new String[]{"홍길동"});
-        while (cursor.moveToNext())
-        {
-            val += cursor.getFloat(1);
-
-        }
-        name = (TextView)findViewById(R.id.name);
-        name.setText(String.valueOf(val));
-        cursor.close();
-
-    }
-*/
-
-
-    public List<User> userList;
+    public List<User> mUserList;
 
     private void initLoadDB() {
 
@@ -372,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDbHelper.open();
 
         // db에 있는 값들을 model을 적용해서 넣는다.
-        userList = mDbHelper.getTableData();
+        mUserList = mDbHelper.getTableData();
 
         // db 닫기
         mDbHelper.close();
@@ -705,6 +674,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    public void setHeader() {
+        navheader = (TextView)findViewById(R.id.header_text);
+        navheader.setText("aaa");
     }
 }
 

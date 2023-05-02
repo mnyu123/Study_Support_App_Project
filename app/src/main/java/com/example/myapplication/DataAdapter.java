@@ -5,8 +5,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +26,6 @@ public class DataAdapter {
     public DataAdapter(Context context) {
         this.mContext = context;
         mDbHelper = new DataBaseHelper(mContext);
-
     }
 
     public DataAdapter createDatabase() throws SQLException {
@@ -106,6 +108,70 @@ public class DataAdapter {
         db.close();
 
         return authenticated;
+    }
+
+//    public List<User> setAccount(String username, String password) {
+//        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+//        List<User> LoginUser = new ArrayList<>();
+//        User user = null;
+//
+//        // SQL 쿼리 실행
+//        String query = "SELECT * FROM " + TABLE_NAME +
+//                " WHERE ID = ? AND Password = ?";
+//        Cursor cursor = db.rawQuery(query, new String[]{username, password});
+//
+//        // 결과 처리
+//        while (cursor.moveToNext()) {
+//            // User 객체 생성 및 정보 저장
+//            user = new User();
+//            user.Username(cursor.getString(0));
+//            user.Student_id(cursor.getInt(1));
+//            user.ID(cursor.getString(2));
+//            user.Password(cursor.getString(3));
+//            user.Email(cursor.getString(4));
+//            user.is_professor(cursor.getInt(5));
+//            user.Time(cursor.getInt(6));
+//            user.CsCheck(cursor.getInt(7));
+//            LoginUser.add(user);
+//            CurrentUser.add(user);
+//        }
+//
+//        // 리소스 해제
+//        cursor.close();
+//        db.close();
+//
+//        return LoginUser;
+//    }
+public void setAccount(String username, String password) {
+    SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        List<User> LoginUser = new ArrayList<>();
+        User user = null;
+
+        // SQL 쿼리 실행
+        String query = "SELECT * FROM " + TABLE_NAME +
+                " WHERE ID = ? AND Password = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{username, password});
+
+        // 결과 처리
+        while (cursor.moveToNext()) {
+            // User 객체 생성 및 정보 저장
+            user = new User();
+            user.Username(cursor.getString(0));
+            user.Student_id(cursor.getInt(1));
+            user.ID(cursor.getString(2));
+            user.Password(cursor.getString(3));
+            user.Email(cursor.getString(4));
+            user.is_professor(cursor.getInt(5));
+            user.Time(cursor.getInt(6));
+            user.CsCheck(cursor.getInt(7));
+            LoginUser.add(user);
+        }
+
+    // 리소스 해제
+    cursor.close();
+    db.close();
+
+    User.userList = LoginUser;
     }
 }
 

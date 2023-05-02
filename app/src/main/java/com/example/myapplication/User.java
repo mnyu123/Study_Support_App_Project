@@ -1,14 +1,23 @@
 package com.example.myapplication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
-    public String Username;
-    public int Student_id;
-    public String ID;
-    public String Password;
-    public String Email;
-    public int is_professor;
-    public int Time;
-    public int CsCheck;
+    private String Username;
+    private int Student_id;
+    private String ID;
+    private String Password;
+    private String Email;
+    private int is_professor;
+    private int Time;
+    private int CsCheck;
+
+    public static List<User> userList;
+
+    public static List<User> getUserList() {
+        return userList;
+    }
 
     public void Username(String username) {
         this.Username = username;
@@ -40,6 +49,63 @@ public class User {
 
     public void CsCheck(int csc) {
         this.CsCheck = csc;
+    }
+
+    // get 메소드
+    public static String getUsername() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Username;
+        }
+        return null;
+    }
+
+    public int getStudentId() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Student_id;
+        }
+        return -1;
+    }
+
+    public String getId() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).ID;
+        }
+        return null;
+    }
+
+    public String getPassword() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Password;
+        }
+        return null;
+    }
+
+    public String getEmail() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Email;
+        }
+        return null;
+    }
+
+    public int getIsProfessor() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).is_professor;
+        }
+        return -1;
+    }
+
+    public int getTime() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Time;
+        }
+        return -1;
+    }
+
+    public int getCsCheck() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).CsCheck;
+        }
+        return -1;
     }
 
    /* public User(String Username,int Student_id,String ID,String Password,String Email,int is_professor,int Time,int CsCheck){

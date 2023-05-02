@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class LoginActivity extends Activity {
     private EditText editText_id, editText_password;
@@ -50,7 +53,12 @@ public class LoginActivity extends Activity {
                     return;
                 }
 
-                // 인증 성공 시 MainActivity로 이동
+                // 인증 성공 시 계정정보 저장 후 MainActivity로 이동
+                dataAdapter.setAccount(id, pw);
+                String firstUser = User.getUsername();
+
+                Toast.makeText(LoginActivity.this,firstUser,Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 Toast.makeText(LoginActivity.this,"로그인 성공",Toast.LENGTH_SHORT).show();
                 startActivity(intent);
