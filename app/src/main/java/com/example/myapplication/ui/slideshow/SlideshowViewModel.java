@@ -8,9 +8,11 @@ public class SlideshowViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
+
+
     public SlideshowViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        mText.setValue("Calendar Fragment");
     }
 
     public LiveData<String> getText() {

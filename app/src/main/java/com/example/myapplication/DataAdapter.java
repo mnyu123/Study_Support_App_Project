@@ -23,52 +23,65 @@ public class DataAdapter {
     private SQLiteDatabase mDb;
     private DataBaseHelper mDbHelper;
 
-    public DataAdapter(Context context) {
+    public DataAdapter(Context context)
+    {
         this.mContext = context;
         mDbHelper = new DataBaseHelper(mContext);
     }
 
-    public DataAdapter createDatabase() throws SQLException {
-        try {
+    public DataAdapter createDatabase() throws SQLException
+    {
+        try
+        {
             mDbHelper.createDataBase();
-        } catch (IOException mIOException) {
+        }
+        catch (IOException mIOException)
+        {
             Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
             throw new Error("UnableToCreateDatabase");
         }
         return this;
     }
 
-    public DataAdapter open() throws SQLException {
-        try {
+    public DataAdapter open() throws SQLException
+    {
+        try
+        {
             mDbHelper.openDataBase();
             mDbHelper.close();
             mDb = mDbHelper.getReadableDatabase();
-        } catch (SQLException mSQLException) {
-            Log.e(TAG, "open >>" + mSQLException.toString());
+        }
+        catch (SQLException mSQLException)
+        {
+            Log.e(TAG, "open >>"+ mSQLException.toString());
             throw mSQLException;
         }
         return this;
     }
 
-    public void close() {
+    public void close()
+    {
         mDbHelper.close();
     }
 
-    public List getTableData() {
-        try {
+    public List getTableData()
+    {
+        try
+        {
             // Table 이름 -> antpool_bitcoin 불러오기
-            String sql = "SELECT * FROM " + TABLE_NAME;
+            String sql ="SELECT * FROM " + TABLE_NAME;
 
             // 모델 넣을 리스트 생성
             List userList = new ArrayList();
 
             // TODO : 모델 선언
-            User user = null;
+            User user= null;
 
             Cursor mCur = mDb.rawQuery(sql, null);
-            if (mCur != null) {
+            if (mCur!=null)
+            {
                 // 칼럼의 마지막까지
-                while (mCur.moveToNext()) {
+                while( mCur.moveToNext() ) {
 
                     // TODO : 커스텀 모델 생성
                     user = new User();
@@ -76,13 +89,15 @@ public class DataAdapter {
                     // TODO : Record 기술
                     // id, name, account, privateKey, secretKey, Comment
                     user.Username(mCur.getString(0));
-                    user.Student_id(mCur.getInt(1));
+                    user.Student_id(mCur.getString(1));
                     user.ID(mCur.getString(2));
                     user.Password(mCur.getString(3));
                     user.Email(mCur.getString(4));
-                    user.is_professor(mCur.getInt(5));
-                    user.Time(mCur.getInt(6));
-                    user.CsCheck(mCur.getInt(7));
+                    user.is_professor(mCur.getString(5));
+                    user.Time(mCur.getString(6));
+                    user.CsCheck(mCur.getString(7));
+
+
 
 
                     // 리스트에 넣기
@@ -91,12 +106,65 @@ public class DataAdapter {
 
             }
             return userList;
-        } catch (SQLException mSQLException) {
-            Log.e(TAG, "getTestData >>" + mSQLException.toString());
+        }
+        catch (SQLException mSQLException)
+        {
+            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
             throw mSQLException;
         }
     }
 
+
+
+    public void getReadableDatabase()
+    {
+        try
+        {
+            // Table 이름 -> antpool_bitcoin 불러오기
+            String sql ="SELECT * FROM " + TABLE_NAME;
+
+            // 모델 넣을 리스트 생성
+            List userList = new ArrayList();
+
+            // TODO : 모델 선언
+            User user= null;
+
+            Cursor mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null)
+            {
+                // 칼럼의 마지막까지
+                while( mCur.moveToNext() ) {
+
+                    // TODO : 커스텀 모델 생성
+                    user = new User();
+
+                    // TODO : Record 기술
+                    // id, name, account, privateKey, secretKey, Comment
+                    user.Username(mCur.getString(0));
+                    user.Student_id(mCur.getString(1));
+                    user.ID(mCur.getString(2));
+                    user.Password(mCur.getString(3));
+                    user.Email(mCur.getString(4));
+                    user.is_professor(mCur.getString(5));
+                    user.Time(mCur.getString(6));
+                    user.CsCheck(mCur.getString(7));
+
+
+
+
+                    // 리스트에 넣기
+                    userList.add(user);
+                }
+
+            }
+
+        }
+        catch (SQLException mSQLException)
+        {
+            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
+            throw mSQLException;
+        }
+    }
     public boolean authenticateUser(String username, String password) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, new String[]{"ID"},
@@ -109,6 +177,7 @@ public class DataAdapter {
 
         return authenticated;
     }
+
 
 public void setAccount(String username, String password) {
     SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -143,3 +212,7 @@ public void setAccount(String username, String password) {
     }
 }
 
+
+
+
+}

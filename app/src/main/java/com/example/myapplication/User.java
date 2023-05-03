@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
+
     private String Username;
     private int Student_id;
     private String ID;
@@ -19,16 +20,17 @@ public class User {
         return userList;
     }
 
+
     public void Username(String username) {
         this.Username = username;
     }
 
-    public void Student_id(int sid) {
+    public void Student_id(String sid) {
         this.Student_id = sid;
     }
 
     public void ID(String id) {
-        this.ID = id;
+        this.ID=id;
     }
 
     public void Password(String pwd) {
@@ -39,17 +41,18 @@ public class User {
         this.Email = email;
     }
 
-    public void is_professor(int isp) {
-        this.is_professor = isp;
+    public void is_professor(String isp) {
+        this.is_professor=isp;
     }
 
-    public void Time(int time) {
+    public void Time(String time) {
         this.Time = time;
     }
 
-    public void CsCheck(int csc) {
-        this.CsCheck = csc;
+    public void CsCheck(String csc) {
+        this.Cs=csc;
     }
+
 
     // get 메소드
     public static String getUsername() {
@@ -108,6 +111,7 @@ public class User {
         return -1;
     }
 
+
    /* public User(String Username,int Student_id,String ID,String Password,String Email,int is_professor,int Time,int CsCheck){
         this.Username =Username;
         this.Student_id=Student_id;
@@ -118,4 +122,16 @@ public class User {
         this.Time=Time;
         this.CsCheck=CsCheck;
     }*/
+    public String getUsername(){
+        return this.Username;
+    }
+    public String getStudent_id(){
+        return this.Student_id;
+    }
+    public String getCs(){
+        return  this.Cs;
+    }
+    public String getTime(){
+        return this.Time;
+    }
 }

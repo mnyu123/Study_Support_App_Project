@@ -1,54 +1,10 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.NonNull;
-
-import android.Manifest;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.LocationManager;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import android.util.Log;
-import android.widget.Toast;
-
-import com.example.myapplication.GpsTracker;
-import com.google.android.material.navigation.NavigationView;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.os.Bundle;
 import android.view.View;
+
 import android.view.Menu;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -104,9 +60,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     String firstUser = User.getUsername();
 
+import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+
+
+
+public class MainActivity extends AppCompatActivity {
+    Button Tocs;
+    private Context cscontext;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
 
         initNavigationMenu();
 
@@ -633,30 +603,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
 
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
 
-                dialog.cancel();
+        Tocs = (Button)findViewById(R.id.ToCs);
+
+        Tocs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),CsCheck.class);
+                startActivity(intent);
+                //((CsCheck)cscontext).CsCheck();
+
             }
         });
-        builder.create().show();
+        //bind view
+
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-
-            case GPS_ENABLE_REQUEST_CODE:
-
-                //사용자가 GPS 활성 시켰는지 검사
-                if (checkLocationServicesStatus()) {
-                    if (checkLocationServicesStatus()) {
 
                         Log.d("@@@", "onActivityResult : GPS 활성화 되있음");
                         checkRunTimePermission();
@@ -680,9 +644,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navheader = (TextView)findViewById(R.id.header_text);
         navheader.setText("aaa");
     }
+
 }
-
-
 
 
 
