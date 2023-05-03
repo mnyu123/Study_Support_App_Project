@@ -31,6 +31,7 @@ public class SlideshowFragment extends Fragment {
         Intent intent = new Intent(getActivity(), CalendarActivity.class);
         startActivity(intent);
 
+
         final TextView textView = binding.textSlideshow;
         slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
