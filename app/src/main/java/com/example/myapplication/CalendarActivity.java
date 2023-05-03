@@ -32,7 +32,7 @@ public class CalendarActivity extends AppCompatActivity
     public static final int PERMISSION_STUDENT = 0;
 
     // 권한 변수 추가
-    public int permission = PERMISSION_STUDENT;
+    public int permission = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -62,7 +62,7 @@ public class CalendarActivity extends AppCompatActivity
                 contextEditText.setText("");
                 checkDay(year, month, dayOfMonth);
 
-                if (permission == PERMISSION_PROFESSOR) {
+                if (permission == 1) {
                     diaryTextView.setEnabled(true);
                     save_Btn.setEnabled(true);
                     del_Btn.setEnabled(true);
