@@ -49,8 +49,12 @@ public class LoginActivity extends Activity {
                     Toast.makeText(LoginActivity.this, "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // 인증 성공 시 계정정보 저장 후 MainActivity로 이동
+                dataAdapter.setAccount(id, pw);
+                String firstUser = User.getUsername();
 
-                // 인증 성공 시 MainActivity로 이동
+                Toast.makeText(LoginActivity.this,firstUser,Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 Toast.makeText(LoginActivity.this,"로그인 성공",Toast.LENGTH_SHORT).show();
                 startActivity(intent);

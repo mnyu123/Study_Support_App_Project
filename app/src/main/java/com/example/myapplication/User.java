@@ -1,16 +1,18 @@
 package com.example.myapplication;
 
+import java.util.List;
+
 public class User {
-    public String Username;
-    public String Student_id;
-    public String ID;
-    public String Password;
-    public String Email;
-    public String is_professor;
-    public String Time;
-    public String Cs;
+    private String Username;
+    private String Student_id;
+    private String ID;
+    private String Password;
+    private String Email;
+    private String is_professor;
+    private String Time;
+    private String CsCheck;
 
-
+    public static List<User> userList;
 
     public void Username(String username) {
         this.Username = username;
@@ -21,7 +23,7 @@ public class User {
     }
 
     public void ID(String id) {
-        this.ID=id;
+        this.ID = id;
     }
 
     public void Password(String pwd) {
@@ -33,7 +35,7 @@ public class User {
     }
 
     public void is_professor(String isp) {
-        this.is_professor=isp;
+        this.is_professor = isp;
     }
 
     public void Time(String time) {
@@ -41,36 +43,63 @@ public class User {
     }
 
     public void CsCheck(String csc) {
-        this.Cs=csc;
+        this.CsCheck = csc;
     }
 
-//    public User(String ID, String Username, String Time, String Cs){
-//        this.ID = ID;
-//        this.Username = Username;
-//        this.Time = Time;
-//        this.Cs = Cs;
-//    }
+    // get 메소드
+    public static String getUsername() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Username;
+        }
+        return null;
+    }
 
-   /* public User(String Username,int Student_id,String ID,String Password,String Email,int is_professor,int Time,int CsCheck){
-        this.Username =Username;
-        this.Student_id=Student_id;
-        this.ID=ID;
-        this.Password=Password;
-        this.Email=Email;
-        this.is_professor=is_professor;
-        this.Time=Time;
-        this.CsCheck=CsCheck;
-    }*/
-    public String getUsername(){
-        return this.Username;
+    public static String getStudentId() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Student_id;
+        }
+        return null;
     }
-    public String getStudent_id(){
-        return this.Student_id;
+
+    public static String getID() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).ID;
+        }
+        return null;
     }
-    public String getCs(){
-        return  this.Cs;
+
+    public static String getPassword() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Password;
+        }
+        return null;
     }
-    public String getTime(){
-        return this.Time;
+
+    public static String getEmail() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Email;
+        }
+        return null;
+    }
+
+    public static String getIsProfessor() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).is_professor;
+        }
+        return null;
+    }
+
+    public static String getTime() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Time;
+        }
+        return null;
+    }
+
+    public static String getCsCheck() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).CsCheck;
+        }
+        return null;
     }
 }
