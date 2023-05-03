@@ -59,49 +59,49 @@ public class User {
         return null;
     }
 
-    public int getStudentId() {
+    public static int getStudentId() {
         if (!userList.isEmpty()) {
             return userList.get(0).Student_id;
         }
         return -1;
     }
 
-    public String getId() {
+    public static String getID() {
         if (!userList.isEmpty()) {
             return userList.get(0).ID;
         }
         return null;
     }
 
-    public String getPassword() {
+    public static String getPassword() {
         if (!userList.isEmpty()) {
             return userList.get(0).Password;
         }
         return null;
     }
 
-    public String getEmail() {
+    public static String getEmail() {
         if (!userList.isEmpty()) {
             return userList.get(0).Email;
         }
         return null;
     }
 
-    public int getIsProfessor() {
+    public static int getIsProfessor() {
         if (!userList.isEmpty()) {
             return userList.get(0).is_professor;
         }
         return -1;
     }
 
-    public int getTime() {
+    public static int getTime() {
         if (!userList.isEmpty()) {
             return userList.get(0).Time;
         }
         return -1;
     }
 
-    public int getCsCheck() {
+    public static int getCsCheck() {
         if (!userList.isEmpty()) {
             return userList.get(0).CsCheck;
         }
