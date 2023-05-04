@@ -4,16 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.myapplication.R;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,6 +26,13 @@ public class CalendarActivity extends AppCompatActivity
     public Button cha_Btn, del_Btn, save_Btn;
     public TextView diaryTextView, textView2, textView3;
     public EditText contextEditText;
+
+
+    public static final int PERMISSION_PROFESSOR = 1;
+    public static final int PERMISSION_STUDENT = 0;
+
+    // 권한 변수 추가
+    public int permission = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,10 +62,17 @@ public class CalendarActivity extends AppCompatActivity
                 contextEditText.setText("");
                 checkDay(year, month, dayOfMonth);
 
-                Toast.makeText(getApplicationContext(),
-                        "Selected Date: " + dayOfMonth + "/" + (month + 1) + "/" + year,
-                        Toast.LENGTH_LONG).show();
-            }
+                if (permission == 1) {
+                    diaryTextView.setEnabled(true);
+                    save_Btn.setEnabled(true);
+                    del_Btn.setEnabled(true);
+                    cha_Btn.setEnabled(true);
+                } else {
+                    diaryTextView.setEnabled(false);
+                    save_Btn.setEnabled(false);
+                    del_Btn.setEnabled(false);
+                    cha_Btn.setEnabled(false);
+                } }
         });
         save_Btn.setOnClickListener(new View.OnClickListener()
         {
@@ -182,13 +196,4 @@ public class CalendarActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-
 }
