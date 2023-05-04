@@ -22,6 +22,12 @@ public class SlideshowFragment extends Fragment {
     Button Tocs;
     private Context cscontext;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        cscontext = context;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         SlideshowViewModel slideshowViewModel =
