@@ -6,8 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+
 
 import com.example.myapplication.R;
 import com.example.myapplication.User;
@@ -30,9 +29,13 @@ public class QRcodeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_qrcode, container, false);
+        QRcodeViewModel QrcodeViewModel =
+                new ViewModelProvider(this).get(QRcodeViewModel.class);
 
-        iv = (ImageView) v.findViewById(R.id.qrcode);
+        binding = FragmentQrcodeBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        iv = (ImageView) root.findViewById(R.id.qrcode);
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
@@ -44,7 +47,7 @@ public class QRcodeFragment extends Fragment {
             e.printStackTrace();
         }
 
-        return v;
+        return root;
     }
 
     @Override
