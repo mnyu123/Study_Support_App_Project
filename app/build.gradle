@@ -53,4 +53,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'androidx.drawerlayout:drawerlayout:1.1.1'
     implementation 'androidx.work:work-runtime:2.7.1'
+    //qr코드
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
 }
