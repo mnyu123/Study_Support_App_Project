@@ -27,9 +27,9 @@ public class SlideshowFragment extends Fragment {
         binding = FragmentSlideshowBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 캘린더 액티비티로 이동
-        Intent intent = new Intent(getActivity(), CalendarActivity.class);
-        startActivity(intent);
+//         캘린더 액티비티로 이동
+//        Intent intent = new Intent(getActivity(), CalendarActivity.class);
+//        startActivity(intent);
 
 
         final TextView textView = binding.textSlideshow;

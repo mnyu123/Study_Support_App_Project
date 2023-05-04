@@ -55,7 +55,7 @@ public class LoginActivity extends Activity {
 
                 Toast.makeText(LoginActivity.this,firstUser,Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
                 Toast.makeText(LoginActivity.this,"로그인 성공",Toast.LENGTH_SHORT).show();
                 startActivity(intent);
                 finish();
