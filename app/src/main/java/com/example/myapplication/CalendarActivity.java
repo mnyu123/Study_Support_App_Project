@@ -251,12 +251,10 @@ public class CalendarActivity extends AppCompatActivity
                         switch (id) {
                             case R.id.nav_home:
                                 // nav_home Fragment로 이동
-                                Log.d("MainActivity", "Home menu item clicked");
                                 navController.navigate(R.id.nav_home);
                                 break;
                             case R.id.menu_item2:
                                 // menu_item2 Fragment로 이동
-                                Log.d("MainActivity", "Gallery menu item clicked");
                                 navController.navigate(R.id.menu_item2);
                                 break;
                             case R.id.menu_item3:

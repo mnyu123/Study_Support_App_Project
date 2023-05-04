@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.slideshow;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,11 +14,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.CalendarActivity;
+import com.example.myapplication.CsCheck;
+import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentSlideshowBinding;
 
 public class SlideshowFragment extends Fragment {
 
     private FragmentSlideshowBinding binding;
+    Button Tocs;
+    private Context cscontext;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -27,13 +32,16 @@ public class SlideshowFragment extends Fragment {
         binding = FragmentSlideshowBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-//         캘린더 액티비티로 이동
-//        Intent intent = new Intent(getActivity(), CalendarActivity.class);
-//        startActivity(intent);
+        Tocs = root.findViewById(R.id.ToCs);
 
-
-        final TextView textView = binding.textSlideshow;
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        Tocs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(cscontext.getApplicationContext(), CsCheck.class);
+                startActivity(intent);
+                //((CsCheck)cscontext).CsCheck();
+            }
+        });
 
         return root;
     }
