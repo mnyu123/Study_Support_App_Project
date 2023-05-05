@@ -1,0 +1,294 @@
+Index: app/src/main/java/com/example/myapplication/DataAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.content.Context;\r\nimport android.database.Cursor;\r\nimport android.database.SQLException;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.util.Log;\r\nimport android.widget.Toast;\r\n\r\nimport java.io.IOException;\r\nimport java.sql.ResultSet;\r\nimport java.sql.Statement;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class DataAdapter {\r\n    protected static final String TAG = \"DataAdapter\";\r\n\r\n    // TODO : TABLE 이름을 명시해야함\r\n    protected static final String TABLE_NAME = \"student\";\r\n\r\n    private final Context mContext;\r\n    private SQLiteDatabase mDb;\r\n    private DataBaseHelper mDbHelper;\r\n\r\n    public DataAdapter(Context context) {\r\n        this.mContext = context;\r\n        mDbHelper = new DataBaseHelper(mContext);\r\n    }\r\n\r\n    public DataAdapter createDatabase() throws SQLException {\r\n        try {\r\n            mDbHelper.createDataBase();\r\n        } catch (IOException mIOException) {\r\n            Log.e(TAG, mIOException.toString() + \"  UnableToCreateDatabase\");\r\n            throw new Error(\"UnableToCreateDatabase\");\r\n        }\r\n        return this;\r\n    }\r\n\r\n    public DataAdapter open() throws SQLException {\r\n        try {\r\n            mDbHelper.openDataBase();\r\n            mDbHelper.close();\r\n            mDb = mDbHelper.getReadableDatabase();\r\n        } catch (SQLException mSQLException) {\r\n            Log.e(TAG, \"open >>\" + mSQLException.toString());\r\n            throw mSQLException;\r\n        }\r\n        return this;\r\n    }\r\n\r\n    public void close() {\r\n        mDbHelper.close();\r\n    }\r\n\r\n    public List getTableData() {\r\n        try {\r\n            // Table 이름 -> antpool_bitcoin 불러오기\r\n            String sql = \"SELECT * FROM \" + TABLE_NAME;\r\n\r\n            // 모델 넣을 리스트 생성\r\n            List userList = new ArrayList();\r\n\r\n            // TODO : 모델 선언\r\n            User user = null;\r\n\r\n            Cursor mCur = mDb.rawQuery(sql, null);\r\n            if (mCur != null) {\r\n                // 칼럼의 마지막까지\r\n                while (mCur.moveToNext()) {\r\n\r\n                    // TODO : 커스텀 모델 생성\r\n                    user = new User();\r\n\r\n                    // TODO : Record 기술\r\n                    // id, name, account, privateKey, secretKey, Comment\r\n                    user.Username(mCur.getString(0));\r\n                    user.Student_id(mCur.getInt(1));\r\n                    user.ID(mCur.getString(2));\r\n                    user.Password(mCur.getString(3));\r\n                    user.Email(mCur.getString(4));\r\n                    user.is_professor(mCur.getInt(5));\r\n                    user.Time(mCur.getInt(6));\r\n                    user.CsCheck(mCur.getInt(7));\r\n\r\n\r\n                    // 리스트에 넣기\r\n                    userList.add(user);\r\n                }\r\n\r\n            }\r\n            return userList;\r\n        } catch (SQLException mSQLException) {\r\n            Log.e(TAG, \"getTestData >>\" + mSQLException.toString());\r\n            throw mSQLException;\r\n        }\r\n    }\r\n\r\n    public boolean authenticateUser(String username, String password) {\r\n        SQLiteDatabase db = mDbHelper.getReadableDatabase();\r\n        Cursor cursor = db.query(TABLE_NAME, new String[]{\"ID\"},\r\n                \"ID = ? AND Password = ?\", new String[]{username, password},\r\n                null, null, null);\r\n\r\n        boolean authenticated = cursor.moveToFirst();\r\n        cursor.close();\r\n        db.close();\r\n\r\n        return authenticated;\r\n    }\r\n\r\npublic void setAccount(String username, String password) {\r\n    SQLiteDatabase db = mDbHelper.getReadableDatabase();\r\n        List<User> LoginUser = new ArrayList<>();\r\n        User user = null;\r\n\r\n        // SQL 쿼리 실행\r\n        String query = \"SELECT * FROM \" + TABLE_NAME +\r\n                \" WHERE ID = ? AND Password = ?\";\r\n        Cursor cursor = db.rawQuery(query, new String[]{username, password});\r\n\r\n        // 결과 처리\r\n        while (cursor.moveToNext()) {\r\n            // User 객체 생성 및 정보 저장\r\n            user = new User();\r\n            user.Username(cursor.getString(0));\r\n            user.Student_id(cursor.getInt(1));\r\n            user.ID(cursor.getString(2));\r\n            user.Password(cursor.getString(3));\r\n            user.Email(cursor.getString(4));\r\n            user.is_professor(cursor.getInt(5));\r\n            user.Time(cursor.getInt(6));\r\n            user.CsCheck(cursor.getInt(7));\r\n            LoginUser.add(user);\r\n        }\r\n\r\n    // 리소스 해제\r\n    cursor.close();\r\n    db.close();\r\n\r\n    User.userList = LoginUser;\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/DataAdapter.java b/app/src/main/java/com/example/myapplication/DataAdapter.java
+--- a/app/src/main/java/com/example/myapplication/DataAdapter.java	(revision 556ae869855733050a6e9e0b1afb7bb51b703718)
++++ b/app/src/main/java/com/example/myapplication/DataAdapter.java	(date 1683090942031)
+@@ -23,80 +23,148 @@
+     private SQLiteDatabase mDb;
+     private DataBaseHelper mDbHelper;
+ 
+-    public DataAdapter(Context context) {
++    public DataAdapter(Context context)
++    {
+         this.mContext = context;
+         mDbHelper = new DataBaseHelper(mContext);
+     }
+ 
+-    public DataAdapter createDatabase() throws SQLException {
+-        try {
++    public DataAdapter createDatabase() throws SQLException
++    {
++        try
++        {
+             mDbHelper.createDataBase();
+-        } catch (IOException mIOException) {
++        }
++        catch (IOException mIOException)
++        {
+             Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
+             throw new Error("UnableToCreateDatabase");
+         }
+         return this;
+     }
+ 
+-    public DataAdapter open() throws SQLException {
+-        try {
++    public DataAdapter open() throws SQLException
++    {
++        try
++        {
+             mDbHelper.openDataBase();
+             mDbHelper.close();
+             mDb = mDbHelper.getReadableDatabase();
+-        } catch (SQLException mSQLException) {
+-            Log.e(TAG, "open >>" + mSQLException.toString());
++        }
++        catch (SQLException mSQLException)
++        {
++            Log.e(TAG, "open >>"+ mSQLException.toString());
+             throw mSQLException;
+         }
+         return this;
+     }
+ 
+-    public void close() {
++    public void close()
++    {
+         mDbHelper.close();
+     }
+ 
+-    public List getTableData() {
+-        try {
+-            // Table 이름 -> antpool_bitcoin 불러오기
+-            String sql = "SELECT * FROM " + TABLE_NAME;
+-
+-            // 모델 넣을 리스트 생성
+-            List userList = new ArrayList();
+-
+-            // TODO : 모델 선언
+-            User user = null;
+-
+-            Cursor mCur = mDb.rawQuery(sql, null);
+-            if (mCur != null) {
+-                // 칼럼의 마지막까지
+-                while (mCur.moveToNext()) {
+-
+-                    // TODO : 커스텀 모델 생성
+-                    user = new User();
++//    public List getTableData()
++//    {
++//        try
++//        {
++//            // Table 이름 -> antpool_bitcoin 불러오기
++//            String sql ="SELECT * FROM " + TABLE_NAME;
++//
++//            // 모델 넣을 리스트 생성
++//            List userList = new ArrayList();
++//
++//            // TODO : 모델 선언
++//            User user= null;
++//
++//            Cursor mCur = mDb.rawQuery(sql, null);
++//            if (mCur!=null)
++//            {
++//                // 칼럼의 마지막까지
++//                while( mCur.moveToNext() ) {
++//
++//                    // TODO : 커스텀 모델 생성
++//                    user = new User();
++//
++//                    // TODO : Record 기술
++//                    // id, name, account, privateKey, secretKey, Comment
++//                    user.Username(mCur.getString(0));
++//                    user.Student_id(mCur.getString(1));
++//                    user.ID(mCur.getString(2));
++//                    user.Password(mCur.getString(3));
++//                    user.Email(mCur.getString(4));
++//                    user.is_professor(mCur.getString(5));
++//                    user.Time(mCur.getString(6));
++//                    user.CsCheck(mCur.getString(7));
++//
++//
++//
++//
++//                    // 리스트에 넣기
++//                    userList.add(user);
++//                }
++//
++//            }
++//            return userList;
++//        }
++//        catch (SQLException mSQLException)
++//        {
++//            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
++//            throw mSQLException;
++//        }
++//    }
+ 
+-                    // TODO : Record 기술
+-                    // id, name, account, privateKey, secretKey, Comment
+-                    user.Username(mCur.getString(0));
+-                    user.Student_id(mCur.getInt(1));
+-                    user.ID(mCur.getString(2));
+-                    user.Password(mCur.getString(3));
+-                    user.Email(mCur.getString(4));
+-                    user.is_professor(mCur.getInt(5));
+-                    user.Time(mCur.getInt(6));
+-                    user.CsCheck(mCur.getInt(7));
+ 
+ 
+-                    // 리스트에 넣기
+-                    userList.add(user);
+-                }
+-
+-            }
+-            return userList;
+-        } catch (SQLException mSQLException) {
+-            Log.e(TAG, "getTestData >>" + mSQLException.toString());
+-            throw mSQLException;
+-        }
+-    }
+-
++//    public void getReadableDatabase()
++//    {
++//        try
++//        {
++//            // Table 이름 -> antpool_bitcoin 불러오기
++//            String sql ="SELECT * FROM " + TABLE_NAME;
++//
++//            // 모델 넣을 리스트 생성
++//            List userList = new ArrayList();
++//
++//            // TODO : 모델 선언
++//            User user= null;
++//
++//            Cursor mCur = mDb.rawQuery(sql, null);
++//            if (mCur!=null)
++//            {
++//                // 칼럼의 마지막까지
++//                while( mCur.moveToNext() ) {
++//
++//                    // TODO : 커스텀 모델 생성
++//                    user = new User();
++//
++//                    // TODO : Record 기술
++//                    // id, name, account, privateKey, secretKey, Comment
++//                    user.Username(mCur.getString(0));
++//                    user.Student_id(mCur.getString(1));
++//                    user.ID(mCur.getString(2));
++//                    user.Password(mCur.getString(3));
++//                    user.Email(mCur.getString(4));
++//                    user.is_professor(mCur.getString(5));
++//                    user.Time(mCur.getString(6));
++//                    user.CsCheck(mCur.getString(7));
++//
++//
++//
++//
++//                    // 리스트에 넣기
++//                    userList.add(user);
++//                }
++//
++//            }
++//
++//        }
++//        catch (SQLException mSQLException)
++//        {
++//            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
++//            throw mSQLException;
++//        }
++//    }
+     public boolean authenticateUser(String username, String password) {
+         SQLiteDatabase db = mDbHelper.getReadableDatabase();
+         Cursor cursor = db.query(TABLE_NAME, new String[]{"ID"},
+@@ -110,6 +178,7 @@
+         return authenticated;
+     }
+ 
++
+ public void setAccount(String username, String password) {
+     SQLiteDatabase db = mDbHelper.getReadableDatabase();
+         List<User> LoginUser = new ArrayList<>();
+@@ -143,3 +212,7 @@
+     }
+ }
+ 
++
++
++
++
+Index: app/src/main/java/com/example/myapplication/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.annotation.NonNull;\r\n\r\nimport android.Manifest;\r\nimport android.database.Cursor;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.os.Bundle;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.RadioButton;\r\nimport android.widget.RadioGroup;\r\nimport android.widget.TextView;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.database.sqlite.SQLiteOpenHelper;\r\n\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\nimport java.io.IOException;\r\nimport java.io.InputStream;\r\nimport java.io.OutputStream;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.LocationManager;\r\n\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.core.view.GravityCompat;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\n\r\nimport android.util.Log;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.myapplication.GpsTracker;\r\nimport com.google.android.material.navigation.NavigationView;\r\n\r\nimport java.util.List;\r\nimport java.util.Locale;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.view.Menu;\r\n\r\nimport com.google.android.material.snackbar.Snackbar;\r\n\r\nimport androidx.navigation.NavController;\r\nimport androidx.navigation.Navigation;\r\nimport androidx.navigation.ui.AppBarConfiguration;\r\nimport androidx.navigation.ui.NavigationUI;\r\n\r\nimport com.example.myapplication.databinding.ActivityMainBinding;\r\n\r\n\r\npublic class MainActivity extends AppCompatActivity implements View.OnClickListener {\r\n    long mNow;\r\n    Date mDate;\r\n    SimpleDateFormat mFormat = new SimpleDateFormat(\"yyyy-MM-dd hh:mm:ss\");\r\n\r\n    TextView mTextView;\r\n    Button mRefreshBtn;\r\n\r\n    Button button1;\r\n    Button csstart;\r\n\r\n    private Button loginButton;\r\n\r\n\r\n    TextView longitudevie;\r\n    TextView latitudevie;\r\n    TextView Con;\r\n    TextView nlongitudevie;\r\n    TextView nlatitudevie;\r\n    TextView name;\r\n\r\n    static TextView navheader;\r\n\r\n\r\n    RadioGroup radioGroup;\r\n\r\n    RadioButton GSRadioButton;\r\n    RadioButton STRadioButton;\r\n    double latitude;\r\n    double longitude;\r\n    char csCheck;\r\n\r\n    private GpsTracker gpsTracker;\r\n\r\n    private static final int GPS_ENABLE_REQUEST_CODE = 2001;\r\n    private static final int PERMISSIONS_REQUEST_CODE = 100;\r\n    String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};\r\n\r\n    private AppBarConfiguration mAppBarConfiguration;\r\n    private ActivityMainBinding binding;\r\n\r\n    String firstUser = User.getUsername();\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n\r\n        initNavigationMenu();\r\n\r\n//        setHeader();\r\n\r\n        final Bundle bundle = new Bundle();\r\n        Button login_btn = findViewById(R.id.login_btn);    //로그인버튼 선언\r\n        login_btn.setOnClickListener(this);\r\n\r\n\r\n        radibtn();\r\n        loginButton = findViewById(R.id.login_btn);\r\n        loginButton.setOnClickListener(new View.OnClickListener() {     //로그인 페이지 넘김\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(MainActivity.this, LoginActivity.class);\r\n                startActivity(intent);\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void initNavigationMenu() {\r\n        //사이드 메뉴바\r\n        binding = ActivityMainBinding.inflate(getLayoutInflater());\r\n        setContentView(binding.getRoot());\r\n\r\n        setSupportActionBar(binding.appBar.toolbar);\r\n        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Snackbar.make(view, \"Replace with your own action\", Snackbar.LENGTH_LONG)\r\n                        .setAction(\"Action\", null).show();\r\n            }\r\n        });\r\n        DrawerLayout drawerLayout = binding.drawerLayout;\r\n        NavigationView navigationView = binding.navView;\r\n\r\n        mAppBarConfiguration = new AppBarConfiguration.Builder(\r\n                R.id.nav_home, R.id.menu_item2, R.id.menu_item3)\r\n                .setOpenableLayout(drawerLayout)\r\n                .build();\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);\r\n        NavigationUI.setupWithNavController(navigationView, navController);\r\n        navigationView.setNavigationItemSelectedListener(\r\n                new NavigationView.OnNavigationItemSelectedListener() {\r\n                    public MenuItem item;\r\n                    public boolean onNavigationItemSelected(MenuItem item) {\r\n                        this.item = item;\r\n                        int id = item.getItemId();\r\n\r\n                        switch (id) {\r\n                            case R.id.nav_home:\r\n                                // nav_home Fragment로 이동\r\n                                Log.d(\"MainActivity\", \"Home menu item clicked\");\r\n                                navController.navigate(R.id.nav_home);\r\n                                break;\r\n                            case R.id.menu_item2:\r\n                                // menu_item2 Fragment로 이동\r\n                                Log.d(\"MainActivity\", \"Gallery menu item clicked\");\r\n                                navController.navigate(R.id.menu_item2);\r\n                                break;\r\n                            case R.id.menu_item3:\r\n                                // menu_item3 Fragment로 이동\r\n                                navController.navigate(R.id.menu_item3);\r\n                                break;\r\n                            case R.id.menu_item4:\r\n                                // menu_item4 Fragment로 이동\r\n                                navController.navigate(R.id.menu_item4);\r\n                                break;\r\n                        }\r\n\r\n                        // Navigation Drawer 닫기\r\n                        drawerLayout.closeDrawer(GravityCompat.START);\r\n                        return true;\r\n                    }\r\n                }\r\n        );\r\n        View headerView = navigationView.getHeaderView(0);\r\n        TextView headerTextView = headerView.findViewById(R.id.header_text);\r\n        headerTextView.setText(firstUser);\r\n    }\r\n\r\n    @Override\r\n    public boolean onCreateOptionsMenu(Menu menu) {\r\n        // Inflate the menu; this adds items to the action bar if it is present.\r\n        getMenuInflater().inflate(R.menu.main, menu);\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public boolean onSupportNavigateUp() {\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n        return NavigationUI.navigateUp(navController, mAppBarConfiguration)\r\n                || super.onSupportNavigateUp();\r\n    }\r\n   /* public void timer(){\r\n        timeCountSettingLV.setVisibility(View.GONE);\r\n        timeCountLV.setVisibility(View.VISIBLE);\r\n\r\n        hourTV.setText(hourET.getText().toString());\r\n        minuteTV.setText(minuteET.getText().toString());\r\n        secondTV.setText(secondET.getText().toString());\r\n\r\n        hour = Integer.parseInt(hourET.getText().toString());\r\n        minute = Integer.parseInt(minuteET.getText().toString());\r\n        second = Integer.parseInt(secondET.getText().toString());\r\n\r\n        Timer timer = new Timer();\r\n        TimerTask timerTask = new TimerTask() {\r\n            @Override\r\n            public void run() {\r\n                // 반복실행할 구문\r\n\r\n                // 0초 이상이면\r\n                if(second != 0) {\r\n                    //1초씩 감소\r\n                    second--;\r\n\r\n                    // 0분 이상이면\r\n                } else if(minute != 0) {\r\n                    // 1분 = 60초\r\n                    second = 60;\r\n                    second--;\r\n                    minute--;\r\n\r\n                    // 0시간 이상이면\r\n                } else if(hour != 0) {\r\n                    // 1시간 = 60분\r\n                    second = 60;\r\n                    minute = 60;\r\n                    second--;\r\n                    minute--;\r\n                    hour--;\r\n                }\r\n\r\n                //시, 분, 초가 10이하(한자리수) 라면\r\n                // 숫자 앞에 0을 붙인다 ( 8 -> 08 )\r\n                if(second <= 9){\r\n                    secondTV.setText(\"0\" + second);\r\n                } else {\r\n                    secondTV.setText(Integer.toString(second));\r\n                }\r\n\r\n                if(minute <= 9){\r\n                    minuteTV.setText(\"0\" + minute);\r\n                } else {\r\n                    minuteTV.setText(Integer.toString(minute));\r\n                }\r\n\r\n                if(hour <= 9){\r\n                    hourTV.setText(\"0\" + hour);\r\n                } else {\r\n                    hourTV.setText(Integer.toString(hour));\r\n                }\r\n\r\n                // 시분초가 다 0이라면 toast를 띄우고 타이머를 종료한다..\r\n                if(hour == 0 && minute == 0 && second == 0) {\r\n                    timer.cancel();//타이머 종료\r\n                    finishTV.setText(\"타이머가 종료되었습니다.\");\r\n                }\r\n            }\r\n        };\r\n    }*/\r\n\r\n    // 마찬가지 삭제 가능한 주석이면 삭제 부탁드립니다 가독성이 떨어집니다\r\n    \r\n    public void radibtn() {\r\n        GSRadioButton = (RadioButton) findViewById(R.id.GSradibtn);\r\n        STRadioButton = (RadioButton) findViewById(R.id.STDradibtn);\r\n       /* GSRadioButton.setOnClickListener(radioButtonClickListener);\r\n        STRadioButton.setOnClickListener(radioButtonClickListener); */\r\n        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);\r\n        radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);\r\n\r\n        button1 = (Button) findViewById(R.id.refreshBtn);\r\n        csstart = (Button) findViewById(R.id.CSstart);\r\n\r\n\r\n    }\r\n   /* View.OnClickListener radioButtonClickListener = new RadioButton.OnClickListener() {\r\n        @Override\r\n\r\n        }\r\n    }; */\r\n\r\n\r\n    RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {\r\n        @Override\r\n        public void onCheckedChanged(RadioGroup radioGroup, int i) {\r\n            if (i == R.id.STDradibtn) {\r\n                stbtns();\r\n            } else if (i == R.id.GSradibtn) {\r\n                gsbtns();\r\n            }\r\n        }\r\n    };\r\n\r\n\r\n    public void gsbtns() {\r\n        button1.setVisibility(View.INVISIBLE);\r\n        csstart.setVisibility(View.VISIBLE);\r\n        btnchange();\r\n    }\r\n\r\n    public void stbtns() {\r\n        button1.setVisibility(View.VISIBLE);\r\n        csstart.setVisibility(View.INVISIBLE);\r\n        btns();\r\n    }\r\n\r\n\r\n    public void btnchange() {\r\n\r\n        Button Btnena = (Button) findViewById(R.id.CSstart);\r\n        Btnena.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View arg0) {\r\n                button1.setEnabled(true);\r\n            }\r\n\r\n        });\r\n    }\r\n\r\n    public List<User> mUserList;\r\n\r\n    private void initLoadDB() {\r\n\r\n        DataAdapter mDbHelper = new DataAdapter(getApplicationContext());\r\n        mDbHelper.createDatabase();\r\n        mDbHelper.open();\r\n\r\n        // db에 있는 값들을 model을 적용해서 넣는다.\r\n        mUserList = mDbHelper.getTableData();\r\n\r\n        // db 닫기\r\n        mDbHelper.close();\r\n    }\r\n\r\n\r\n    int val;\r\n\r\n    void getVal() {\r\n\r\n        //Dbhelper의 읽기모드 객체를 가져와 SQLiteDatabase에 담아 사용준비\r\n        DataBaseHelper helper = new DataBaseHelper(this);\r\n        SQLiteDatabase database = helper.getReadableDatabase();\r\n\r\n\r\n        //Cursor라는 그릇에 목록을 담아주기\r\n        Cursor cursor = database.rawQuery(\"SELECT Student_id FROM student where Username = '김경호'\", null);\r\n\r\n\r\n//        if(cursor != null && cursor.moveToFirst())\r\n        //목록의 개수만큼 순회하여 adapter에 있는 list배열에 add\r\n        while (cursor.moveToNext()) {\r\n            //num 행은 가장 첫번째에 있으니 0번이 되고, name은 1번\r\n            val = cursor.getInt(0);\r\n        }\r\n        name = (TextView) findViewById(R.id.name);\r\n        name.setText(String.valueOf(val));\r\n        cursor.close();\r\n        helper.close();\r\n\r\n\r\n    }\r\n\r\n\r\n    public class prime{\r\n\r\n        double platitude =0;\r\n        double plongtitude = 0;\r\n    }\r\n\r\n    public class dist {\r\n\r\n        double dislat = 0;\r\n        double dislon = 0;\r\n    }\r\n\r\n    public void btns() {\r\n        mTextView = (TextView) findViewById(R.id.textView);\r\n\r\n        mRefreshBtn = (Button) findViewById(R.id.refreshBtn);\r\n\r\n        //bind listener\r\n        mRefreshBtn.setOnClickListener(this::onClick);\r\n\r\n\r\n        longitudevie = (TextView) findViewById(R.id.longitudevie);\r\n        latitudevie = (TextView) findViewById(R.id.latitudevie);\r\n\r\n        Con = (TextView) findViewById(R.id.Con);\r\n\r\n        nlongitudevie = (TextView) findViewById(R.id.nlongitudevie);\r\n        nlatitudevie = (TextView) findViewById(R.id.nlatitudevie);\r\n\r\n        if (!checkLocationServicesStatus()) {\r\n\r\n            showDialogForLocationServiceSetting();\r\n        } else {\r\n\r\n            checkRunTimePermission();\r\n        }\r\n\r\n\r\n        prime pr = new prime();\r\n        dist di = new dist();\r\n\r\n\r\n        pr.platitude = 35.9684;\r\n        pr.plongtitude = 126.9581;\r\n\r\n\r\n        TextView textview_latitude = (TextView) findViewById(R.id.latitudevie);\r\n        TextView textview_longitude = (TextView) findViewById(R.id.longitudevie);\r\n\r\n\r\n        Button ShowLocationButton = (Button) findViewById(R.id.refreshBtn);\r\n        ShowLocationButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View arg0) {\r\n\r\n\r\n                gpsTracker = new GpsTracker(MainActivity.this);\r\n\r\n                latitude = gpsTracker.getLatitude();\r\n                longitude = gpsTracker.getLongitude();\r\n\r\n                if ((Math.abs(latitude) >= Math.abs(pr.platitude)))\r\n                    di.dislat = Math.abs(latitude) - Math.abs(pr.platitude);\r\n                else\r\n                    di.dislat = Math.abs(pr.platitude) - Math.abs(latitude);\r\n\r\n                if ((Math.abs(longitude) >= Math.abs(pr.plongtitude)))\r\n                    di.dislon = Math.abs(longitude) - Math.abs(pr.plongtitude);\r\n                else\r\n                    di.dislon = Math.abs(pr.plongtitude) - Math.abs(longitude);\r\n\r\n                String dilon = String.format(\"%.7f\", di.dislon);\r\n                String dilat = String.format(\"%.7f\", di.dislat);\r\n\r\n\r\n                mTextView.setText(getTime());\r\n                textview_latitude.setText(String.valueOf(latitude));\r\n                textview_longitude.setText(String.valueOf(longitude));\r\n\r\n\r\n                nlongitudevie.setText(dilon);\r\n                nlatitudevie.setText(dilat);\r\n\r\n                if (Math.abs(di.dislat) <= 0.0002 && Math.abs(di.dislon) <= 0.002)\r\n                    csCheck = 'O';\r\n                else\r\n                    csCheck = 'X';\r\n\r\n\r\n                Con.setText(String.valueOf(csCheck));\r\n                initLoadDB();\r\n                getVal();\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n    String getTime() {\r\n        mNow = System.currentTimeMillis();\r\n        mDate = new Date(mNow);\r\n        SimpleDateFormat mFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\r\n        return mFormat.format(mDate);\r\n    }\r\n\r\n    public void onClick(View v) {\r\n        switch (v.getId()) {\r\n            case R.id.refreshBtn:\r\n                mTextView.setText(getTime());\r\n                break;\r\n            default:\r\n                break;\r\n        }\r\n    }\r\n\r\n\r\n    public void onRequestPermissionsResult(int permsRequestCode,\r\n                                           @NonNull String[] permissions,\r\n                                           @NonNull int[] grandResults) {\r\n\r\n        super.onRequestPermissionsResult(permsRequestCode, permissions, grandResults);\r\n        if (permsRequestCode == PERMISSIONS_REQUEST_CODE && grandResults.length == REQUIRED_PERMISSIONS.length) {\r\n\r\n            // 요청 코드가 PERMISSIONS_REQUEST_CODE 이고, 요청한 퍼미션 개수만큼 수신되었다면\r\n\r\n            boolean check_result = true;\r\n\r\n\r\n            // 모든 퍼미션을 허용했는지 체크합니다.\r\n\r\n            for (int result : grandResults) {\r\n                if (result != PackageManager.PERMISSION_GRANTED) {\r\n                    check_result = false;\r\n                    break;\r\n                }\r\n            }\r\n\r\n\r\n            if (check_result) {\r\n\r\n                //위치 값을 가져올 수 있음\r\n\r\n            } else {\r\n                // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.\r\n\r\n                if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])\r\n                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {\r\n\r\n                    Toast.makeText(MainActivity.this, \"퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.\", Toast.LENGTH_LONG).show();\r\n                    finish();\r\n\r\n\r\n                } else {\r\n\r\n                    Toast.makeText(MainActivity.this, \"퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. \", Toast.LENGTH_LONG).show();\r\n\r\n                }\r\n            }\r\n\r\n        }\r\n    }\r\n\r\n    void checkRunTimePermission() {\r\n\r\n        //런타임 퍼미션 처리\r\n        // 1. 위치 퍼미션을 가지고 있는지 체크합니다.\r\n        int hasFineLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this,\r\n                Manifest.permission.ACCESS_FINE_LOCATION);\r\n        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this,\r\n                Manifest.permission.ACCESS_COARSE_LOCATION);\r\n\r\n\r\n        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&\r\n                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {\r\n\r\n            // 2. 이미 퍼미션을 가지고 있다면\r\n            // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)\r\n\r\n\r\n            // 3.  위치 값을 가져올 수 있음\r\n\r\n\r\n        } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.\r\n\r\n            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는\r\n            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, REQUIRED_PERMISSIONS[0])) {\r\n\r\n                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.\r\n                Toast.makeText(MainActivity.this, \"이 앱을 실행하려면 위치 접근 권한이 필요합니다.\", Toast.LENGTH_LONG).show();\r\n                // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.\r\n                ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS,\r\n                        PERMISSIONS_REQUEST_CODE);\r\n\r\n\r\n            } else {\r\n                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.\r\n                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.\r\n                ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS,\r\n                        PERMISSIONS_REQUEST_CODE);\r\n            }\r\n\r\n        }\r\n\r\n    }\r\n\r\n\r\n    public String getCurrentAddress(double latitude, double longitude) {\r\n\r\n        //지오코더... GPS를 주소로 변환\r\n        Geocoder geocoder = new Geocoder(this, Locale.getDefault());\r\n\r\n        List<Address> addresses;\r\n\r\n        try {\r\n\r\n            addresses = geocoder.getFromLocation(\r\n                    latitude,\r\n                    longitude,\r\n                    7);\r\n        } catch (IOException ioException) {\r\n            //네트워크 문제\r\n            Toast.makeText(this, \"지오코더 서비스 사용불가\", Toast.LENGTH_LONG).show();\r\n            return \"지오코더 서비스 사용불가\";\r\n        } catch (IllegalArgumentException illegalArgumentException) {\r\n            Toast.makeText(this, \"잘못된 GPS 좌표\", Toast.LENGTH_LONG).show();\r\n            return \"잘못된 GPS 좌표\";\r\n\r\n        }\r\n\r\n\r\n        if (addresses == null || addresses.size() == 0) {\r\n            Toast.makeText(this, \"주소 미발견\", Toast.LENGTH_LONG).show();\r\n            return \"주소 미발견\";\r\n\r\n        }\r\n\r\n        Address address = addresses.get(0);\r\n        return address.getAddressLine(0).toString() + \"\\n\";\r\n\r\n    }\r\n\r\n\r\n    //여기부터는 GPS 활성화를 위한 메소드들\r\n    private void showDialogForLocationServiceSetting() {\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);\r\n        builder.setTitle(\"위치 서비스 비활성화\");\r\n        builder.setMessage(\"앱을 사용하기 위해서는 위치 서비스가 필요합니다.\\n\"\r\n                + \"위치 설정을 수정하실래요?\");\r\n        builder.setCancelable(true);\r\n        builder.setPositiveButton(\"설정\", new DialogInterface.OnClickListener() {\r\n            @Override\r\n            public void onClick(DialogInterface dialog, int id) {\r\n                Intent callGPSSettingIntent\r\n                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);\r\n                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);\r\n\r\n            }\r\n        });\r\n        builder.setNegativeButton(\"취소\", new DialogInterface.OnClickListener() {\r\n            @Override\r\n            public void onClick(DialogInterface dialog, int id) {\r\n\r\n                dialog.cancel();\r\n            }\r\n        });\r\n        builder.create().show();\r\n    }\r\n\r\n\r\n    @Override\r\n    protected void onActivityResult(int requestCode, int resultCode, Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n\r\n        switch (requestCode) {\r\n\r\n            case GPS_ENABLE_REQUEST_CODE:\r\n\r\n                //사용자가 GPS 활성 시켰는지 검사\r\n                if (checkLocationServicesStatus()) {\r\n                    if (checkLocationServicesStatus()) {\r\n\r\n                        Log.d(\"@@@\", \"onActivityResult : GPS 활성화 되있음\");\r\n                        checkRunTimePermission();\r\n                        return;\r\n                    }\r\n                }\r\n\r\n                break;\r\n        }\r\n    }\r\n\r\n    //id pw입력후 메세지 입력\r\n    public boolean checkLocationServicesStatus() {\r\n        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);\r\n\r\n        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)\r\n                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);\r\n    }\r\n\r\n    public void setHeader() {\r\n        navheader = (TextView)findViewById(R.id.header_text);\r\n        navheader.setText(\"aaa\");\r\n    }\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/MainActivity.java b/app/src/main/java/com/example/myapplication/MainActivity.java
+--- a/app/src/main/java/com/example/myapplication/MainActivity.java	(revision 556ae869855733050a6e9e0b1afb7bb51b703718)
++++ b/app/src/main/java/com/example/myapplication/MainActivity.java	(date 1683090942036)
+@@ -334,18 +334,18 @@
+ 
+     public List<User> mUserList;
+ 
+-    private void initLoadDB() {
+-
+-        DataAdapter mDbHelper = new DataAdapter(getApplicationContext());
+-        mDbHelper.createDatabase();
+-        mDbHelper.open();
+-
+-        // db에 있는 값들을 model을 적용해서 넣는다.
+-        mUserList = mDbHelper.getTableData();
+-
+-        // db 닫기
+-        mDbHelper.close();
+-    }
++//    private void initLoadDB() {
++//
++//        DataAdapter mDbHelper = new DataAdapter(getApplicationContext());
++//        mDbHelper.createDatabase();
++//        mDbHelper.open();
++//
++//        // db에 있는 값들을 model을 적용해서 넣는다.
++//        mUserList = mDbHelper.getTableData();
++//
++//        // db 닫기
++//        mDbHelper.close();
++//    }
+ 
+ 
+     int val;
+@@ -466,7 +466,7 @@
+ 
+ 
+                 Con.setText(String.valueOf(csCheck));
+-                initLoadDB();
++                //initLoadDB();
+                 getVal();
+ 
+             }
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nplugins {\r\n    id 'com.android.application' version '7.3.1' apply false\r\n    id 'com.android.library' version '7.3.1' apply false\r\n}\r\next {\r\n    navigationVersion = '1.0.0-rc02'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision 556ae869855733050a6e9e0b1afb7bb51b703718)
++++ b/build.gradle	(date 1683272785680)
+@@ -1,7 +1,7 @@
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
+ plugins {
+-    id 'com.android.application' version '7.3.1' apply false
+-    id 'com.android.library' version '7.3.1' apply false
++    id 'com.android.application' version '7.4.2' apply false
++    id 'com.android.library' version '7.4.2' apply false
+ }
+ ext {
+     navigationVersion = '1.0.0-rc02'

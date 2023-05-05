@@ -438,10 +438,11 @@ public class CsCheck extends AppCompatActivity {
 //            throw new Error("UnableToCreateDatabase");
 //        }
 
+        String SName = User.getUsername();
         //Cursor라는 그릇에 목록을 담아주기
-        Cursor cursor = database.rawQuery("SELECT * FROM student WHERE Username = '김경호'" ,null);
+        Cursor cursor = database.rawQuery("SELECT * FROM student" ,null);
 
-         helper.insertData(getTime(),csCheck,"김강호");
+         helper.insertData(getTime(),csCheck,SName);
 //        helper.insertTimeData(getTime(),"김경호");
 //        helper.insertCSData(csCheck,"김경호");
 //        if(cursor != null && cursor.moveToFirst())
