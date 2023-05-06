@@ -19,7 +19,7 @@
         android:id="@+id/login_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="(가제)원광 수업 도우미앱 로그인"
+        android:text="원광 수업 도우미앱 로그인"
         android:gravity="center"
         android:textSize="24sp"
         android:textStyle="bold"
