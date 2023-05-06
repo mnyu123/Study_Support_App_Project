@@ -82,12 +82,13 @@ public class User {
         return null;
     }
 
-    public static String getIsProfessor() {
+    public static boolean getIsProfessor() {
         if (!userList.isEmpty()) {
-            return userList.get(0).is_professor;
+            return Boolean.parseBoolean(userList.get(0).is_professor);
         }
-        return null;
+        return false;
     }
+
 
     public static String getTime() {
         if (!userList.isEmpty()) {

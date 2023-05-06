@@ -43,13 +43,16 @@ public class CalendarActivity extends AppCompatActivity
     public static final int PERMISSION_PROFESSOR = 1;
     public static final int PERMISSION_STUDENT = 0;
 
+    String studentIdStr = User.getStudentId();
+    int studentId = Integer.parseInt(studentIdStr);
+    String firstUser = String.valueOf(studentId);   //사이드 이름/학번
     // 권한 변수 추가
     public int permission = 0;
 
     private ActivityCalendarBinding binding;
     private AppBarConfiguration mAppBarConfiguration;
 
-    String firstUser = User.getUsername();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -275,7 +278,14 @@ public class CalendarActivity extends AppCompatActivity
         );
         View headerView = navigationView.getHeaderView(0);
         TextView headerTextView = headerView.findViewById(R.id.header_text);
-        headerTextView.setText(firstUser);
+        if (User.getIsProfessor()) {
+            headerTextView.setText(String.format("%s", User.getUsername()));
+        } else {
+            String studentIdStr = User.getStudentId();
+            int studentId = Integer.parseInt(studentIdStr);
+            headerTextView.setText(String.format("%s 학생님\n%s", User.getUsername(), studentId));
+        }
+
     }
 
     @Override
