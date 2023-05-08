@@ -218,7 +218,11 @@ public class CalendarActivity extends AppCompatActivity
         }
     }
 
-    private void initNavigationMenu() {
+    public void rungo(){
+        initNavigationMenu();
+    }
+
+    public void initNavigationMenu() {
         //사이드 메뉴바
         binding = ActivityCalendarBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

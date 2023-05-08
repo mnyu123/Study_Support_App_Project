@@ -12,7 +12,7 @@ public class ListOpener extends AppCompatActivity {
 
     ListView listView;
 
-    CsCheck cs = new CsCheck();
+  //  CsCheck cs = new CsCheck();
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
