@@ -82,6 +82,12 @@ public class User {
         return null;
     }
 
+    public static String getpro() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).is_professor;
+        }
+        return null;
+    }
     public static boolean getIsProfessor() {
         if (!userList.isEmpty()) {
             return Boolean.parseBoolean(userList.get(0).is_professor);

@@ -44,6 +44,7 @@ import com.example.myapplication.DataAdapter;
 import com.example.myapplication.DataBaseHelper;
 import com.example.myapplication.GpsTracker;
 import com.example.myapplication.ListOpener;
+import com.example.myapplication.LoginActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.User;
 import com.example.myapplication.databinding.FragmentSlideshowBinding;
@@ -73,7 +74,7 @@ public class SlideshowFragment extends Fragment {
     TextView nlongitudevie;
     TextView nlatitudevie;
     TextView name;
-
+    String val;
 
     private static final String PRIMAY_CHANNEL_ID = "primary_notification_channel";
 
@@ -92,6 +93,10 @@ public class SlideshowFragment extends Fragment {
     double plongtitude = 0;
 
     String csCheck;
+
+    boolean is_proboolean;
+
+    String is_pro;
 
     //private GpsTracker gpsTracker;
 
@@ -170,37 +175,67 @@ public class SlideshowFragment extends Fragment {
     public void radibtn() {
         View root = binding.getRoot();
 
-        GSRadioButton = (RadioButton) root.findViewById(R.id.GSradibtn);
-        STRadioButton = (RadioButton) root.findViewById(R.id.STDradibtn);
-       /* GSRadioButton.setOnClickListener(radioButtonClickListener);
-        STRadioButton.setOnClickListener(radioButtonClickListener); */
-        radioGroup = (RadioGroup) root.findViewById(R.id.radioGroup);
-        radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);
+//        GSRadioButton = (RadioButton) root.findViewById(R.id.GSradibtn);
+//        STRadioButton = (RadioButton) root.findViewById(R.id.STDradibtn);
+//       /* GSRadioButton.setOnClickListener(radioButtonClickListener);
+//        STRadioButton.setOnClickListener(radioButtonClickListener); */
+//        radioGroup = (RadioGroup) root.findViewById(R.id.radioGroup);
+//        radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);
+
+
+
+//        is_proboolean = User.getIsProfessor();
+//
+//        if(is_proboolean){
+//            csstart.setEnabled(true);
+//            gsbtns();
+//        }
+//        else{
+//            if(alram_val==1)
+//            {sendNotification();}
+//            csstart.setEnabled(false);
+//
+//            stbtns();
+//
+//        }
 
         button1 = (Button) root.findViewById(R.id.refreshBtn);
         csstart = (Button) root.findViewById(R.id.CSstart);
 
+        is_pro = User.getpro();
+
+        val = is_pro;
+        name=(TextView) root.findViewById(R.id.name);
+        name.setText(String.valueOf(val));
+
+
+        if(is_pro.equals("1")){
+            csstart.setEnabled(true);
+            gsbtns();
+        }
+        else{
+            if(alram_val==1)
+            {sendNotification();}
+            csstart.setEnabled(false);
+
+            stbtns();
+
+        }
 
 
     }
 
-    RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(RadioGroup radioGroup, int i) {
-            if (i == R.id.STDradibtn) {
-                if(alram_val==1)
-                {sendNotification();}
-                csstart.setEnabled(false);
-
-                stbtns();
-
-
-            } else if (i == R.id.GSradibtn) {
-                csstart.setEnabled(true);
-                gsbtns();
-            }
-        }
-    };
+//    RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
+//        @Override
+//        public void onCheckedChanged(RadioGroup radioGroup, int i) {
+//            if (i == R.id.STDradibtn) {
+//
+//
+//            } else if (i == R.id.GSradibtn) {
+//
+//            }
+//        }
+//    };
 
 
     public void gsbtns(){
@@ -455,7 +490,8 @@ public class SlideshowFragment extends Fragment {
     }
 
     //데이터 베이스 값 읽기
-    String val;
+
+
     void getVal(){
         View root = binding.getRoot();
 
@@ -485,7 +521,9 @@ public class SlideshowFragment extends Fragment {
         while(cursor.moveToNext()){
             //num 행은 가장 첫번째에 있으니 0번이 되고, name은 1번
 
-            val = cursor.getString(7);
+          //  val = cursor.getString(7);
+
+            val = is_pro;
 //            if(isInserted==true)
 //
 
@@ -496,8 +534,8 @@ public class SlideshowFragment extends Fragment {
 
 
 
-        name=(TextView) root.findViewById(R.id.name);
-        name.setText(String.valueOf(val));
+//        name=(TextView) root.findViewById(R.id.name);
+//        name.setText(String.valueOf(val));
         cursor.close();
         helper.close();
 

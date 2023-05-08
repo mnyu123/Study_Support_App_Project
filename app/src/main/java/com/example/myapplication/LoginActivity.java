@@ -3,6 +3,7 @@ package com.example.myapplication;
 import static com.example.myapplication.R.layout.login_activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,8 @@ public class LoginActivity extends Activity {
         setContentView(login_activity);
         setContentView(R.layout.login_activity);
 //        initNavigationMenu();
+
+
 
         editText_id = findViewById(R.id.editText_id);
         editText_password = findViewById(R.id.editText_password);
