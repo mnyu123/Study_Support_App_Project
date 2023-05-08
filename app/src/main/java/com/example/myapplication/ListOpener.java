@@ -17,7 +17,7 @@ public class ListOpener extends AppCompatActivity {
     Button BTNOK;
     Button BTNNO;
 
-    CsCheck cs = new CsCheck();
+    //CsCheck cs = new CsCheck();
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 

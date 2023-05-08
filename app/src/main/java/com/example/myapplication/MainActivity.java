@@ -20,14 +20,14 @@ public class MainActivity extends AppCompatActivity {
 
         Tocs = (Button)findViewById(R.id.ToCs);
 
-        Tocs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),CsCheck.class);
-                startActivity(intent);
-                //((CsCheck)cscontext).CsCheck();
-            }
-        });
+//        Tocs.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getApplicationContext(),CsCheck.class);
+//                startActivity(intent);
+//                //((CsCheck)cscontext).CsCheck();
+//            }
+//        });
         //bind view
 
     }

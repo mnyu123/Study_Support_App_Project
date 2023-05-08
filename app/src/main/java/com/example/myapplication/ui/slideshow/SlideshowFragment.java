@@ -39,7 +39,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.CalendarActivity;
-import com.example.myapplication.CsCheck;
+//import com.example.myapplication.CsCheck;
 import com.example.myapplication.DataAdapter;
 import com.example.myapplication.DataBaseHelper;
 import com.example.myapplication.GpsTracker;
