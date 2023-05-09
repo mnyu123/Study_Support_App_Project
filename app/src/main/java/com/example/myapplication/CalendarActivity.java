@@ -294,12 +294,12 @@ public class CalendarActivity extends AppCompatActivity
         );
         View headerView = navigationView.getHeaderView(0);
         TextView headerTextView = headerView.findViewById(R.id.header_text);
-        if (User.getIsProfessor()) {
-            headerTextView.setText(String.format("%s", User.getUsername()));
+        if (User.getIsProfessor() == 1) {
+            headerTextView.setText(String.format("%s 교수님", User.getUsername()));
         } else {
             String studentIdStr = User.getStudentId();
             int studentId = Integer.parseInt(studentIdStr);
-            headerTextView.setText(String.format("%s 학생님\n%s", User.getUsername(), studentId));
+            headerTextView.setText(String.format("%s 학생님\n(%s)", User.getUsername(), studentId));
         }
 
     }
