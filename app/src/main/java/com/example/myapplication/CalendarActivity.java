@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -69,6 +70,19 @@ public class CalendarActivity extends AppCompatActivity
         textView2 = findViewById(R.id.textView2);
         textView3 = findViewById(R.id.textView3);
         contextEditText = findViewById(R.id.contextEditText);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerLayout = navigationView.getHeaderView(0);
+        Button logoutButton = headerLayout.findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 로그인 액티비티로 이동하는 인텐트 생성
+                Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);
+                // 모든 액티비티 종료 및 로그인 액티비티 호출
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener()
         {
             @Override
@@ -138,6 +152,7 @@ public class CalendarActivity extends AppCompatActivity
             save_Btn.setVisibility(View.INVISIBLE);
             cha_Btn.setVisibility(View.VISIBLE);
             del_Btn.setVisibility(View.VISIBLE);
+
 
             cha_Btn.setOnClickListener(new View.OnClickListener()
             {
@@ -227,6 +242,7 @@ public class CalendarActivity extends AppCompatActivity
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBar.toolbar);
+
         binding.appBar.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -14,4 +14,11 @@
         android:text="원광 수업 도우미 앱 프로토타입"
         android:textSize="30dp" />
 
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:text="logout" />
+
 </LinearLayout>
