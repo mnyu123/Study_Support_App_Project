@@ -37,6 +37,8 @@
             android:theme="@style/Theme.MyApplication.NoActionBar"/>
 <!--        <activity android:name=".CsCheck"/>-->
         <activity android:name=".ListOpener"/>
+        <activity android:name=".noticeboard.RegisterActivity" />
+        <activity android:name=".noticeboard.ListActivity"/>
     </application>
 
 </manifest>

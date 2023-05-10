@@ -1,7 +1,6 @@
 package com.example.myapplication.noticeboard;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,6 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.example.myapplication.noticeboard.RegisterActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 
@@ -29,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.crypto.Cipher;
 import javax.net.ssl.HttpsURLConnection;
 
 public class ListActivity extends AppCompatActivity {
@@ -38,7 +41,9 @@ public class ListActivity extends AppCompatActivity {
 
     // 사용할 컴포넌트 선언
     ListView listView;
+
     Button reg_button;
+    Context cscontext;
     String userid = "";
 
     // 리스트뷰에 사용할 제목 배열
@@ -52,40 +57,19 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-// LoginActivity 에서 넘긴 userid 값 받기
+        cscontext = this;
+
+        // LoginActivity 에서 넘긴 userid 값 받기
         userid = getIntent().getStringExtra("userid");
 
-// 컴포넌트 초기화
-        listView = findViewById(R.id.listView);
-
-// listView 를 클릭했을 때 이벤트 추가
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-// 어떤 값을 선택했는지 토스트를 뿌려줌
-                Toast.makeText(ListActivity.this, adapterView.getItemAtPosition(i)+ " 클릭", Toast.LENGTH_SHORT).show();
-
-// 게시물의 번호와 userid를 가지고 DetailActivity 로 이동
-                Intent intent = new Intent(ListActivity.this, DetailActivity.class);
-                intent.putExtra("board_seq", seqList.get(i));
-                intent.putExtra("userid", userid);
-                startActivity(intent);
-
-            }
-        });
-
-// 버튼 컴포넌트 초기화
+        // 버튼 객체 초기화
         reg_button = findViewById(R.id.reg_button);
 
-// 버튼 이벤트 추가
         reg_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-// userid 를 가지고 RegisterActivity 로 이동
+                // RegisterActivity 로 이동
                 Intent intent = new Intent(ListActivity.this, RegisterActivity.class);
-                intent.putExtra("userid", userid);
                 startActivity(intent);
             }
         });
@@ -208,4 +192,59 @@ public class ListActivity extends AppCompatActivity {
             return response;
         }
     }
-}
+
+
+        protected String doInBackground(String... params) {
+//
+// String userid = params[0];
+// String passwd = params[1];
+
+            String server_url = "http://15.164.252.136/load_board.php";
+
+
+            URL url;
+            String response = "";
+            try {
+                url = new URL(server_url);
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("userid", "");
+// .appendQueryParameter("passwd", passwd);
+                String query = builder.build().getEncodedQuery();
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+                int responseCode=conn.getResponseCode();
+
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    String line;
+                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response+=line;
+                    }
+                }
+                else {
+                    response="";
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
+    }
+

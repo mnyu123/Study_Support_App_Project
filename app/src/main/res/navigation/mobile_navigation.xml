@@ -14,8 +14,8 @@
     <fragment
         android:id="@+id/menu_item2"
         android:name="com.example.myapplication.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/login_activity" />
+        android:label="게시판"
+        tools:layout="@layout/activity_list" />
 
     <fragment
         android:id="@+id/menu_item3"
