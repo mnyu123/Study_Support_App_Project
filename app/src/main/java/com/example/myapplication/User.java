@@ -88,15 +88,11 @@ public class User {
         }
         return null;
     }
-    public static int getIsProfessor() {
-        if (!userList.isEmpty()) {
-            if (userList.get(0).is_professor.equals("1")) {
-                return 1;
-            } else {
-                return 0;
-            }
+    public static boolean is_professor() {
+        if (!userList.isEmpty() && userList.get(0).is_professor.equals("1")) {
+            return true;
         } else {
-            return 0;
+            return false;
         }
     }
 

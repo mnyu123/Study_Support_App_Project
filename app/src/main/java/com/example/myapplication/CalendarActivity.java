@@ -86,8 +86,7 @@ public class CalendarActivity extends AppCompatActivity
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener()
         {
             @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth)
-            {
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 diaryTextView.setVisibility(View.VISIBLE);
                 save_Btn.setVisibility(View.VISIBLE);
                 contextEditText.setVisibility(View.VISIBLE);
@@ -98,17 +97,21 @@ public class CalendarActivity extends AppCompatActivity
                 contextEditText.setText("");
                 checkDay(year, month, dayOfMonth);
 
-                if (permission == 1) {
+                if (User.is_professor()) {
                     diaryTextView.setEnabled(true);
                     save_Btn.setEnabled(true);
                     del_Btn.setEnabled(true);
                     cha_Btn.setEnabled(true);
                 } else {
-                    diaryTextView.setEnabled(false);
                     save_Btn.setEnabled(false);
                     del_Btn.setEnabled(false);
                     cha_Btn.setEnabled(false);
-                } }
+                    contextEditText.setVisibility(View.INVISIBLE);
+                    save_Btn.setVisibility(View.INVISIBLE);
+                    del_Btn.setVisibility(View.INVISIBLE);
+                    cha_Btn.setVisibility(View.INVISIBLE);
+                }
+            }
         });
         save_Btn.setOnClickListener(new View.OnClickListener()
         {
@@ -294,7 +297,7 @@ public class CalendarActivity extends AppCompatActivity
         );
         View headerView = navigationView.getHeaderView(0);
         TextView headerTextView = headerView.findViewById(R.id.header_text);
-        if (User.getIsProfessor() == 1) {
+        if (User.is_professor()) {
             headerTextView.setText(String.format("%s 교수님", User.getUsername()));
         } else {
             String studentIdStr = User.getStudentId();
@@ -303,6 +306,8 @@ public class CalendarActivity extends AppCompatActivity
         }
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
