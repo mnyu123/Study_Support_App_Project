@@ -1,8 +1,8 @@
 package com.example.myapplication.ui.slideshow;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
+import com.example.myapplication.CheckSup;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
@@ -21,6 +21,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,13 +39,12 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication.CalendarActivity;
 //import com.example.myapplication.CsCheck;
 import com.example.myapplication.DataAdapter;
 import com.example.myapplication.DataBaseHelper;
 import com.example.myapplication.GpsTracker;
 import com.example.myapplication.ListOpener;
-import com.example.myapplication.LoginActivity;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.User;
 import com.example.myapplication.databinding.FragmentSlideshowBinding;
@@ -66,7 +66,7 @@ public class SlideshowFragment extends Fragment {
     Button mRefreshBtn;
     Button CSstart;
 
-    Button button1;
+    static Button button1;
     Button csstart;
     TextView longitudevie;
     TextView latitudevie;
@@ -74,7 +74,7 @@ public class SlideshowFragment extends Fragment {
     TextView nlongitudevie;
     TextView nlatitudevie;
     TextView name;
-    String val;
+    double val;
 
     private static final String PRIMAY_CHANNEL_ID = "primary_notification_channel";
 
@@ -98,6 +98,7 @@ public class SlideshowFragment extends Fragment {
 
     String is_pro;
 
+    SlideshowViewModel slideshowViewModel;
     //private GpsTracker gpsTracker;
 
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -107,24 +108,45 @@ public class SlideshowFragment extends Fragment {
     String SName = User.getUsername();
     private Context cscontext;
 
+    CheckSup ccs = new CheckSup();
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         cscontext = context;
+
     }
 
+
+    public void onSaveInstanceState(@NonNull Bundle outState){
+        super.onSaveInstanceState(outState);
+        double prlat =platitude;
+        double prlon = plongtitude;
+
+        outState.putDouble("prlat",prlat);
+        outState.putDouble("prlon",prlon);
+    }
+
+
+
+    public void senddata(){
+        Intent intent = new Intent();
+    }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SlideshowViewModel slideshowViewModel =
+        slideshowViewModel =
                 new ViewModelProvider(this).get(SlideshowViewModel.class);
 
         binding = FragmentSlideshowBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        radibtn();
+        requestPermission();
         createNotificationChannel();
+        radibtn();
+
 
         Button tolist = (Button) root.findViewById(R.id.toList);
+
         tolist.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 Intent intent = new Intent(cscontext.getApplicationContext(), ListOpener.class);
@@ -133,6 +155,22 @@ public class SlideshowFragment extends Fragment {
         });
 
         return root;
+    }
+
+    public void requestPermission(){
+        int permissionCheck = ContextCompat.checkSelfPermission(cscontext, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if(permissionCheck == PackageManager.PERMISSION_DENIED){ //포그라운드 위치 권한 확인
+
+            //위치 권한 요청
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
+        int permissionCheck2 = ContextCompat.checkSelfPermission(cscontext, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+
+        if(permissionCheck == PackageManager.PERMISSION_DENIED){ //백그라운드 위치 권한 확인
+            //위치 권한 요청
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 0);
+        }
     }
 
     public void createNotificationChannel(){
@@ -153,7 +191,7 @@ public class SlideshowFragment extends Fragment {
     }
     private NotificationCompat.Builder getNotificationBuilder(){
         Intent notify = new Intent(cscontext.getApplicationContext(),ListOpener.class);
-        // notify.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+         notify.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent notifyPending = PendingIntent.getActivity
                 (cscontext.getApplicationContext(),NOTIFICATION_ID,notify,PendingIntent.FLAG_MUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(cscontext.getApplicationContext(),PRIMAY_CHANNEL_ID)
@@ -204,18 +242,20 @@ public class SlideshowFragment extends Fragment {
 
         is_pro = User.getpro();
 
-        val = is_pro;
-        name=(TextView) root.findViewById(R.id.name);
-        name.setText(String.valueOf(val));
+        pgpsresult pgp = new pgpsresult();
+
+
 
 
         if(is_pro.equals("1")){
             csstart.setEnabled(true);
             gsbtns();
+
         }
         else{
-            if(alram_val==1)
-            {sendNotification();}
+            if(slideshowViewModel.getval()==1)
+            {sendNotification();
+            slideshowViewModel.setaval(0);}
             csstart.setEnabled(false);
 
             stbtns();
@@ -263,16 +303,29 @@ public class SlideshowFragment extends Fragment {
 
         }
         public void onFinish(){
-            button1.setEnabled(false);
-            onResume();
+
 
         }
     }
+
+
+
+        public void endtimer(){
+            button1.setEnabled(false);
+            onResume();
+        }
+
+
+
+
+
 
     //학생 좌표받기
     public class gpsresult{
         GpsTracker gpsTracker = new GpsTracker(cscontext.getApplicationContext());
         double lat = gpsTracker.getLatitude();
+
+
         double lon = gpsTracker.getLongitude();
 
 
@@ -282,6 +335,9 @@ public class SlideshowFragment extends Fragment {
     public class pgpsresult{
         GpsTracker gpsTracker = new GpsTracker(cscontext.getApplicationContext());
         double lat = gpsTracker.getPRLatitude();
+
+
+
         double lon = gpsTracker.getPRLongitude();
 
 
@@ -296,29 +352,34 @@ public class SlideshowFragment extends Fragment {
     public void btnchange(){
         View root = binding.getRoot();
 
-        Button CSstart = (Button) root.findViewById(R.id.CSstart);
+        //Button CSstart = (Button) root.findViewById(R.id.CSstart);
         //5분 타이머
-        TimerRest timer = new TimerRest(300000,1000);
+       // TimerRest timer = new TimerRest(300000,1000);
         // prime pr = new prime();
         pgpsresult pgp = new pgpsresult();
-        CSstart.setOnClickListener(new View.OnClickListener()
+        csstart.setOnClickListener(new View.OnClickListener()
 
         {
             @Override
             public void onClick(View arg0)
             {
-                double prlatitude =0;
-                double prlongitude =0;
+//                double prlatitude =0;
+//                double prlongitude =0;
+//
+//
+//                prlatitude = pgp.lat;
+//                prlongitude = pgp.lon;
+//                platitude = prlatitude;
+//                plongtitude = prlongitude;
 
+                slideshowViewModel.setprla(pgp.lat);
+                slideshowViewModel.setprlo(pgp.lon);
 
-
-                prlatitude = pgp.lat;
-                prlongitude = pgp.lon;
-                platitude = prlatitude;
-                plongtitude = prlongitude;
                 button1.setEnabled(true);
-                timer.start();
-                alram_val=1;
+                slideshowViewModel.Timersta();
+                slideshowViewModel.setaval(1);
+
+
 
             }
 
@@ -441,15 +502,15 @@ public class SlideshowFragment extends Fragment {
                 latitude = gp.lat;
                 longitude = gp.lon;
 
-                if((Math.abs(latitude)>=Math.abs(platitude)))
-                    di.dislat = Math.abs(latitude) - Math.abs(platitude);
+                if((Math.abs(latitude)>=Math.abs(slideshowViewModel.getprla())))
+                    di.dislat = Math.abs(latitude) - Math.abs(slideshowViewModel.getprla());
                 else
-                    di.dislat = Math.abs(platitude) - Math.abs(latitude);
+                    di.dislat = Math.abs(slideshowViewModel.getprla()) - Math.abs(latitude);
 
-                if((Math.abs(longitude)>=Math.abs(plongtitude)))
-                    di.dislon = Math.abs(longitude) - Math.abs(plongtitude);
+                if((Math.abs(longitude)>=Math.abs(slideshowViewModel.getprlo())))
+                    di.dislon = Math.abs(longitude) - Math.abs(slideshowViewModel.getprlo());
                 else
-                    di.dislon = Math.abs(plongtitude) - Math.abs(longitude);
+                    di.dislon = Math.abs(slideshowViewModel.getprlo()) - Math.abs(longitude);
 
                 String dilon = String.format("%.7f",di.dislon);
                 String dilat = String.format("%.7f", di.dislat);
@@ -471,6 +532,11 @@ public class SlideshowFragment extends Fragment {
                     csCheck = "X";
 
 
+
+                val = slideshowViewModel.getprla();
+
+                name=(TextView) root.findViewById(R.id.name);
+                name.setText(String.valueOf(val));
 
                 Con.setText(String.valueOf(csCheck));
                 // initLoadDB();
@@ -523,7 +589,7 @@ public class SlideshowFragment extends Fragment {
 
           //  val = cursor.getString(7);
 
-            val = is_pro;
+            //val = slideshowViewModel.getprla();
 //            if(isInserted==true)
 //
 
