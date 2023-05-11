@@ -274,18 +274,34 @@ public class CalendarActivity extends AppCompatActivity
                             case R.id.nav_home:
                                 // nav_home Fragment로 이동
                                 navController.navigate(R.id.nav_home);
+                                diaryTextView.setEnabled(true);
+                                save_Btn.setEnabled(true);
+                                del_Btn.setEnabled(true);
+                                cha_Btn.setEnabled(true);
                                 break;
                             case R.id.menu_item2:
                                 // menu_item2 Fragment로 이동
                                 navController.navigate(R.id.menu_item2);
+                                contextEditText.setVisibility(View.INVISIBLE);
+                                save_Btn.setVisibility(View.INVISIBLE);
+                                del_Btn.setVisibility(View.INVISIBLE);
+                                cha_Btn.setVisibility(View.INVISIBLE);
                                 break;
                             case R.id.menu_item3:
                                 // menu_item3 Fragment로 이동
                                 navController.navigate(R.id.menu_item3);
+                                contextEditText.setVisibility(View.INVISIBLE);
+                                save_Btn.setVisibility(View.INVISIBLE);
+                                del_Btn.setVisibility(View.INVISIBLE);
+                                cha_Btn.setVisibility(View.INVISIBLE);
                                 break;
                             case R.id.menu_item4:
                                 // menu_item4 Fragment로 이동
                                 navController.navigate(R.id.menu_item4);
+                                contextEditText.setVisibility(View.INVISIBLE);
+                                save_Btn.setVisibility(View.INVISIBLE);
+                                del_Btn.setVisibility(View.INVISIBLE);
+                                cha_Btn.setVisibility(View.INVISIBLE);
                                 break;
                         }
 
