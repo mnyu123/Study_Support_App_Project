@@ -39,6 +39,7 @@
         <activity android:name=".ListOpener"/>
         <activity android:name=".noticeboard.RegisterActivity" />
         <activity android:name=".noticeboard.ListActivity"/>
+        <activity android:name=".noticeboard.DetailActivity"/>
     </application>
 
 </manifest>

@@ -20,6 +20,5 @@
         android:textColor="#FFFFFF"
         android:text="새 글 작성하기"
         android:onClick="goToRegisterActivity"/>
-    />
 
 </LinearLayout>
