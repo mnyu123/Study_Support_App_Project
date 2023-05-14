@@ -6,16 +6,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_baseline_home_24"
-            android:title="@string/menu_home" />
+            android:icon="@drawable/calendar"
+            android:title="수업 일정" />
         <item
             android:id="@+id/menu_item2"
+            android:icon="@drawable/school"
             android:title="게시판" />
         <item
             android:id="@+id/menu_item3"
+            android:icon="@drawable/location_pin"
             android:title="출석체크" />
         <item
             android:id="@+id/menu_item4"
-            android:title="QR 출석" />
+            android:icon="@drawable/user"
+            android:title="학생증" />
     </group>
 </menu>

@@ -1,0 +1,370 @@
+Index: app/src/main/res/layout/appbar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/appbar.xml b/app/src/main/res/layout/appbar.xml
+--- a/app/src/main/res/layout/appbar.xml	
++++ b/app/src/main/res/layout/appbar.xml	
+@@ -19,13 +19,6 @@
+ 
+     <include layout="@layout/content_main" />
+ 
+-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+-        android:id="@+id/fab"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_gravity="bottom|end"
+-        android:layout_marginBottom="16dp"
+-        android:layout_marginEnd="16dp"
+-        app:srcCompat="@android:drawable/ic_dialog_email" />
++
+ 
+ </androidx.coordinatorlayout.widget.CoordinatorLayout>
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	
++++ b/app/src/main/res/layout/activity_main.xml	
+@@ -12,7 +12,6 @@
+         android:id="@+id/textView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+-        android:text="출석시작 버튼"
+         android:textSize="18sp"
+         android:layout_marginBottom="14dp"
+         />
+@@ -21,7 +20,9 @@
+         android:id="@+id/ToCs"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:text="출석시작 버튼" />
++        android:text="출석"
++        android:background="#00000000" />
++
+ 
+ 
+ </LinearLayout>
+Index: app/src/main/java/com/example/myapplication/CalendarActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/CalendarActivity.java b/app/src/main/java/com/example/myapplication/CalendarActivity.java
+--- a/app/src/main/java/com/example/myapplication/CalendarActivity.java	
++++ b/app/src/main/java/com/example/myapplication/CalendarActivity.java	
+@@ -243,13 +243,7 @@
+ 
+         setSupportActionBar(binding.appBar.toolbar);
+ 
+-        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {
+-            @Override
+-            public void onClick(View view) {
+-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+-                        .setAction("Action", null).show();
+-            }
+-        });
++
+         DrawerLayout drawerLayout = binding.drawerLayout;
+         NavigationView navigationView = binding.navView;
+ 
+@@ -269,19 +263,19 @@
+ 
+                         switch (id) {
+                             case R.id.nav_home:
+-                                // nav_home Fragment로 이동
++                                // nav_home Fragment 로 이동
+                                 navController.navigate(R.id.nav_home);
+                                 break;
+                             case R.id.menu_item2:
+-                                // menu_item2 Fragment로 이동
++                                // menu_item2 Fragment 로 이동
+                                 navController.navigate(R.id.menu_item2);
+                                 break;
+                             case R.id.menu_item3:
+-                                // menu_item3 Fragment로 이동
++                                // menu_item3 Fragment 로 이동
+                                 navController.navigate(R.id.menu_item3);
+                                 break;
+                             case R.id.menu_item4:
+-                                // menu_item4 Fragment로 이동
++                                // menu_item4 Fragment 로 이동
+                                 navController.navigate(R.id.menu_item4);
+                                 break;
+                         }
+Index: app/src/main/res/layout/activity_calendar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_calendar.xml b/app/src/main/res/layout/activity_calendar.xml
+--- a/app/src/main/res/layout/activity_calendar.xml	
++++ b/app/src/main/res/layout/activity_calendar.xml	
+@@ -8,27 +8,26 @@
+     android:fitsSystemWindows="true"
+     tools:openDrawer="start"
+     >
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
++<androidx.constraintlayout.widget.ConstraintLayout
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    tools:context=".MainActivity">
++    tools:context=".MainActivity"
++    android:background="#fa5352">
+ 
+     <CalendarView
+         android:id="@+id/calendarView"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
++        android:layout_width="336dp"
++        android:layout_height="326dp"
+         android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+-        android:layout_marginTop="8dp"
++        android:layout_marginTop="20dp"
+         android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
++        android:background="@drawable/custom_shape"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.488"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/textView3" />
+ 
++
+     <TextView
+         android:id="@+id/diaryTextView"
+         android:layout_width="0dp"
+@@ -49,14 +48,12 @@
+         android:layout_width="0dp"
+         android:layout_height="116dp"
+         android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+         android:layout_marginTop="16dp"
+         android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+         android:ems="10"
+         android:hint="일정 내용을 입력하세요."
+         android:inputType="textMultiLine"
+-        android:visibility="invisible"
++        android:visibility="visible"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/diaryTextView" />
+@@ -66,10 +63,8 @@
+         android:layout_width="0dp"
+         android:layout_height="0dp"
+         android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+         android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:visibility="invisible"
++        android:visibility="visible"
+         app:layout_constraintBottom_toBottomOf="@+id/contextEditText"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="@+id/contextEditText"
+@@ -79,16 +74,15 @@
+         android:id="@+id/textView3"
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+-        android:visibility="invisible"
+         android:layout_marginStart="8dp"
+         android:layout_marginTop="8dp"
+         android:layout_marginEnd="8dp"
+         android:gravity="center"
+-        android:text="달력"
+         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+         android:textColor="#9E28B3"
+         android:textSize="24sp"
+         android:textStyle="bold"
++        android:visibility="visible"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
+@@ -98,14 +92,11 @@
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+         android:layout_marginTop="16dp"
+         android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:layout_marginBottom="20dp"
++        android:backgroundTint="#3F51B5"
+         android:text="저장"
+-        android:backgroundTint="#3F51B5"
+-        android:visibility="invisible"
++        android:visibility="visible"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/contextEditText" />
+@@ -116,12 +107,10 @@
+         android:layout_width="180dp"
+         android:layout_height="wrap_content"
+         android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+         android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
++        android:backgroundTint="#3F51B5"
+         android:text="수정"
+-        android:backgroundTint="#3F51B5"
+-        android:visibility="invisible"
++        android:visibility="visible"
+         app:layout_constraintBaseline_toBaselineOf="@+id/save_Btn"
+         app:layout_constraintEnd_toStartOf="@+id/del_Btn"
+         app:layout_constraintStart_toStartOf="parent" />
+@@ -131,12 +120,11 @@
+         android:layout_width="176dp"
+         android:layout_height="wrap_content"
+         android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:text="삭제"
+         android:backgroundTint="#3F51B5"
+-        android:visibility="invisible"
++        android:text="삭제"
++        android:visibility="visible"
+         app:layout_constraintBaseline_toBaselineOf="@+id/cha_Btn"
+-        app:layout_constraintEnd_toEndOf="@+id/save_Btn"/>
++        app:layout_constraintEnd_toEndOf="@+id/save_Btn" />
+     <include
+         android:id="@+id/app_bar"
+         layout="@layout/appbar"
+Index: app/src/main/res/values/themes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes.xml
+--- a/app/src/main/res/values/themes.xml	
++++ b/app/src/main/res/values/themes.xml	
+@@ -15,7 +15,6 @@
+     </style>
+ 
+     <style name="Theme.MyApplication.NoActionBar">
+-        <item name="windowActionBar">false</item>
+         <item name="windowNoTitle">true</item>
+     </style>
+ 
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	
++++ b/.idea/compiler.xml	
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="CompilerConfiguration">
+-    <bytecodeTargetLevel target="11" />
++    <bytecodeTargetLevel target="17" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_login.xml b/app/src/main/res/layout/activity_login.xml
+--- a/app/src/main/res/layout/activity_login.xml	
++++ b/app/src/main/res/layout/activity_login.xml	
+@@ -9,24 +9,24 @@
+     <Button
+         android:id="@+id/login_button"
+         android:layout_width="210dp"
+-        android:layout_height="49dp"
++        android:layout_height="0dp"
++        android:layout_marginBottom="83dp"
+         android:background="#AEEA00"
+         android:text="로그인"
+         app:layout_constraintBottom_toTopOf="@+id/join_button"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/passwd_et" />
+ 
+     <Button
+         android:id="@+id/join_button"
+         android:layout_width="203dp"
+-        android:layout_height="45dp"
++        android:layout_height="0dp"
++        android:layout_marginBottom="83dp"
+         android:background="#FFD600"
+         android:text="회원가입"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/login_button" />
+ 
+@@ -34,13 +34,13 @@
+         android:id="@+id/userid_et"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_marginBottom="84dp"
+         android:ems="10"
++        android:hint="아이디를 입력하세요."
+         android:inputType="textPersonName"
+         android:text=""
+-        android:hint="아이디를 입력하세요."
+         app:layout_constraintBottom_toTopOf="@+id/passwd_et"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/textView" />
+ 
+@@ -48,12 +48,12 @@
+         android:id="@+id/passwd_et"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_marginBottom="83dp"
+         android:ems="10"
+         android:hint="비밀번호를 입력하세요."
+         android:inputType="textPassword"
+         app:layout_constraintBottom_toTopOf="@+id/login_button"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/userid_et" />
+ 
+@@ -61,11 +61,12 @@
+         android:id="@+id/textView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_marginTop="83dp"
++        android:layout_marginBottom="83dp"
+         android:text="로그인 페이지"
+         android:textSize="30sp"
+         app:layout_constraintBottom_toTopOf="@+id/userid_et"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/drawable/custom_shape.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/custom_shape.xml b/app/src/main/res/drawable/custom_shape.xml
+new file mode 100644
+--- /dev/null	
++++ b/app/src/main/res/drawable/custom_shape.xml	
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="utf-8"?>
++<shape xmlns:android="http://schemas.android.com/apk/res/android"
++    android:shape="rectangle" >
++
++    <corners
++        android:radius="50dp" />
++
++    <solid android:color="@android:color/white" />
++
++</shape>

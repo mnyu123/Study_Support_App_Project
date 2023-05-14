@@ -4,8 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fafa"
     tools:context=".ui.QRcode.QRcodeFragment"
-    android:background="@color/white">
+    android:background="#fa5352">
+
+
+    <ImageView
+        android:id="@+id/qrcode_user2"
+        android:layout_width="440dp"
+        android:layout_height="700dp"
+        android:layout_marginStart="41.7dp"
+        android:contentDescription="image description"
+        android:src="@drawable/user2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/qrcode"
@@ -13,10 +27,9 @@
         android:layout_height="300dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_margin="55dp"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="55dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="65dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

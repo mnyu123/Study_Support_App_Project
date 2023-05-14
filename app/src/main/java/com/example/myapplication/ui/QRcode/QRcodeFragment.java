@@ -56,3 +56,4 @@ public class QRcodeFragment extends Fragment {
         binding = null;
     }
 }
+

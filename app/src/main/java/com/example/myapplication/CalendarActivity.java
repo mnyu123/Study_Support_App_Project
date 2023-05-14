@@ -245,14 +245,6 @@ public class CalendarActivity extends AppCompatActivity
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBar.toolbar);
-
-        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         DrawerLayout drawerLayout = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
@@ -272,7 +264,7 @@ public class CalendarActivity extends AppCompatActivity
 
                         switch (id) {
                             case R.id.nav_home:
-                                // nav_home Fragment로 이동
+                                // nav_home Fragment 로 이동
                                 navController.navigate(R.id.nav_home);
                                 diaryTextView.setEnabled(true);
                                 save_Btn.setEnabled(true);
@@ -280,7 +272,7 @@ public class CalendarActivity extends AppCompatActivity
                                 cha_Btn.setEnabled(true);
                                 break;
                             case R.id.menu_item2:
-                                // menu_item2 Fragment로 이동
+                                // menu_item2 Fragment 로 이동
                                 navController.navigate(R.id.menu_item2);
                                 contextEditText.setVisibility(View.INVISIBLE);
                                 save_Btn.setVisibility(View.INVISIBLE);
@@ -288,7 +280,7 @@ public class CalendarActivity extends AppCompatActivity
                                 cha_Btn.setVisibility(View.INVISIBLE);
                                 break;
                             case R.id.menu_item3:
-                                // menu_item3 Fragment로 이동
+                                // menu_item3 Fragment 로 이동
                                 navController.navigate(R.id.menu_item3);
                                 contextEditText.setVisibility(View.INVISIBLE);
                                 save_Btn.setVisibility(View.INVISIBLE);
@@ -296,7 +288,7 @@ public class CalendarActivity extends AppCompatActivity
                                 cha_Btn.setVisibility(View.INVISIBLE);
                                 break;
                             case R.id.menu_item4:
-                                // menu_item4 Fragment로 이동
+                                // menu_item4 Fragment 로 이동
                                 navController.navigate(R.id.menu_item4);
                                 contextEditText.setVisibility(View.INVISIBLE);
                                 save_Btn.setVisibility(View.INVISIBLE);

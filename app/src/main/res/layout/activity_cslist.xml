@@ -93,6 +93,21 @@
                     android:text="결석자" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/BT0"
+            android:layout_width="65dp"
+            android:layout_height="86dp"
+            android:background="@android:color/transparent"
+            android:outlineProvider="none"
+            android:stateListAnimator="@null"
+            android:text="투명"
+            android:textColor="#00000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.022"
+            app:layout_constraintStart_toStartOf="@+id/app_bar"
+            app:layout_constraintTop_toTopOf="@+id/app_bar"
+            app:layout_constraintVertical_bias="1.0" />
 
 </LinearLayout>
 

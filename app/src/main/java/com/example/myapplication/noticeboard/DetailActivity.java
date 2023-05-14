@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
 
 import com.example.myapplication.R;
 
@@ -54,7 +55,7 @@ public class DetailActivity extends AppCompatActivity {
         commentEt = findViewById(R.id.comment_et);
         regButton = findViewById(R.id.reg_button);
 
-        // ListActivity에서 전달받은 제목과 내용을 TextView에 표시
+        // ListActivity 에서 전달받은 제목과 내용을 TextView 에 표시
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String title = bundle.getString("title");
@@ -85,6 +86,7 @@ public class DetailActivity extends AppCompatActivity {
         layoutParams.setMargins(0, 16, 0, 0);
         commentView.setLayoutParams(layoutParams);
         commentView.setText(comment);
+        commentView.setTextColor(Color.BLACK); // 텍스트 색상을 검정색으로 설정
 
         // 댓글 뷰 추가
         commentLayout.addView(commentView);
