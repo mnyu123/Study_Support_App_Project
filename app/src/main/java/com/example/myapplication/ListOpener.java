@@ -57,7 +57,7 @@ public class ListOpener extends AppCompatActivity {
 
         DataBaseHelper dbhelper =new DataBaseHelper(this);
         SQLiteDatabase db = dbhelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM student ",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM student WHERE is_professor = '0'",null);
         CSLIST cslist = new CSLIST();
 
         String va1="";
@@ -85,7 +85,7 @@ public class ListOpener extends AppCompatActivity {
 
         DataBaseHelper dbhelper =new DataBaseHelper(this);
         SQLiteDatabase db = dbhelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM student WHERE Cs = 'O' ",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM student WHERE Cs = 'O' AND is_professor = '0' ",null);
         CSLIST cslist = new CSLIST();
 
         String va1="";
@@ -110,7 +110,7 @@ public class ListOpener extends AppCompatActivity {
 
         DataBaseHelper dbhelper =new DataBaseHelper(this);
         SQLiteDatabase db = dbhelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM student WHERE Cs = 'X' ",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM student WHERE Cs = 'X' AND is_professor = '0'",null);
         CSLIST cslist = new CSLIST();
 
         String va1="";
