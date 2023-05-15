@@ -1,0 +1,9 @@
+<changelist name="Uncommitted_changes_before_Update_at_2023-05-14_오후_7_50_[Changes]" date="1684061444790" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-05-14_오후_7_50_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 2023-05-14 오후 7:50 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="app/src/main/assets/student_db.db" />
+    <option name="AFTER_PATH" value="app/src/main/assets/student_db.db" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2023-05-14_오후_7_50_[Changes]/student_db.db" />
+  </binary>
+</changelist>

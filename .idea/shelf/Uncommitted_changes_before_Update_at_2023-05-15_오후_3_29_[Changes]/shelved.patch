@@ -1,0 +1,592 @@
+Index: app/src/main/java/com/example/myapplication/ui/slideshow/SlideshowFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.ui.slideshow;\r\n\r\nimport static android.content.Context.NOTIFICATION_SERVICE;\r\n\r\nimport com.example.myapplication.CheckSup;\r\nimport android.Manifest;\r\nimport android.app.AlertDialog;\r\nimport android.app.NotificationChannel;\r\nimport android.app.NotificationManager;\r\nimport android.app.PendingIntent;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.database.Cursor;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.graphics.Color;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.LocationManager;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.os.CountDownTimer;\r\nimport android.provider.Settings;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.RadioButton;\r\nimport android.widget.RadioGroup;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.app.NotificationCompat;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.lifecycle.ViewModelProvider;\r\n\r\n//import com.example.myapplication.CsCheck;\r\nimport com.example.myapplication.DataAdapter;\r\nimport com.example.myapplication.DataBaseHelper;\r\nimport com.example.myapplication.GpsTracker;\r\nimport com.example.myapplication.ListOpener;\r\nimport com.example.myapplication.MainActivity;\r\nimport com.example.myapplication.R;\r\nimport com.example.myapplication.User;\r\nimport com.example.myapplication.databinding.FragmentSlideshowBinding;\r\n\r\nimport java.io.IOException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\npublic class SlideshowFragment extends Fragment {\r\n\r\n    private FragmentSlideshowBinding binding;\r\n    long mNow;\r\n    Date mDate;\r\n    SimpleDateFormat mFormat = new SimpleDateFormat(\"yyyy-MM-dd hh:mm:ss\");\r\n\r\n    TextView mTextView;\r\n    Button mRefreshBtn;\r\n    Button CSstart;\r\n\r\n    static Button button1;\r\n    Button csstart;\r\n    TextView longitudevie;\r\n    TextView latitudevie;\r\n    TextView Con;\r\n    TextView nlongitudevie;\r\n    TextView nlatitudevie;\r\n    TextView name;\r\n    double val;\r\n\r\n    private static final String PRIMAY_CHANNEL_ID = \"primary_notification_channel\";\r\n\r\n    private NotificationManager mNotificationManager;\r\n\r\n    private static final int NOTIFICATION_ID=0;\r\n\r\n\r\n    int alram_val = 0;\r\n\r\n    RadioGroup radioGroup;\r\n\r\n    RadioButton GSRadioButton;\r\n    RadioButton STRadioButton;\r\n    double platitude =0;\r\n    double plongtitude = 0;\r\n\r\n    String csCheck;\r\n\r\n    boolean is_proboolean;\r\n\r\n    String is_pro;\r\n\r\n    SlideshowViewModel slideshowViewModel;\r\n    //private GpsTracker gpsTracker;\r\n\r\n    private static final int GPS_ENABLE_REQUEST_CODE = 2001;\r\n    private static final int PERMISSIONS_REQUEST_CODE = 100;\r\n    String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};\r\n\r\n    String SName = User.getUsername();\r\n    private Context cscontext;\r\n\r\n    CheckSup ccs = new CheckSup();\r\n\r\n    @Override\r\n    public void onAttach(Context context) {\r\n        super.onAttach(context);\r\n        cscontext = context;\r\n\r\n    }\r\n\r\n\r\n    public void onSaveInstanceState(@NonNull Bundle outState){\r\n        super.onSaveInstanceState(outState);\r\n        double prlat =platitude;\r\n        double prlon = plongtitude;\r\n\r\n        outState.putDouble(\"prlat\",prlat);\r\n        outState.putDouble(\"prlon\",prlon);\r\n    }\r\n\r\n\r\n\r\n    public void senddata(){\r\n        Intent intent = new Intent();\r\n    }\r\n    public View onCreateView(@NonNull LayoutInflater inflater,\r\n                             ViewGroup container, Bundle savedInstanceState) {\r\n        slideshowViewModel =\r\n                new ViewModelProvider(this).get(SlideshowViewModel.class);\r\n\r\n        binding = FragmentSlideshowBinding.inflate(inflater, container, false);\r\n        View root = binding.getRoot();\r\n\r\n        requestPermission();\r\n        createNotificationChannel();\r\n        radibtn();\r\n\r\n\r\n        Button tolist = (Button) root.findViewById(R.id.toList);\r\n\r\n        tolist.setOnClickListener(new View.OnClickListener(){\r\n            public void onClick(View view){\r\n                Intent intent = new Intent(cscontext.getApplicationContext(), ListOpener.class);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n\r\n        return root;\r\n    }\r\n\r\n    public void requestPermission(){\r\n        int permissionCheck = ContextCompat.checkSelfPermission(cscontext, Manifest.permission.ACCESS_FINE_LOCATION);\r\n\r\n        if(permissionCheck == PackageManager.PERMISSION_DENIED){ //포그라운드 위치 권한 확인\r\n\r\n            //위치 권한 요청\r\n            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);\r\n        }\r\n        int permissionCheck2 = ContextCompat.checkSelfPermission(cscontext, Manifest.permission.ACCESS_BACKGROUND_LOCATION);\r\n\r\n        if(permissionCheck == PackageManager.PERMISSION_DENIED){ //백그라운드 위치 권한 확인\r\n            //위치 권한 요청\r\n            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 0);\r\n        }\r\n    }\r\n\r\n    public void createNotificationChannel(){\r\n        mNotificationManager = (NotificationManager)\r\n                requireContext().getSystemService(NOTIFICATION_SERVICE);\r\n\r\n        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){\r\n            NotificationChannel nfcc = new NotificationChannel(PRIMAY_CHANNEL_ID,\"Test\",mNotificationManager.IMPORTANCE_HIGH);\r\n            nfcc.enableLights(true);\r\n            nfcc.setLightColor(Color.RED);\r\n            nfcc.enableVibration(true);\r\n            nfcc.setDescription(\"NOTIFICATION\");\r\n\r\n            mNotificationManager.createNotificationChannel(nfcc);\r\n\r\n        }\r\n\r\n    }\r\n    private NotificationCompat.Builder getNotificationBuilder(){\r\n        Intent notify = new Intent(cscontext.getApplicationContext(),ListOpener.class);\r\n         notify.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);\r\n        PendingIntent notifyPending = PendingIntent.getActivity\r\n                (cscontext.getApplicationContext(),NOTIFICATION_ID,notify,PendingIntent.FLAG_MUTABLE|PendingIntent.FLAG_UPDATE_CURRENT);\r\n        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(cscontext.getApplicationContext(),PRIMAY_CHANNEL_ID)\r\n                .setContentTitle(\"출석알람!\")\r\n                .setContentText(\"출석하세요!\")\r\n                .setSmallIcon(R.drawable.clock)\r\n                .setContentIntent(notifyPending)\r\n                .setAutoCancel(true);\r\n        return notifyBuilder;\r\n    }\r\n    public void sendNotification(){\r\n        NotificationCompat.Builder notifyBuilder = getNotificationBuilder();\r\n        mNotificationManager.notify(NOTIFICATION_ID,notifyBuilder.build());\r\n    }\r\n\r\n\r\n\r\n\r\n    public void radibtn() {\r\n        View root = binding.getRoot();\r\n\r\n//        GSRadioButton = (RadioButton) root.findViewById(R.id.GSradibtn);\r\n//        STRadioButton = (RadioButton) root.findViewById(R.id.STDradibtn);\r\n//       /* GSRadioButton.setOnClickListener(radioButtonClickListener);\r\n//        STRadioButton.setOnClickListener(radioButtonClickListener); */\r\n//        radioGroup = (RadioGroup) root.findViewById(R.id.radioGroup);\r\n//        radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);\r\n\r\n\r\n\r\n//        is_proboolean = User.getIsProfessor();\r\n//\r\n//        if(is_proboolean){\r\n//            csstart.setEnabled(true);\r\n//            gsbtns();\r\n//        }\r\n//        else{\r\n//            if(alram_val==1)\r\n//            {sendNotification();}\r\n//            csstart.setEnabled(false);\r\n//\r\n//            stbtns();\r\n//\r\n//        }\r\n\r\n        button1 = (Button) root.findViewById(R.id.refreshBtn);\r\n        csstart = (Button) root.findViewById(R.id.CSstart);\r\n\r\n        is_pro = User.getpro();\r\n\r\n        pgpsresult pgp = new pgpsresult();\r\n\r\n\r\n\r\n\r\n        if(is_pro.equals(\"1\")){\r\n            csstart.setEnabled(true);\r\n            gsbtns();\r\n\r\n        }\r\n        else{\r\n            if(slideshowViewModel.getval()==1)\r\n            {sendNotification();\r\n            slideshowViewModel.setaval(0);}\r\n            csstart.setEnabled(false);\r\n\r\n            stbtns();\r\n\r\n        }\r\n\r\n\r\n    }\r\n\r\n//    RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {\r\n//        @Override\r\n//        public void onCheckedChanged(RadioGroup radioGroup, int i) {\r\n//            if (i == R.id.STDradibtn) {\r\n//\r\n//\r\n//            } else if (i == R.id.GSradibtn) {\r\n//\r\n//            }\r\n//        }\r\n//    };\r\n\r\n\r\n    public void gsbtns(){\r\n        button1.setVisibility(View.INVISIBLE);\r\n        csstart.setVisibility(View.VISIBLE);\r\n\r\n        btnchange();\r\n    }\r\n    public void stbtns(){\r\n        button1.setVisibility(View.VISIBLE);\r\n        csstart.setVisibility(View.INVISIBLE);\r\n        btns();\r\n    }\r\n\r\n    // 타이머 TimeRest에 전달된 시간만큼 타이머 작동\r\n    //onTick은 초마다 실행할 명령어\r\n    //onfinish로 출석체크 버튼 비활성화\r\n\r\n    class TimerRest extends CountDownTimer {\r\n\r\n        public TimerRest(long millisInFuture, long countDownInterval){\r\n            super(millisInFuture,countDownInterval);\r\n        }\r\n        public void onTick(long millisInFuture){\r\n\r\n        }\r\n        public void onFinish(){\r\n\r\n\r\n        }\r\n    }\r\n\r\n\r\n\r\n        public void endtimer(){\r\n            button1.setEnabled(false);\r\n            onResume();\r\n        }\r\n\r\n\r\n\r\n\r\n\r\n\r\n    //학생 좌표받기\r\n    public class gpsresult{\r\n        GpsTracker gpsTracker = new GpsTracker(cscontext.getApplicationContext());\r\n        double lat = gpsTracker.getLatitude();\r\n\r\n\r\n        double lon = gpsTracker.getLongitude();\r\n\r\n\r\n\r\n    }\r\n    //교수 좌표받기\r\n    public class pgpsresult{\r\n        GpsTracker gpsTracker = new GpsTracker(cscontext.getApplicationContext());\r\n        double lat = gpsTracker.getPRLatitude();\r\n\r\n\r\n\r\n        double lon = gpsTracker.getPRLongitude();\r\n\r\n\r\n\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n    //출석체크 버튼 클릭시 발생 이벤트 / 교수의 좌표를 받아 전달하고 타이머 5분 시작\r\n    public void btnchange(){\r\n        View root = binding.getRoot();\r\n\r\n        //Button CSstart = (Button) root.findViewById(R.id.CSstart);\r\n        //5분 타이머\r\n       // TimerRest timer = new TimerRest(300000,1000);\r\n        // prime pr = new prime();\r\n        pgpsresult pgp = new pgpsresult();\r\n        csstart.setOnClickListener(new View.OnClickListener()\r\n\r\n        {\r\n            @Override\r\n            public void onClick(View arg0)\r\n            {\r\n//                double prlatitude =0;\r\n//                double prlongitude =0;\r\n//\r\n//\r\n//                prlatitude = pgp.lat;\r\n//                prlongitude = pgp.lon;\r\n//                platitude = prlatitude;\r\n//                plongtitude = prlongitude;\r\n\r\n                slideshowViewModel.setprla(pgp.lat);\r\n                slideshowViewModel.setprlo(pgp.lon);\r\n\r\n                button1.setEnabled(true);\r\n                slideshowViewModel.Timersta();\r\n                slideshowViewModel.setaval(1);\r\n\r\n\r\n\r\n            }\r\n\r\n        });\r\n\r\n\r\n    }\r\n\r\n\r\n\r\n\r\n    //User 리스트에 db값 전달\r\n\r\n    public List<User> userList ;\r\n\r\n    public void initLoadDB() {\r\n\r\n        DataAdapter mDbHelper = new DataAdapter(cscontext.getApplicationContext());\r\n        mDbHelper.createDatabase();\r\n        mDbHelper.open();\r\n\r\n        // db에 있는 값들을 model을 적용해서 넣는다.\r\n        userList = mDbHelper.getTableData();\r\n\r\n        // db 닫기\r\n        mDbHelper.close();\r\n    }\r\n\r\n//    public void initLoad() {\r\n//\r\n//        DataBaseHelper dbhelper =new DataBaseHelper(this);\r\n//        SQLiteDatabase db = dbhelper.getReadableDatabase();\r\n//        Cursor cursor = db.rawQuery(\"SELECT * FROM student\",null);\r\n//        CSLIST cslist = new CSLIST();\r\n//\r\n//        String va1=\"\";\r\n//        String va2=\"\";\r\n//        String va3=\"\";\r\n//        String va4=\"\";\r\n//        while(cursor.moveToNext()){\r\n//            cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));\r\n////            va1 = cursor.getString(1);\r\n////            va2 = cursor.getString(0);\r\n////            va3 = cursor.getString(6);\r\n////            va4= cursor.getString(7);\r\n//        }\r\n////        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();\r\n//\r\n//\r\n//        dbhelper.close();\r\n//        db.close();\r\n//    }\r\n\r\n\r\n\r\n    //    public class prime{\r\n//\r\n//        double platitude =0;\r\n//        double plongtitude = 0;\r\n//    }\r\n    public class dist{\r\n\r\n        double dislat = 0;\r\n        double dislon = 0;\r\n    }\r\n    public void btns(){\r\n        View root = binding.getRoot();\r\n\r\n        mTextView = (TextView) root.findViewById(R.id.textView);\r\n\r\n        mRefreshBtn = (Button) root.findViewById(R.id.refreshBtn);\r\n\r\n        //bind listener\r\n        mRefreshBtn.setOnClickListener(this::onClick);\r\n\r\n\r\n\r\n\r\n        longitudevie = (TextView)root.findViewById(R.id.longitudevie);\r\n        latitudevie = (TextView)root.findViewById(R.id.latitudevie);\r\n\r\n        Con = (TextView)root.findViewById(R.id.Con);\r\n\r\n        nlongitudevie = (TextView)root.findViewById(R.id.nlongitudevie);\r\n        nlatitudevie = (TextView)root.findViewById(R.id.nlatitudevie);\r\n\r\n        if (!checkLocationServicesStatus()) {\r\n\r\n            showDialogForLocationServiceSetting();\r\n        }else {\r\n\r\n            checkRunTimePermission();\r\n        }\r\n\r\n\r\n        //  prime pr = new prime();\r\n        dist di = new dist();\r\n        gpsresult gp = new gpsresult();\r\n\r\n\r\n\r\n\r\n\r\n        TextView textview_latitude = (TextView)root.findViewById(R.id.latitudevie);\r\n        TextView textview_longitude = (TextView)root.findViewById(R.id.longitudevie);\r\n\r\n\r\n        Button ShowLocationButton = (Button) root.findViewById(R.id.refreshBtn);\r\n        ShowLocationButton.setOnClickListener(new View.OnClickListener()\r\n        {\r\n            @Override\r\n            public void onClick(View arg0)\r\n            {\r\n                gpsresult gp = new gpsresult();\r\n\r\n                double latitude=0;\r\n                double longitude=0;\r\n\r\n\r\n                latitude = gp.lat;\r\n                longitude = gp.lon;\r\n\r\n                if((Math.abs(latitude)>=Math.abs(slideshowViewModel.getprla())))\r\n                    di.dislat = Math.abs(latitude) - Math.abs(slideshowViewModel.getprla());\r\n                else\r\n                    di.dislat = Math.abs(slideshowViewModel.getprla()) - Math.abs(latitude);\r\n\r\n                if((Math.abs(longitude)>=Math.abs(slideshowViewModel.getprlo())))\r\n                    di.dislon = Math.abs(longitude) - Math.abs(slideshowViewModel.getprlo());\r\n                else\r\n                    di.dislon = Math.abs(slideshowViewModel.getprlo()) - Math.abs(longitude);\r\n\r\n                String dilon = String.format(\"%.7f\",di.dislon);\r\n                String dilat = String.format(\"%.7f\", di.dislat);\r\n\r\n\r\n                mTextView.setText(getTime());\r\n                textview_latitude.setText(String.valueOf(latitude));\r\n                textview_longitude.setText(String.valueOf(longitude));\r\n\r\n\r\n                nlongitudevie.setText(dilon);\r\n                nlatitudevie.setText(dilat);\r\n\r\n//                nlongitudevie.setText(String.valueOf(di.dislon));\r\n//                nlatitudevie.setText(String.valueOf(di.dislat));\r\n                if(Math.abs(di.dislat) <= 0.0002 && Math.abs(di.dislon) <=0.002)\r\n                    csCheck = \"O\";\r\n                else\r\n                    csCheck = \"X\";\r\n\r\n\r\n\r\n                val = slideshowViewModel.getprla();\r\n\r\n                name=(TextView) root.findViewById(R.id.name);\r\n                name.setText(String.valueOf(val));\r\n\r\n                Con.setText(String.valueOf(csCheck));\r\n                // initLoadDB();\r\n                getVal();\r\n                //initLoad();\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    //데이터 베이스 값 읽기\r\n\r\n\r\n    void getVal(){\r\n        View root = binding.getRoot();\r\n\r\n        //Dbhelper의 읽기모드 객체를 가져와 SQLiteDatabase에 담아 사용준비\r\n        DataBaseHelper helper = new DataBaseHelper(cscontext.getApplicationContext());\r\n        SQLiteDatabase database = helper.getReadableDatabase();\r\n\r\n//        try\r\n//        {\r\n//           helper.DoCopyDB();\r\n//        }\r\n//        catch (IOException mIOException)\r\n//        {\r\n//            Log.e(TAG, mIOException.toString() + \"  UnableToCreateDatabase\");\r\n//            throw new Error(\"UnableToCreateDatabase\");\r\n//        }\r\n\r\n\r\n        //Cursor라는 그릇에 목록을 담아주기\r\n        Cursor cursor = database.rawQuery(\"SELECT * FROM student\" ,null);\r\n\r\n        helper.insertData(getTime(),csCheck,SName);\r\n//        helper.insertTimeData(getTime(),\"김경호\");\r\n//        helper.insertCSData(csCheck,\"김경호\");\r\n//        if(cursor != null && cursor.moveToFirst())\r\n        //목록의 개수만큼 순회하여 adapter에 있는 list배열에 add\r\n        while(cursor.moveToNext()){\r\n            //num 행은 가장 첫번째에 있으니 0번이 되고, name은 1번\r\n\r\n          //  val = cursor.getString(7);\r\n\r\n            //val = slideshowViewModel.getprla();\r\n//            if(isInserted==true)\r\n//\r\n\r\n        }\r\n\r\n\r\n        //  boolean isInserted =\r\n\r\n\r\n\r\n//        name=(TextView) root.findViewById(R.id.name);\r\n//        name.setText(String.valueOf(val));\r\n        cursor.close();\r\n        helper.close();\r\n\r\n\r\n\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n    String getTime(){\r\n        mNow = System.currentTimeMillis();\r\n        mDate = new Date(mNow);\r\n        SimpleDateFormat mFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\r\n        return mFormat.format(mDate);\r\n    }\r\n\r\n    public void onClick(View v) {\r\n        switch (v.getId()){\r\n            case R.id.refreshBtn:\r\n                mTextView.setText(getTime());\r\n                break;\r\n            default:\r\n                break;\r\n        }\r\n    }\r\n\r\n\r\n\r\n//    void MKList(){\r\n//        ArrayList<User> user;\r\n//\r\n//    }\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n    public void onRequestPermissionsResult(int permsRequestCode,\r\n                                           @NonNull String[] permissions,\r\n                                           @NonNull int[] grandResults) {\r\n\r\n        super.onRequestPermissionsResult(permsRequestCode, permissions, grandResults);\r\n        if (permsRequestCode == PERMISSIONS_REQUEST_CODE && grandResults.length == REQUIRED_PERMISSIONS.length) {\r\n\r\n            // 요청 코드가 PERMISSIONS_REQUEST_CODE 이고, 요청한 퍼미션 개수만큼 수신되었다면\r\n\r\n            boolean check_result = true;\r\n\r\n\r\n            // 모든 퍼미션을 허용했는지 체크합니다.\r\n\r\n            for (int result : grandResults) {\r\n                if (result != PackageManager.PERMISSION_GRANTED) {\r\n                    check_result = false;\r\n                    break;\r\n                }\r\n            }\r\n\r\n\r\n            if (check_result) {\r\n\r\n                //위치 값을 가져올 수 있음\r\n                ;\r\n            } else {\r\n                // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.\r\n\r\n                if (shouldShowRequestPermissionRationale(REQUIRED_PERMISSIONS[0])\r\n                        || shouldShowRequestPermissionRationale(REQUIRED_PERMISSIONS[1])) {\r\n                    Toast.makeText(requireContext(), \"퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.\", Toast.LENGTH_LONG).show();\r\n                    getActivity().finish();\r\n                } else {\r\n                    Toast.makeText(requireContext(), \"퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다.\", Toast.LENGTH_LONG).show();\r\n                }\r\n            }\r\n\r\n        }\r\n    }\r\n\r\n    void checkRunTimePermission(){\r\n\r\n        //런타임 퍼미션 처리\r\n        // 1. 위치 퍼미션을 가지고 있는지 체크합니다.\r\n        int hasFineLocationPermission = ContextCompat.checkSelfPermission(cscontext.getApplicationContext(),\r\n                Manifest.permission.ACCESS_FINE_LOCATION);\r\n        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(cscontext.getApplicationContext(),\r\n                Manifest.permission.ACCESS_COARSE_LOCATION);\r\n\r\n\r\n        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&\r\n                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {\r\n\r\n            // 2. 이미 퍼미션을 가지고 있다면\r\n            // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)\r\n\r\n\r\n            // 3.  위치 값을 가져올 수 있음\r\n\r\n\r\n\r\n        } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.\r\n\r\n            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는\r\n            if (shouldShowRequestPermissionRationale(REQUIRED_PERMISSIONS[0])) {\r\n                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.\r\n                Toast.makeText(requireContext(), \"이 앱을 실행하려면 위치 접근 권한이 필요합니다.\", Toast.LENGTH_LONG).show();\r\n                // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.\r\n                requestPermissions(REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);\r\n            } else {\r\n                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.\r\n                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.\r\n                requestPermissions(REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);\r\n            }\r\n\r\n        }\r\n\r\n    }\r\n\r\n\r\n    public String getCurrentAddress( double latitude, double longitude) {\r\n\r\n        //지오코더... GPS를 주소로 변환\r\n        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());\r\n\r\n        List<Address> addresses;\r\n\r\n        try {\r\n\r\n            addresses = geocoder.getFromLocation(\r\n                    latitude,\r\n                    longitude,\r\n                    7);\r\n        } catch (IOException ioException) {\r\n            //네트워크 문제\r\n            Toast.makeText(requireContext(), \"지오코더 서비스 사용불가\", Toast.LENGTH_LONG).show();\r\n            return \"지오코더 서비스 사용불가\";\r\n        } catch (IllegalArgumentException illegalArgumentException) {\r\n            Toast.makeText(requireContext(),\"잘못된 GPS 좌표\", Toast.LENGTH_LONG).show();\r\n            return \"잘못된 GPS 좌표\";\r\n\r\n        }\r\n\r\n\r\n\r\n        if (addresses == null || addresses.size() == 0) {\r\n            Toast.makeText(requireContext(), \"주소 미발견\", Toast.LENGTH_LONG).show();\r\n            return \"주소 미발견\";\r\n\r\n        }\r\n\r\n        Address address = addresses.get(0);\r\n        return address.getAddressLine(0).toString()+\"\\n\";\r\n\r\n    }\r\n\r\n\r\n    //여기부터는 GPS 활성화를 위한 메소드들\r\n    private void showDialogForLocationServiceSetting() {\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());\r\n        builder.setTitle(\"위치 서비스 비활성화\");\r\n        builder.setMessage(\"앱을 사용하기 위해서는 위치 서비스가 필요합니다.\\n\"\r\n                + \"위치 설정을 수정하실래요?\");\r\n        builder.setCancelable(true);\r\n        builder.setPositiveButton(\"설정\", new DialogInterface.OnClickListener() {\r\n            @Override\r\n            public void onClick(DialogInterface dialog, int id) {\r\n                Intent callGPSSettingIntent\r\n                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);\r\n                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);\r\n\r\n            }\r\n        });\r\n        builder.setNegativeButton(\"취소\", new DialogInterface.OnClickListener() {\r\n            @Override\r\n            public void onClick(DialogInterface dialog, int id) {\r\n\r\n                dialog.cancel();\r\n            }\r\n        });\r\n        builder.create().show();\r\n    }\r\n\r\n\r\n    @Override\r\n    public void onActivityResult(int requestCode, int resultCode, Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n\r\n        switch (requestCode) {\r\n\r\n            case GPS_ENABLE_REQUEST_CODE:\r\n\r\n                //사용자가 GPS 활성 시켰는지 검사\r\n                if (checkLocationServicesStatus()) {\r\n                    if (checkLocationServicesStatus()) {\r\n\r\n                        Log.d(\"@@@\", \"onActivityResult : GPS 활성화 되있음\");\r\n                        checkRunTimePermission();\r\n                        return;\r\n                    }\r\n                }\r\n\r\n                break;\r\n        }\r\n    }\r\n\r\n    public boolean checkLocationServicesStatus() {\r\n        LocationManager locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);\r\n\r\n        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)\r\n                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);\r\n    }\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/ui/slideshow/SlideshowFragment.java b/app/src/main/java/com/example/myapplication/ui/slideshow/SlideshowFragment.java
+--- a/app/src/main/java/com/example/myapplication/ui/slideshow/SlideshowFragment.java	(revision 30b7af9f4759bd4c79e3dbdb88a012f95675158b)
++++ b/app/src/main/java/com/example/myapplication/ui/slideshow/SlideshowFragment.java	(date 1684131726859)
+@@ -62,18 +62,15 @@
+     Date mDate;
+     SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+ 
+-    TextView mTextView;
++
+     Button mRefreshBtn;
+     Button CSstart;
+ 
+     static Button button1;
+     Button csstart;
+-    TextView longitudevie;
+-    TextView latitudevie;
+-    TextView Con;
+-    TextView nlongitudevie;
+-    TextView nlatitudevie;
+-    TextView name;
++
++    TextView Confirm_Text;
++
+     double val;
+ 
+     private static final String PRIMAY_CHANNEL_ID = "primary_notification_channel";
+@@ -85,21 +82,17 @@
+ 
+     int alram_val = 0;
+ 
+-    RadioGroup radioGroup;
+ 
+-    RadioButton GSRadioButton;
+-    RadioButton STRadioButton;
+     double platitude =0;
+     double plongtitude = 0;
+ 
+     String csCheck;
+ 
+-    boolean is_proboolean;
+ 
+     String is_pro;
+ 
+     SlideshowViewModel slideshowViewModel;
+-    //private GpsTracker gpsTracker;
++
+ 
+     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
+     private static final int PERMISSIONS_REQUEST_CODE = 100;
+@@ -129,9 +122,7 @@
+ 
+ 
+ 
+-    public void senddata(){
+-        Intent intent = new Intent();
+-    }
++
+     public View onCreateView(@NonNull LayoutInflater inflater,
+                              ViewGroup container, Bundle savedInstanceState) {
+         slideshowViewModel =
+@@ -213,29 +204,6 @@
+     public void radibtn() {
+         View root = binding.getRoot();
+ 
+-//        GSRadioButton = (RadioButton) root.findViewById(R.id.GSradibtn);
+-//        STRadioButton = (RadioButton) root.findViewById(R.id.STDradibtn);
+-//       /* GSRadioButton.setOnClickListener(radioButtonClickListener);
+-//        STRadioButton.setOnClickListener(radioButtonClickListener); */
+-//        radioGroup = (RadioGroup) root.findViewById(R.id.radioGroup);
+-//        radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);
+-
+-
+-
+-//        is_proboolean = User.getIsProfessor();
+-//
+-//        if(is_proboolean){
+-//            csstart.setEnabled(true);
+-//            gsbtns();
+-//        }
+-//        else{
+-//            if(alram_val==1)
+-//            {sendNotification();}
+-//            csstart.setEnabled(false);
+-//
+-//            stbtns();
+-//
+-//        }
+ 
+         button1 = (Button) root.findViewById(R.id.refreshBtn);
+         csstart = (Button) root.findViewById(R.id.CSstart);
+@@ -265,17 +233,6 @@
+ 
+     }
+ 
+-//    RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
+-//        @Override
+-//        public void onCheckedChanged(RadioGroup radioGroup, int i) {
+-//            if (i == R.id.STDradibtn) {
+-//
+-//
+-//            } else if (i == R.id.GSradibtn) {
+-//
+-//            }
+-//        }
+-//    };
+ 
+ 
+     public void gsbtns(){
+@@ -294,30 +251,6 @@
+     //onTick은 초마다 실행할 명령어
+     //onfinish로 출석체크 버튼 비활성화
+ 
+-    class TimerRest extends CountDownTimer {
+-
+-        public TimerRest(long millisInFuture, long countDownInterval){
+-            super(millisInFuture,countDownInterval);
+-        }
+-        public void onTick(long millisInFuture){
+-
+-        }
+-        public void onFinish(){
+-
+-
+-        }
+-    }
+-
+-
+-
+-        public void endtimer(){
+-            button1.setEnabled(false);
+-            onResume();
+-        }
+-
+-
+-
+-
+ 
+ 
+     //학생 좌표받기
+@@ -352,10 +285,6 @@
+     public void btnchange(){
+         View root = binding.getRoot();
+ 
+-        //Button CSstart = (Button) root.findViewById(R.id.CSstart);
+-        //5분 타이머
+-       // TimerRest timer = new TimerRest(300000,1000);
+-        // prime pr = new prime();
+         pgpsresult pgp = new pgpsresult();
+         csstart.setOnClickListener(new View.OnClickListener()
+ 
+@@ -363,14 +292,6 @@
+             @Override
+             public void onClick(View arg0)
+             {
+-//                double prlatitude =0;
+-//                double prlongitude =0;
+-//
+-//
+-//                prlatitude = pgp.lat;
+-//                prlongitude = pgp.lon;
+-//                platitude = prlatitude;
+-//                plongtitude = prlongitude;
+ 
+                 slideshowViewModel.setprla(pgp.lat);
+                 slideshowViewModel.setprlo(pgp.lon);
+@@ -408,38 +329,9 @@
+         mDbHelper.close();
+     }
+ 
+-//    public void initLoad() {
+-//
+-//        DataBaseHelper dbhelper =new DataBaseHelper(this);
+-//        SQLiteDatabase db = dbhelper.getReadableDatabase();
+-//        Cursor cursor = db.rawQuery("SELECT * FROM student",null);
+-//        CSLIST cslist = new CSLIST();
+-//
+-//        String va1="";
+-//        String va2="";
+-//        String va3="";
+-//        String va4="";
+-//        while(cursor.moveToNext()){
+-//            cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
+-////            va1 = cursor.getString(1);
+-////            va2 = cursor.getString(0);
+-////            va3 = cursor.getString(6);
+-////            va4= cursor.getString(7);
+-//        }
+-////        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
+-//
+-//
+-//        dbhelper.close();
+-//        db.close();
+-//    }
+ 
+ 
+ 
+-    //    public class prime{
+-//
+-//        double platitude =0;
+-//        double plongtitude = 0;
+-//    }
+     public class dist{
+ 
+         double dislat = 0;
+@@ -448,7 +340,7 @@
+     public void btns(){
+         View root = binding.getRoot();
+ 
+-        mTextView = (TextView) root.findViewById(R.id.textView);
++
+ 
+         mRefreshBtn = (Button) root.findViewById(R.id.refreshBtn);
+ 
+@@ -457,15 +349,6 @@
+ 
+ 
+ 
+-
+-        longitudevie = (TextView)root.findViewById(R.id.longitudevie);
+-        latitudevie = (TextView)root.findViewById(R.id.latitudevie);
+-
+-        Con = (TextView)root.findViewById(R.id.Con);
+-
+-        nlongitudevie = (TextView)root.findViewById(R.id.nlongitudevie);
+-        nlatitudevie = (TextView)root.findViewById(R.id.nlatitudevie);
+-
+         if (!checkLocationServicesStatus()) {
+ 
+             showDialogForLocationServiceSetting();
+@@ -475,18 +358,12 @@
+         }
+ 
+ 
+-        //  prime pr = new prime();
+         dist di = new dist();
+         gpsresult gp = new gpsresult();
+ 
+ 
+ 
+ 
+-
+-        TextView textview_latitude = (TextView)root.findViewById(R.id.latitudevie);
+-        TextView textview_longitude = (TextView)root.findViewById(R.id.longitudevie);
+-
+-
+         Button ShowLocationButton = (Button) root.findViewById(R.id.refreshBtn);
+         ShowLocationButton.setOnClickListener(new View.OnClickListener()
+         {
+@@ -516,32 +393,24 @@
+                 String dilat = String.format("%.7f", di.dislat);
+ 
+ 
+-                mTextView.setText(getTime());
+-                textview_latitude.setText(String.valueOf(latitude));
+-                textview_longitude.setText(String.valueOf(longitude));
+-
+-
+-                nlongitudevie.setText(dilon);
+-                nlatitudevie.setText(dilat);
+-
+-//                nlongitudevie.setText(String.valueOf(di.dislon));
+-//                nlatitudevie.setText(String.valueOf(di.dislat));
+                 if(Math.abs(di.dislat) <= 0.0002 && Math.abs(di.dislon) <=0.002)
+                     csCheck = "O";
+                 else
+                     csCheck = "X";
+ 
+ 
++                TextView Confirm_Text = (TextView)root.findViewById(R.id.Confirm_Text);
++
++                if(csCheck.equals("O"))
++                    Confirm_Text.setText("출석 체크 완료!");
++
++
+ 
+                 val = slideshowViewModel.getprla();
+ 
+-                name=(TextView) root.findViewById(R.id.name);
+-                name.setText(String.valueOf(val));
+ 
+-                Con.setText(String.valueOf(csCheck));
+-                // initLoadDB();
+                 getVal();
+-                //initLoad();
++
+ 
+ 
+ 
+@@ -565,15 +434,6 @@
+         DataBaseHelper helper = new DataBaseHelper(cscontext.getApplicationContext());
+         SQLiteDatabase database = helper.getReadableDatabase();
+ 
+-//        try
+-//        {
+-//           helper.DoCopyDB();
+-//        }
+-//        catch (IOException mIOException)
+-//        {
+-//            Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
+-//            throw new Error("UnableToCreateDatabase");
+-//        }
+ 
+ 
+         //Cursor라는 그릇에 목록을 담아주기
+@@ -596,12 +456,7 @@
+         }
+ 
+ 
+-        //  boolean isInserted =
+-
+ 
+-
+-//        name=(TextView) root.findViewById(R.id.name);
+-//        name.setText(String.valueOf(val));
+         cursor.close();
+         helper.close();
+ 
+@@ -623,7 +478,6 @@
+     public void onClick(View v) {
+         switch (v.getId()){
+             case R.id.refreshBtn:
+-                mTextView.setText(getTime());
+                 break;
+             default:
+                 break;
+@@ -632,18 +486,6 @@
+ 
+ 
+ 
+-//    void MKList(){
+-//        ArrayList<User> user;
+-//
+-//    }
+-
+-
+-
+-
+-
+-
+-
+-
+ 
+     public void onRequestPermissionsResult(int permsRequestCode,
+                                            @NonNull String[] permissions,
+@@ -726,42 +568,6 @@
+     }
+ 
+ 
+-    public String getCurrentAddress( double latitude, double longitude) {
+-
+-        //지오코더... GPS를 주소로 변환
+-        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+-
+-        List<Address> addresses;
+-
+-        try {
+-
+-            addresses = geocoder.getFromLocation(
+-                    latitude,
+-                    longitude,
+-                    7);
+-        } catch (IOException ioException) {
+-            //네트워크 문제
+-            Toast.makeText(requireContext(), "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+-            return "지오코더 서비스 사용불가";
+-        } catch (IllegalArgumentException illegalArgumentException) {
+-            Toast.makeText(requireContext(),"잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
+-            return "잘못된 GPS 좌표";
+-
+-        }
+-
+-
+-
+-        if (addresses == null || addresses.size() == 0) {
+-            Toast.makeText(requireContext(), "주소 미발견", Toast.LENGTH_LONG).show();
+-            return "주소 미발견";
+-
+-        }
+-
+-        Address address = addresses.get(0);
+-        return address.getAddressLine(0).toString()+"\n";
+-
+-    }
+-
+ 
+     //여기부터는 GPS 활성화를 위한 메소드들
+     private void showDialogForLocationServiceSetting() {
+Index: app/src/main/res/layout/fragment_slideshow.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"vertical\"\r\n    android:gravity=\"center\"\r\n    android:background=\"@color/white\"\r\n    tools:context=\".MainActivity\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"시간\"\r\n        android:textSize=\"18sp\"\r\n        android:layout_marginBottom=\"14dp\"\r\n        />\r\n    <TextView\r\n        android:id=\"@+id/latitudevie\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"latitude\"\r\n        android:textSize=\"18sp\"\r\n        android:layout_marginBottom=\"14dp\"\r\n        />\r\n    <TextView\r\n        android:id=\"@+id/nlatitudevie\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"원광대 위치 35.9684 / 클릭시 현재위치 - 원광대위치\"\r\n        android:textSize=\"18sp\"\r\n        android:layout_marginBottom=\"14dp\"\r\n        />\r\n    <TextView\r\n        android:id=\"@+id/longitudevie\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"longitude\"\r\n        android:textSize=\"18sp\"\r\n        android:layout_marginBottom=\"14dp\"\r\n        />\r\n    <TextView\r\n        android:id=\"@+id/nlongitudevie\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"원광대 위치 126.9581 / 클릭시 현재위치 - 원광대위치\"\r\n        android:textSize=\"18sp\"\r\n        android:layout_marginBottom=\"14dp\"\r\n        />\r\n\r\n    <TextView\r\n        android:id=\"@+id/Con\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"O/X\"\r\n        android:textSize=\"18sp\"\r\n        android:layout_marginBottom=\"14dp\"\r\n        />\r\n\r\n\r\n\r\n\r\n    <FrameLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\">\r\n\r\n        <Button\r\n            android:id=\"@+id/refreshBtn\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"출석체크\"\r\n            android:visibility=\"invisible\"\r\n            android:enabled=\"false\"/>\r\n\r\n        <Button\r\n            android:id=\"@+id/CSstart\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"출석시작\"\r\n            android:visibility=\"invisible\"/>\r\n    </FrameLayout>\r\n\r\n    <!--    <LinearLayout-->\r\n    <!--        android:layout_width=\"wrap_content\"-->\r\n    <!--        android:layout_height=\"wrap_content\"-->\r\n    <!--        android:orientation=\"horizontal\">-->\r\n\r\n\r\n    <!--        <EditText-->\r\n    <!--            android:id=\"@+id/minuteET\"-->\r\n    <!--            android:layout_width=\"0dp\"-->\r\n    <!--            android:layout_weight=\"1\"-->\r\n    <!--            android:hint=\"00\"-->\r\n    <!--            android:gravity=\"center\"-->\r\n    <!--            android:layout_height=\"wrap_content\"-->\r\n    <!--            android:inputType=\"number\"/>-->\r\n\r\n    <!--        <TextView-->\r\n    <!--            android:id=\"@+id/mintext\"-->\r\n    <!--            android:layout_width=\"wrap_content\"-->\r\n    <!--            android:layout_height=\"wrap_content\"-->\r\n    <!--            android:layout_weight=\"1\"-->\r\n    <!--            android:text=\"TextView\" />-->\r\n\r\n    <!--        <TextView-->\r\n    <!--            android:id=\"@+id/textView10\"-->\r\n    <!--            android:layout_width=\"wrap_content\"-->\r\n    <!--            android:layout_height=\"wrap_content\"-->\r\n    <!--            android:layout_weight=\"1\"-->\r\n    <!--            android:text=\":\" />-->\r\n\r\n    <!--        <EditText-->\r\n    <!--            android:id=\"@+id/secondET\"-->\r\n    <!--            android:layout_width=\"0dp\"-->\r\n    <!--            android:layout_height=\"wrap_content\"-->\r\n    <!--            android:layout_weight=\"1\"-->\r\n    <!--            android:gravity=\"center\"-->\r\n    <!--            android:hint=\"00\"-->\r\n    <!--            android:inputType=\"number\" />-->\r\n\r\n    <!--        <TextView-->\r\n    <!--            android:id=\"@+id/sectext\"-->\r\n    <!--            android:layout_width=\"wrap_content\"-->\r\n    <!--            android:layout_height=\"wrap_content\"-->\r\n    <!--            android:layout_weight=\"1\"-->\r\n    <!--            android:text=\"TextView\" />-->\r\n\r\n\r\n    <!--    </LinearLayout>-->\r\n\r\n    <TextView\r\n        android:id=\"@+id/name\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"TextView\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/toList\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Button\" />\r\n\r\n\r\n</LinearLayout>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_slideshow.xml b/app/src/main/res/layout/fragment_slideshow.xml
+--- a/app/src/main/res/layout/fragment_slideshow.xml	(revision 30b7af9f4759bd4c79e3dbdb88a012f95675158b)
++++ b/app/src/main/res/layout/fragment_slideshow.xml	(date 1684132168750)
+@@ -1,146 +1,55 @@
++
+ <?xml version="1.0" encoding="utf-8"?>
+-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:tools="http://schemas.android.com/tools"
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    android:orientation="vertical"
+-    android:gravity="center"
+-    android:background="@color/white"
+-    tools:context=".MainActivity">
++    android:layout_height="match_parent">
++
+ 
+-    <TextView
+-        android:id="@+id/textView"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="시간"
+-        android:textSize="18sp"
+-        android:layout_marginBottom="14dp"
+-        />
+-    <TextView
+-        android:id="@+id/latitudevie"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="latitude"
+-        android:textSize="18sp"
+-        android:layout_marginBottom="14dp"
+-        />
+-    <TextView
+-        android:id="@+id/nlatitudevie"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="원광대 위치 35.9684 / 클릭시 현재위치 - 원광대위치"
+-        android:textSize="18sp"
+-        android:layout_marginBottom="14dp"
+-        />
+-    <TextView
+-        android:id="@+id/longitudevie"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="longitude"
+-        android:textSize="18sp"
+-        android:layout_marginBottom="14dp"
+-        />
++    <ImageView
++        android:layout_width="200dp"
++        android:layout_height="200dp"
++        android:src="@drawable/clock" />
++
+     <TextView
+-        android:id="@+id/nlongitudevie"
+-        android:layout_width="wrap_content"
++        android:id="@+id/Confirm_Text"
++        android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:text="원광대 위치 126.9581 / 클릭시 현재위치 - 원광대위치"
+-        android:textSize="18sp"
+-        android:layout_marginBottom="14dp"
+-        />
++        android:text="출석체크!" />
+ 
+-    <TextView
+-        android:id="@+id/Con"
++    <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+-        android:text="O/X"
+-        android:textSize="18sp"
+-        android:layout_marginBottom="14dp"
+-        />
+-
+-
+-
++        android:orientation="horizontal">
+ 
+-    <FrameLayout
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content">
++        <FrameLayout
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content">
+ 
+-        <Button
+-            android:id="@+id/refreshBtn"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="출석체크"
+-            android:visibility="invisible"
+-            android:enabled="false"/>
++            <Button
++                android:id="@+id/refreshBtn"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:enabled="false"
++                android:text="출석체크"
++                android:visibility="invisible" />
+ 
+-        <Button
+-            android:id="@+id/CSstart"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:text="출석시작"
+-            android:visibility="invisible"/>
+-    </FrameLayout>
++            <Button
++                android:id="@+id/CSstart"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:text="출석시작"
++                android:visibility="invisible" />
++
++
++        </FrameLayout>
+ 
+-    <!--    <LinearLayout-->
+-    <!--        android:layout_width="wrap_content"-->
+-    <!--        android:layout_height="wrap_content"-->
+-    <!--        android:orientation="horizontal">-->
+-
+-
+-    <!--        <EditText-->
+-    <!--            android:id="@+id/minuteET"-->
+-    <!--            android:layout_width="0dp"-->
+-    <!--            android:layout_weight="1"-->
+-    <!--            android:hint="00"-->
+-    <!--            android:gravity="center"-->
+-    <!--            android:layout_height="wrap_content"-->
+-    <!--            android:inputType="number"/>-->
+-
+-    <!--        <TextView-->
+-    <!--            android:id="@+id/mintext"-->
+-    <!--            android:layout_width="wrap_content"-->
+-    <!--            android:layout_height="wrap_content"-->
+-    <!--            android:layout_weight="1"-->
+-    <!--            android:text="TextView" />-->
+-
+-    <!--        <TextView-->
+-    <!--            android:id="@+id/textView10"-->
+-    <!--            android:layout_width="wrap_content"-->
+-    <!--            android:layout_height="wrap_content"-->
+-    <!--            android:layout_weight="1"-->
+-    <!--            android:text=":" />-->
+-
+-    <!--        <EditText-->
+-    <!--            android:id="@+id/secondET"-->
+-    <!--            android:layout_width="0dp"-->
+-    <!--            android:layout_height="wrap_content"-->
+-    <!--            android:layout_weight="1"-->
+-    <!--            android:gravity="center"-->
+-    <!--            android:hint="00"-->
+-    <!--            android:inputType="number" />-->
+-
+-    <!--        <TextView-->
+-    <!--            android:id="@+id/sectext"-->
+-    <!--            android:layout_width="wrap_content"-->
+-    <!--            android:layout_height="wrap_content"-->
+-    <!--            android:layout_weight="1"-->
+-    <!--            android:text="TextView" />-->
+-
+-
+-    <!--    </LinearLayout>-->
+-
+-    <TextView
+-        android:id="@+id/name"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:text="TextView" />
+-
+-    <Button
+-        android:id="@+id/toList"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:text="Button" />
+-
++        <Button
++            android:id="@+id/toList"
++            android:layout_width="95dp"
++            android:layout_height="wrap_content"
++            android:text="출석 조회" />
+ 
+-</LinearLayout>
++    </LinearLayout>
+ 
++</androidx.constraintlayout.widget.ConstraintLayout>
++

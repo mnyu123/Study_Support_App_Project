@@ -62,18 +62,15 @@ public class SlideshowFragment extends Fragment {
     Date mDate;
     SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    TextView mTextView;
+
     Button mRefreshBtn;
     Button CSstart;
 
     static Button button1;
     Button csstart;
-    TextView longitudevie;
-    TextView latitudevie;
-    TextView Con;
-    TextView nlongitudevie;
-    TextView nlatitudevie;
-    TextView name;
+
+    TextView Confirm_Text;
+
     double val;
 
     private static final String PRIMAY_CHANNEL_ID = "primary_notification_channel";
@@ -85,21 +82,17 @@ public class SlideshowFragment extends Fragment {
 
     int alram_val = 0;
 
-    RadioGroup radioGroup;
 
-    RadioButton GSRadioButton;
-    RadioButton STRadioButton;
     double platitude =0;
     double plongtitude = 0;
 
     String csCheck;
 
-    boolean is_proboolean;
 
     String is_pro;
 
     SlideshowViewModel slideshowViewModel;
-    //private GpsTracker gpsTracker;
+
 
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
@@ -129,9 +122,7 @@ public class SlideshowFragment extends Fragment {
 
 
 
-    public void senddata(){
-        Intent intent = new Intent();
-    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         slideshowViewModel =
@@ -213,29 +204,6 @@ public class SlideshowFragment extends Fragment {
     public void radibtn() {
         View root = binding.getRoot();
 
-//        GSRadioButton = (RadioButton) root.findViewById(R.id.GSradibtn);
-//        STRadioButton = (RadioButton) root.findViewById(R.id.STDradibtn);
-//       /* GSRadioButton.setOnClickListener(radioButtonClickListener);
-//        STRadioButton.setOnClickListener(radioButtonClickListener); */
-//        radioGroup = (RadioGroup) root.findViewById(R.id.radioGroup);
-//        radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);
-
-
-
-//        is_proboolean = User.getIsProfessor();
-//
-//        if(is_proboolean){
-//            csstart.setEnabled(true);
-//            gsbtns();
-//        }
-//        else{
-//            if(alram_val==1)
-//            {sendNotification();}
-//            csstart.setEnabled(false);
-//
-//            stbtns();
-//
-//        }
 
         button1 = (Button) root.findViewById(R.id.refreshBtn);
         csstart = (Button) root.findViewById(R.id.CSstart);
@@ -265,17 +233,6 @@ public class SlideshowFragment extends Fragment {
 
     }
 
-//    RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
-//        @Override
-//        public void onCheckedChanged(RadioGroup radioGroup, int i) {
-//            if (i == R.id.STDradibtn) {
-//
-//
-//            } else if (i == R.id.GSradibtn) {
-//
-//            }
-//        }
-//    };
 
 
     public void gsbtns(){
@@ -293,30 +250,6 @@ public class SlideshowFragment extends Fragment {
     // 타이머 TimeRest에 전달된 시간만큼 타이머 작동
     //onTick은 초마다 실행할 명령어
     //onfinish로 출석체크 버튼 비활성화
-
-    class TimerRest extends CountDownTimer {
-
-        public TimerRest(long millisInFuture, long countDownInterval){
-            super(millisInFuture,countDownInterval);
-        }
-        public void onTick(long millisInFuture){
-
-        }
-        public void onFinish(){
-
-
-        }
-    }
-
-
-
-        public void endtimer(){
-            button1.setEnabled(false);
-            onResume();
-        }
-
-
-
 
 
 
@@ -352,10 +285,6 @@ public class SlideshowFragment extends Fragment {
     public void btnchange(){
         View root = binding.getRoot();
 
-        //Button CSstart = (Button) root.findViewById(R.id.CSstart);
-        //5분 타이머
-       // TimerRest timer = new TimerRest(300000,1000);
-        // prime pr = new prime();
         pgpsresult pgp = new pgpsresult();
         csstart.setOnClickListener(new View.OnClickListener()
 
@@ -363,14 +292,6 @@ public class SlideshowFragment extends Fragment {
             @Override
             public void onClick(View arg0)
             {
-//                double prlatitude =0;
-//                double prlongitude =0;
-//
-//
-//                prlatitude = pgp.lat;
-//                prlongitude = pgp.lon;
-//                platitude = prlatitude;
-//                plongtitude = prlongitude;
 
                 slideshowViewModel.setprla(pgp.lat);
                 slideshowViewModel.setprlo(pgp.lon);
@@ -408,38 +329,9 @@ public class SlideshowFragment extends Fragment {
         mDbHelper.close();
     }
 
-//    public void initLoad() {
-//
-//        DataBaseHelper dbhelper =new DataBaseHelper(this);
-//        SQLiteDatabase db = dbhelper.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT * FROM student",null);
-//        CSLIST cslist = new CSLIST();
-//
-//        String va1="";
-//        String va2="";
-//        String va3="";
-//        String va4="";
-//        while(cursor.moveToNext()){
-//            cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
-////            va1 = cursor.getString(1);
-////            va2 = cursor.getString(0);
-////            va3 = cursor.getString(6);
-////            va4= cursor.getString(7);
-//        }
-////        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
-//
-//
-//        dbhelper.close();
-//        db.close();
-//    }
 
 
 
-    //    public class prime{
-//
-//        double platitude =0;
-//        double plongtitude = 0;
-//    }
     public class dist{
 
         double dislat = 0;
@@ -448,7 +340,7 @@ public class SlideshowFragment extends Fragment {
     public void btns(){
         View root = binding.getRoot();
 
-        mTextView = (TextView) root.findViewById(R.id.textView);
+
 
         mRefreshBtn = (Button) root.findViewById(R.id.refreshBtn);
 
@@ -456,15 +348,6 @@ public class SlideshowFragment extends Fragment {
         mRefreshBtn.setOnClickListener(this::onClick);
 
 
-
-
-        longitudevie = (TextView)root.findViewById(R.id.longitudevie);
-        latitudevie = (TextView)root.findViewById(R.id.latitudevie);
-
-        Con = (TextView)root.findViewById(R.id.Con);
-
-        nlongitudevie = (TextView)root.findViewById(R.id.nlongitudevie);
-        nlatitudevie = (TextView)root.findViewById(R.id.nlatitudevie);
 
         if (!checkLocationServicesStatus()) {
 
@@ -475,16 +358,10 @@ public class SlideshowFragment extends Fragment {
         }
 
 
-        //  prime pr = new prime();
         dist di = new dist();
         gpsresult gp = new gpsresult();
 
 
-
-
-
-        TextView textview_latitude = (TextView)root.findViewById(R.id.latitudevie);
-        TextView textview_longitude = (TextView)root.findViewById(R.id.longitudevie);
 
 
         Button ShowLocationButton = (Button) root.findViewById(R.id.refreshBtn);
@@ -516,32 +393,24 @@ public class SlideshowFragment extends Fragment {
                 String dilat = String.format("%.7f", di.dislat);
 
 
-                mTextView.setText(getTime());
-                textview_latitude.setText(String.valueOf(latitude));
-                textview_longitude.setText(String.valueOf(longitude));
-
-
-                nlongitudevie.setText(dilon);
-                nlatitudevie.setText(dilat);
-
-//                nlongitudevie.setText(String.valueOf(di.dislon));
-//                nlatitudevie.setText(String.valueOf(di.dislat));
                 if(Math.abs(di.dislat) <= 0.0002 && Math.abs(di.dislon) <=0.002)
                     csCheck = "O";
                 else
                     csCheck = "X";
 
 
+                TextView Confirm_Text = (TextView)root.findViewById(R.id.Confirm_Text);
+
+                if(csCheck.equals("O"))
+                    Confirm_Text.setText("출석 체크 완료!");
+
+
 
                 val = slideshowViewModel.getprla();
 
-                name=(TextView) root.findViewById(R.id.name);
-                name.setText(String.valueOf(val));
 
-                Con.setText(String.valueOf(csCheck));
-                // initLoadDB();
                 getVal();
-                //initLoad();
+
 
 
 
@@ -565,15 +434,6 @@ public class SlideshowFragment extends Fragment {
         DataBaseHelper helper = new DataBaseHelper(cscontext.getApplicationContext());
         SQLiteDatabase database = helper.getReadableDatabase();
 
-//        try
-//        {
-//           helper.DoCopyDB();
-//        }
-//        catch (IOException mIOException)
-//        {
-//            Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
-//            throw new Error("UnableToCreateDatabase");
-//        }
 
 
         //Cursor라는 그릇에 목록을 담아주기
@@ -596,12 +456,7 @@ public class SlideshowFragment extends Fragment {
         }
 
 
-        //  boolean isInserted =
 
-
-
-//        name=(TextView) root.findViewById(R.id.name);
-//        name.setText(String.valueOf(val));
         cursor.close();
         helper.close();
 
@@ -623,24 +478,11 @@ public class SlideshowFragment extends Fragment {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.refreshBtn:
-                mTextView.setText(getTime());
                 break;
             default:
                 break;
         }
     }
-
-
-
-//    void MKList(){
-//        ArrayList<User> user;
-//
-//    }
-
-
-
-
-
 
 
 
@@ -725,42 +567,6 @@ public class SlideshowFragment extends Fragment {
 
     }
 
-
-    public String getCurrentAddress( double latitude, double longitude) {
-
-        //지오코더... GPS를 주소로 변환
-        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-
-        List<Address> addresses;
-
-        try {
-
-            addresses = geocoder.getFromLocation(
-                    latitude,
-                    longitude,
-                    7);
-        } catch (IOException ioException) {
-            //네트워크 문제
-            Toast.makeText(requireContext(), "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
-            return "지오코더 서비스 사용불가";
-        } catch (IllegalArgumentException illegalArgumentException) {
-            Toast.makeText(requireContext(),"잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
-            return "잘못된 GPS 좌표";
-
-        }
-
-
-
-        if (addresses == null || addresses.size() == 0) {
-            Toast.makeText(requireContext(), "주소 미발견", Toast.LENGTH_LONG).show();
-            return "주소 미발견";
-
-        }
-
-        Address address = addresses.get(0);
-        return address.getAddressLine(0).toString()+"\n";
-
-    }
 
 
     //여기부터는 GPS 활성화를 위한 메소드들
