@@ -7,12 +7,14 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="#fa5352">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="76dp">
+            android:layout_height="76dp"
+            android:background="@drawable/edittext_custom_shape2">
 
                 <TextView
                     android:id="@+id/textView3"
@@ -64,7 +66,8 @@
             android:layout_width="match_parent"
             android:layout_height="480dp"
             android:gravity="center_vertical"
-            android:weightSum="10" />
+            android:weightSum="10"
+            android:background="@drawable/edittext_custom_shape2" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,6 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/edittext_custom_shape2"
                     android:text="전체보기" />
 
                 <Button
@@ -83,6 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/edittext_custom_shape2"
                     android:text="출석자" />
 
                 <Button
@@ -90,6 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@drawable/edittext_custom_shape2"
                     android:text="결석자" />
         </LinearLayout>
 
