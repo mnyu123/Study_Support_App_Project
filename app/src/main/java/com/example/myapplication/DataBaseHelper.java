@@ -121,32 +121,6 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         onCreate(sqLiteDatabase);
     }
 
-//    public void insertData(String time, String cscheck){
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues contentValues = new ContentValues();
-//        contentValues.put(Col1,time);
-//        contentValues.put(Col2,cscheck);
-//        long result = db.insert(TABLE_NAME,"Time", contentValues);
-//        if(result == -1)
-//            Toast.makeText(mContext,"출석값 입력 실패",Toast.LENGTH_LONG).show();
-//       else
-//            Toast.makeText(mContext,"출석값 입력 완료",Toast.LENGTH_LONG).show();
-//
-//    }
-//    public void insertTimeData(String time, String Username){
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues contentValues = new ContentValues();
-//        contentValues.put(Col1,time);
-//        db.update(TABLE_NAME,contentValues,"Username=?",new String[]{Username});
-//
-//    }
-//    public void insertCSData(String CsCheck, String Username){
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues contentValues = new ContentValues();
-//        contentValues.put(Col2,CsCheck);
-//        db.update(TABLE_NAME,contentValues,"Username=?",new String[]{Username});
-//
-//    }
     public void insertData(String time,String cscheck, String Username){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -170,22 +144,5 @@ public class DataBaseHelper extends SQLiteOpenHelper{
             throw new Error("ErrorCopyingDataBase");
         }
     }
-
-
-//    public void UpdateData(String time, String cscheck){
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues contentValues = new ContentValues();
-//        contentValues.put(Col1,time);
-//        contentValues.put(Col2,cscheck);
-//        long result = db.insert(TABLE_NAME,null, contentValues);
-//        if(result == -1)
-//            Toast.makeText(mContext,"출석값 입력 실패",Toast.LENGTH_LONG).show();
-//        else
-//            Toast.makeText(mContext,"출석값 입력 완료",Toast.LENGTH_LONG).show();
-//    }
-
-
-
-
 }
 

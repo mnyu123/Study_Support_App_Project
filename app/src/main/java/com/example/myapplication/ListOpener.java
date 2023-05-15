@@ -17,7 +17,6 @@ public class ListOpener extends AppCompatActivity {
     Button BTNOK;
     Button BTNNO;
 
-    //CsCheck cs = new CsCheck();
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
@@ -66,18 +65,12 @@ public class ListOpener extends AppCompatActivity {
         String va4="";
         while(cursor.moveToNext()){
             cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
-//            va1 = cursor.getString(1);
-//            va2 = cursor.getString(0);
-//            va3 = cursor.getString(6);
-//            va4= cursor.getString(7);
         }
-//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
 
         listView.setAdapter(cslist);
         dbhelper.close();
         db.close();
     }
-//
 
 
 
@@ -94,12 +87,7 @@ public class ListOpener extends AppCompatActivity {
         String va4="";
         while(cursor.moveToNext()){
             cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
-//            va1 = cursor.getString(1);
-//            va2 = cursor.getString(0);
-//            va3 = cursor.getString(6);
-//            va4= cursor.getString(7);
         }
-//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
 
         listView.setAdapter(cslist);
         dbhelper.close();
@@ -119,12 +107,7 @@ public class ListOpener extends AppCompatActivity {
         String va4="";
         while(cursor.moveToNext()){
             cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
-//            va1 = cursor.getString(1);
-//            va2 = cursor.getString(0);
-//            va3 = cursor.getString(6);
-//            va4= cursor.getString(7);
         }
-//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
 
         listView.setAdapter(cslist);
         dbhelper.close();
