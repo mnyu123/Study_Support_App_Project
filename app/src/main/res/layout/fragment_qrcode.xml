@@ -4,11 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/fafa"
     tools:context=".ui.QRcode.QRcodeFragment"
     android:background="#fa5352">
 
-
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/qrcode_user2"
+        app:layout_constraintTop_toTopOf="parent" />
     <ImageView
         android:id="@+id/qrcode_user2"
         android:layout_width="440dp"
