@@ -1,0 +1,1380 @@
+Index: app/src/main/java/com/example/myapplication/CalendarActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\n\nimport androidx.annotation.NonNull;\nimport androidx.appcompat.app.AppCompatActivity;\n\nimport android.annotation.SuppressLint;\nimport android.content.Intent;\nimport android.os.Bundle;\nimport android.util.Log;\nimport android.view.Menu;\nimport android.view.MenuItem;\nimport android.view.View;\nimport android.widget.Button;\nimport android.widget.CalendarView;\nimport android.widget.EditText;\nimport android.widget.TextView;\n\nimport androidx.appcompat.app.AppCompatActivity;\nimport androidx.core.view.GravityCompat;\nimport androidx.drawerlayout.widget.DrawerLayout;\nimport androidx.navigation.NavController;\nimport androidx.navigation.Navigation;\nimport androidx.navigation.ui.AppBarConfiguration;\nimport androidx.navigation.ui.NavigationUI;\n\nimport com.example.myapplication.R;\nimport com.example.myapplication.databinding.ActivityCalendarBinding;\nimport com.google.android.material.navigation.NavigationView;\nimport com.google.android.material.snackbar.Snackbar;\n\nimport java.io.FileInputStream;\nimport java.io.FileOutputStream;\n\npublic class CalendarActivity extends AppCompatActivity\n{\n    public String readDay = null;\n    public String str = null;\n    public CalendarView calendarView;\n    public Button cha_Btn, del_Btn, save_Btn;\n    public TextView diaryTextView, textView2, textView3;\n    public EditText contextEditText;\n\n\n    public static final int PERMISSION_PROFESSOR = 1;\n    public static final int PERMISSION_STUDENT = 0;\n\n    String studentIdStr = User.getStudentId();\n    int studentId = Integer.parseInt(studentIdStr);\n    String firstUser = String.valueOf(studentId);   //사이드 이름/학번\n    // 권한 변수 추가\n    public int permission = 0;\n\n    private ActivityCalendarBinding binding;\n    private AppBarConfiguration mAppBarConfiguration;\n\n\n\n    @Override\n    protected void onCreate(Bundle savedInstanceState)\n    {\n        super.onCreate(savedInstanceState);\n\n        initNavigationMenu();\n\n        calendarView = findViewById(R.id.calendarView);\n        diaryTextView = findViewById(R.id.diaryTextView);\n        save_Btn = findViewById(R.id.save_Btn);\n        del_Btn = findViewById(R.id.del_Btn);\n        cha_Btn = findViewById(R.id.cha_Btn);\n        textView2 = findViewById(R.id.textView2);\n        textView3 = findViewById(R.id.textView3);\n        contextEditText = findViewById(R.id.contextEditText);\n        NavigationView navigationView = findViewById(R.id.nav_view);\n        View headerLayout = navigationView.getHeaderView(0);\n        Button logoutButton = headerLayout.findViewById(R.id.logout_button);\n        logoutButton.setOnClickListener(new View.OnClickListener() {\n            @Override\n            public void onClick(View v) {\n                // 로그인 액티비티로 이동하는 인텐트 생성\n                Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);\n                // 모든 액티비티 종료 및 로그인 액티비티 호출\n                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);\n                startActivity(intent);\n            }\n        });\n        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener()\n        {\n            @Override\n            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {\n                diaryTextView.setVisibility(View.VISIBLE);\n                save_Btn.setVisibility(View.VISIBLE);\n                contextEditText.setVisibility(View.VISIBLE);\n                textView2.setVisibility(View.INVISIBLE);\n                cha_Btn.setVisibility(View.INVISIBLE);\n                del_Btn.setVisibility(View.INVISIBLE);\n                diaryTextView.setText(String.format(\"%d / %d / %d\", year, month + 1, dayOfMonth));\n                contextEditText.setText(\"\");\n                checkDay(year, month, dayOfMonth);\n\n                if (User.is_professor()) {\n                    diaryTextView.setEnabled(true);\n                    save_Btn.setEnabled(true);\n                    del_Btn.setEnabled(true);\n                    cha_Btn.setEnabled(true);\n                } else {\n                    save_Btn.setEnabled(false);\n                    del_Btn.setEnabled(false);\n                    cha_Btn.setEnabled(false);\n                    contextEditText.setVisibility(View.INVISIBLE);\n                    save_Btn.setVisibility(View.INVISIBLE);\n                    del_Btn.setVisibility(View.INVISIBLE);\n                    cha_Btn.setVisibility(View.INVISIBLE);\n                }\n            }\n        });\n        save_Btn.setOnClickListener(new View.OnClickListener()\n        {\n            @Override\n            public void onClick(View view)\n            {\n                saveDiary(readDay);\n                str = contextEditText.getText().toString();\n                textView2.setText(str);\n                save_Btn.setVisibility(View.INVISIBLE);\n                cha_Btn.setVisibility(View.VISIBLE);\n                del_Btn.setVisibility(View.VISIBLE);\n                contextEditText.setVisibility(View.INVISIBLE);\n                textView2.setVisibility(View.VISIBLE);\n\n            }\n        });\n\n\n    }\n\n    public void checkDay(int cYear, int cMonth, int cDay)\n    {\n        readDay = \"\" + cYear + \"-\" + (cMonth + 1) + \"\" + \"-\" + cDay + \".txt\";\n        FileInputStream fis;\n\n        try\n        {\n            fis = openFileInput(readDay);\n\n            byte[] fileData = new byte[fis.available()];\n            fis.read(fileData);\n            fis.close();\n\n            str = new String(fileData);\n\n            contextEditText.setVisibility(View.INVISIBLE);\n            textView2.setVisibility(View.VISIBLE);\n            textView2.setText(str);\n\n            save_Btn.setVisibility(View.INVISIBLE);\n            cha_Btn.setVisibility(View.VISIBLE);\n            del_Btn.setVisibility(View.VISIBLE);\n\n\n            cha_Btn.setOnClickListener(new View.OnClickListener()\n            {\n                @Override\n                public void onClick(View view)\n                {\n                    contextEditText.setVisibility(View.VISIBLE);\n                    textView2.setVisibility(View.INVISIBLE);\n                    contextEditText.setText(str);\n\n                    save_Btn.setVisibility(View.VISIBLE);\n                    cha_Btn.setVisibility(View.INVISIBLE);\n                    del_Btn.setVisibility(View.INVISIBLE);\n                    textView2.setText(contextEditText.getText());\n                }\n\n            });\n            del_Btn.setOnClickListener(new View.OnClickListener()\n            {\n                @Override\n                public void onClick(View view)\n                {\n                    textView2.setVisibility(View.INVISIBLE);\n                    contextEditText.setText(\"\");\n                    contextEditText.setVisibility(View.VISIBLE);\n                    save_Btn.setVisibility(View.VISIBLE);\n                    cha_Btn.setVisibility(View.INVISIBLE);\n                    del_Btn.setVisibility(View.INVISIBLE);\n                    removeDiary(readDay);\n                }\n            });\n            if (textView2.getText() == null)\n            {\n                textView2.setVisibility(View.INVISIBLE);\n                diaryTextView.setVisibility(View.VISIBLE);\n                save_Btn.setVisibility(View.VISIBLE);\n                cha_Btn.setVisibility(View.INVISIBLE);\n                del_Btn.setVisibility(View.INVISIBLE);\n                contextEditText.setVisibility(View.VISIBLE);\n            }\n\n        }\n        catch (Exception e)\n        {\n            e.printStackTrace();\n        }\n    }\n\n    @SuppressLint(\"WrongConstant\")\n    public void removeDiary(String readDay)\n    {\n        FileOutputStream fos;\n        try\n        {\n            fos = openFileOutput(readDay, MODE_NO_LOCALIZED_COLLATORS);\n            String content = \"\";\n            fos.write((content).getBytes());\n            fos.close();\n\n        }\n        catch (Exception e)\n        {\n            e.printStackTrace();\n        }\n    }\n\n    @SuppressLint(\"WrongConstant\")\n    public void saveDiary(String readDay)\n    {\n        FileOutputStream fos;\n        try\n        {\n            fos = openFileOutput(readDay, MODE_NO_LOCALIZED_COLLATORS);\n            String content = contextEditText.getText().toString();\n            fos.write((content).getBytes());\n            fos.close();\n        }\n        catch (Exception e)\n        {\n            e.printStackTrace();\n        }\n    }\n\n    private void initNavigationMenu() {\n        //사이드 메뉴바\n        binding = ActivityCalendarBinding.inflate(getLayoutInflater());\n        setContentView(binding.getRoot());\n\n        setSupportActionBar(binding.appBar.toolbar);\n\n        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {\n            @Override\n            public void onClick(View view) {\n                Snackbar.make(view, \"Replace with your own action\", Snackbar.LENGTH_LONG)\n                        .setAction(\"Action\", null).show();\n            }\n        });\n        DrawerLayout drawerLayout = binding.drawerLayout;\n        NavigationView navigationView = binding.navView;\n\n        mAppBarConfiguration = new AppBarConfiguration.Builder(\n                R.id.nav_home, R.id.menu_item2, R.id.menu_item3)\n                .setOpenableLayout(drawerLayout)\n                .build();\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\n        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);\n        NavigationUI.setupWithNavController(navigationView, navController);\n        navigationView.setNavigationItemSelectedListener(\n                new NavigationView.OnNavigationItemSelectedListener() {\n                    public MenuItem item;\n                    public boolean onNavigationItemSelected(MenuItem item) {\n                        this.item = item;\n                        int id = item.getItemId();\n\n                        switch (id) {\n                            case R.id.nav_home:\n                                // nav_home Fragment로 이동\n                                navController.navigate(R.id.nav_home);\n                                diaryTextView.setEnabled(true);\n                                save_Btn.setEnabled(true);\n                                del_Btn.setEnabled(true);\n                                cha_Btn.setEnabled(true);\n                                break;\n                            case R.id.menu_item2:\n                                // menu_item2 Fragment로 이동\n                                navController.navigate(R.id.menu_item2);\n                                contextEditText.setVisibility(View.INVISIBLE);\n                                save_Btn.setVisibility(View.INVISIBLE);\n                                del_Btn.setVisibility(View.INVISIBLE);\n                                cha_Btn.setVisibility(View.INVISIBLE);\n                                break;\n                            case R.id.menu_item3:\n                                // menu_item3 Fragment로 이동\n                                navController.navigate(R.id.menu_item3);\n                                contextEditText.setVisibility(View.INVISIBLE);\n                                save_Btn.setVisibility(View.INVISIBLE);\n                                del_Btn.setVisibility(View.INVISIBLE);\n                                cha_Btn.setVisibility(View.INVISIBLE);\n                                break;\n                            case R.id.menu_item4:\n                                // menu_item4 Fragment로 이동\n                                navController.navigate(R.id.menu_item4);\n                                contextEditText.setVisibility(View.INVISIBLE);\n                                save_Btn.setVisibility(View.INVISIBLE);\n                                del_Btn.setVisibility(View.INVISIBLE);\n                                cha_Btn.setVisibility(View.INVISIBLE);\n                                break;\n                        }\n\n                        // Navigation Drawer 닫기\n                        drawerLayout.closeDrawer(GravityCompat.START);\n                        return true;\n                    }\n                }\n        );\n        View headerView = navigationView.getHeaderView(0);\n        TextView headerTextView = headerView.findViewById(R.id.header_text);\n        if (User.is_professor()) {\n            headerTextView.setText(String.format(\"%s 교수님\", User.getUsername()));\n        } else {\n            String studentIdStr = User.getStudentId();\n            int studentId = Integer.parseInt(studentIdStr);\n            headerTextView.setText(String.format(\"%s 학생님\\n(%s)\", User.getUsername(), studentId));\n        }\n\n    }\n\n\n\n    @Override\n    public boolean onCreateOptionsMenu(Menu menu) {\n        // Inflate the menu; this adds items to the action bar if it is present.\n        getMenuInflater().inflate(R.menu.main, menu);\n        return true;\n    }\n\n    @Override\n    public boolean onSupportNavigateUp() {\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\n        return NavigationUI.navigateUp(navController, mAppBarConfiguration)\n                || super.onSupportNavigateUp();\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/CalendarActivity.java b/app/src/main/java/com/example/myapplication/CalendarActivity.java
+--- a/app/src/main/java/com/example/myapplication/CalendarActivity.java	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/java/com/example/myapplication/CalendarActivity.java	(date 1683987632033)
+@@ -14,10 +14,13 @@
+ import android.widget.CalendarView;
+ import android.widget.EditText;
+ import android.widget.TextView;
++import android.view.View;
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ import androidx.core.view.GravityCompat;
+ import androidx.drawerlayout.widget.DrawerLayout;
++import androidx.fragment.app.FragmentManager;
++import androidx.fragment.app.FragmentTransaction;
+ import androidx.navigation.NavController;
+ import androidx.navigation.Navigation;
+ import androidx.navigation.ui.AppBarConfiguration;
+@@ -25,14 +28,18 @@
+ 
+ import com.example.myapplication.R;
+ import com.example.myapplication.databinding.ActivityCalendarBinding;
++import com.example.myapplication.ui.QRcode.QRcodeFragment;
++import com.example.myapplication.ui.gallery.GalleryFragment;
++import com.example.myapplication.ui.home.HomeFragment;
++import com.example.myapplication.ui.slideshow.SlideshowFragment;
++import com.google.android.material.bottomnavigation.BottomNavigationView;
+ import com.google.android.material.navigation.NavigationView;
+ import com.google.android.material.snackbar.Snackbar;
+ 
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ 
+-public class CalendarActivity extends AppCompatActivity
+-{
++public class CalendarActivity extends AppCompatActivity {
+     public String readDay = null;
+     public String str = null;
+     public CalendarView calendarView;
+@@ -54,13 +61,15 @@
+     private AppBarConfiguration mAppBarConfiguration;
+ 
+ 
+-
+     @Override
+-    protected void onCreate(Bundle savedInstanceState)
+-    {
++    protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+ 
+-        initNavigationMenu();
++
++
++
++
++
+ 
+         calendarView = findViewById(R.id.calendarView);
+         diaryTextView = findViewById(R.id.diaryTextView);
+@@ -83,8 +92,7 @@
+                 startActivity(intent);
+             }
+         });
+-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener()
+-        {
++        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+             @Override
+             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                 diaryTextView.setVisibility(View.VISIBLE);
+@@ -113,11 +121,9 @@
+                 }
+             }
+         });
+-        save_Btn.setOnClickListener(new View.OnClickListener()
+-        {
++        save_Btn.setOnClickListener(new View.OnClickListener() {
+             @Override
+-            public void onClick(View view)
+-            {
++            public void onClick(View view) {
+                 saveDiary(readDay);
+                 str = contextEditText.getText().toString();
+                 textView2.setText(str);
+@@ -133,13 +139,12 @@
+ 
+     }
+ 
+-    public void checkDay(int cYear, int cMonth, int cDay)
+-    {
++
++    public void checkDay(int cYear, int cMonth, int cDay) {
+         readDay = "" + cYear + "-" + (cMonth + 1) + "" + "-" + cDay + ".txt";
+         FileInputStream fis;
+ 
+-        try
+-        {
++        try {
+             fis = openFileInput(readDay);
+ 
+             byte[] fileData = new byte[fis.available()];
+@@ -157,11 +162,9 @@
+             del_Btn.setVisibility(View.VISIBLE);
+ 
+ 
+-            cha_Btn.setOnClickListener(new View.OnClickListener()
+-            {
++            cha_Btn.setOnClickListener(new View.OnClickListener() {
+                 @Override
+-                public void onClick(View view)
+-                {
++                public void onClick(View view) {
+                     contextEditText.setVisibility(View.VISIBLE);
+                     textView2.setVisibility(View.INVISIBLE);
+                     contextEditText.setText(str);
+@@ -173,11 +176,9 @@
+                 }
+ 
+             });
+-            del_Btn.setOnClickListener(new View.OnClickListener()
+-            {
++            del_Btn.setOnClickListener(new View.OnClickListener() {
+                 @Override
+-                public void onClick(View view)
+-                {
++                public void onClick(View view) {
+                     textView2.setVisibility(View.INVISIBLE);
+                     contextEditText.setText("");
+                     contextEditText.setVisibility(View.VISIBLE);
+@@ -187,8 +188,7 @@
+                     removeDiary(readDay);
+                 }
+             });
+-            if (textView2.getText() == null)
+-            {
++            if (textView2.getText() == null) {
+                 textView2.setVisibility(View.INVISIBLE);
+                 diaryTextView.setVisibility(View.VISIBLE);
+                 save_Btn.setVisibility(View.VISIBLE);
+@@ -197,44 +197,34 @@
+                 contextEditText.setVisibility(View.VISIBLE);
+             }
+ 
+-        }
+-        catch (Exception e)
+-        {
++        } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+ 
+     @SuppressLint("WrongConstant")
+-    public void removeDiary(String readDay)
+-    {
++    public void removeDiary(String readDay) {
+         FileOutputStream fos;
+-        try
+-        {
++        try {
+             fos = openFileOutput(readDay, MODE_NO_LOCALIZED_COLLATORS);
+             String content = "";
+             fos.write((content).getBytes());
+             fos.close();
+ 
+-        }
+-        catch (Exception e)
+-        {
++        } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+ 
+     @SuppressLint("WrongConstant")
+-    public void saveDiary(String readDay)
+-    {
++    public void saveDiary(String readDay) {
+         FileOutputStream fos;
+-        try
+-        {
++        try {
+             fos = openFileOutput(readDay, MODE_NO_LOCALIZED_COLLATORS);
+             String content = contextEditText.getText().toString();
+             fos.write((content).getBytes());
+             fos.close();
+-        }
+-        catch (Exception e)
+-        {
++        } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+@@ -246,13 +236,6 @@
+ 
+         setSupportActionBar(binding.appBar.toolbar);
+ 
+-        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {
+-            @Override
+-            public void onClick(View view) {
+-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+-                        .setAction("Action", null).show();
+-            }
+-        });
+         DrawerLayout drawerLayout = binding.drawerLayout;
+         NavigationView navigationView = binding.navView;
+ 
+@@ -266,13 +249,14 @@
+         navigationView.setNavigationItemSelectedListener(
+                 new NavigationView.OnNavigationItemSelectedListener() {
+                     public MenuItem item;
++
+                     public boolean onNavigationItemSelected(MenuItem item) {
+                         this.item = item;
+                         int id = item.getItemId();
+ 
+                         switch (id) {
+                             case R.id.nav_home:
+-                                // nav_home Fragment로 이동
++                                // nav_home Fragment 로 이동
+                                 navController.navigate(R.id.nav_home);
+                                 diaryTextView.setEnabled(true);
+                                 save_Btn.setEnabled(true);
+@@ -280,7 +264,7 @@
+                                 cha_Btn.setEnabled(true);
+                                 break;
+                             case R.id.menu_item2:
+-                                // menu_item2 Fragment로 이동
++                                // menu_item2 Fragment 로 이동
+                                 navController.navigate(R.id.menu_item2);
+                                 contextEditText.setVisibility(View.INVISIBLE);
+                                 save_Btn.setVisibility(View.INVISIBLE);
+@@ -288,7 +272,7 @@
+                                 cha_Btn.setVisibility(View.INVISIBLE);
+                                 break;
+                             case R.id.menu_item3:
+-                                // menu_item3 Fragment로 이동
++                                // menu_item3 Fragment 로 이동
+                                 navController.navigate(R.id.menu_item3);
+                                 contextEditText.setVisibility(View.INVISIBLE);
+                                 save_Btn.setVisibility(View.INVISIBLE);
+@@ -296,7 +280,7 @@
+                                 cha_Btn.setVisibility(View.INVISIBLE);
+                                 break;
+                             case R.id.menu_item4:
+-                                // menu_item4 Fragment로 이동
++                                // menu_item4 Fragment 로 이동
+                                 navController.navigate(R.id.menu_item4);
+                                 contextEditText.setVisibility(View.INVISIBLE);
+                                 save_Btn.setVisibility(View.INVISIBLE);
+@@ -324,7 +308,6 @@
+     }
+ 
+ 
+-
+     @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
+         // Inflate the menu; this adds items to the action bar if it is present.
+@@ -338,4 +321,6 @@
+         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                 || super.onSupportNavigateUp();
+     }
+-}
+\ No newline at end of file
++
++}
++
+Index: app/src/main/res/layout/activity_calendar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.drawerlayout.widget.DrawerLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:id=\"@+id/drawer_layout\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:fitsSystemWindows=\"true\"\n    tools:openDrawer=\"start\"\n    >\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    tools:context=\".MainActivity\">\n\n    <CalendarView\n        android:id=\"@+id/calendarView\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:layout_marginStart=\"8dp\"\n        android:layout_marginLeft=\"8dp\"\n        android:layout_marginTop=\"8dp\"\n        android:layout_marginEnd=\"8dp\"\n        android:layout_marginRight=\"8dp\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.488\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/textView3\" />\n\n    <TextView\n        android:id=\"@+id/diaryTextView\"\n        android:layout_width=\"0dp\"\n        android:layout_height=\"wrap_content\"\n        android:layout_marginStart=\"8dp\"\n        android:layout_marginLeft=\"8dp\"\n        android:layout_marginTop=\"16dp\"\n        android:layout_marginEnd=\"8dp\"\n        android:layout_marginRight=\"8dp\"\n        android:gravity=\"center\"\n        android:textAppearance=\"@style/TextAppearance.AppCompat.Large\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/calendarView\" />\n\n    <EditText\n        android:id=\"@+id/contextEditText\"\n        android:layout_width=\"0dp\"\n        android:layout_height=\"116dp\"\n        android:layout_marginStart=\"8dp\"\n        android:layout_marginLeft=\"8dp\"\n        android:layout_marginTop=\"16dp\"\n        android:layout_marginEnd=\"8dp\"\n        android:layout_marginRight=\"8dp\"\n        android:ems=\"10\"\n        android:hint=\"일정 내용을 입력하세요.\"\n        android:inputType=\"textMultiLine\"\n        android:visibility=\"invisible\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/diaryTextView\" />\n\n    <TextView\n        android:id=\"@+id/textView2\"\n        android:layout_width=\"0dp\"\n        android:layout_height=\"0dp\"\n        android:layout_marginStart=\"8dp\"\n        android:layout_marginLeft=\"8dp\"\n        android:layout_marginEnd=\"8dp\"\n        android:layout_marginRight=\"8dp\"\n        android:visibility=\"invisible\"\n        app:layout_constraintBottom_toBottomOf=\"@+id/contextEditText\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"@+id/contextEditText\"\n        app:layout_constraintTop_toTopOf=\"@+id/contextEditText\" />\n\n    <TextView\n        android:id=\"@+id/textView3\"\n        android:layout_width=\"0dp\"\n        android:layout_height=\"wrap_content\"\n        android:visibility=\"invisible\"\n        android:layout_marginStart=\"8dp\"\n        android:layout_marginTop=\"8dp\"\n        android:layout_marginEnd=\"8dp\"\n        android:gravity=\"center\"\n        android:text=\"달력\"\n        android:textAppearance=\"@style/TextAppearance.AppCompat.Large\"\n        android:textColor=\"#9E28B3\"\n        android:textSize=\"24sp\"\n        android:textStyle=\"bold\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toTopOf=\"parent\" />\n\n    <Button\n        android:id=\"@+id/save_Btn\"\n        android:layout_width=\"0dp\"\n        android:layout_height=\"wrap_content\"\n        android:layout_marginStart=\"8dp\"\n        android:layout_marginLeft=\"8dp\"\n        android:layout_marginTop=\"16dp\"\n        android:layout_marginEnd=\"8dp\"\n        android:layout_marginRight=\"8dp\"\n        android:layout_marginBottom=\"20dp\"\n        android:text=\"저장\"\n        android:backgroundTint=\"#3F51B5\"\n        android:visibility=\"invisible\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/contextEditText\" />\n\n\n    <Button\n        android:id=\"@+id/cha_Btn\"\n        android:layout_width=\"180dp\"\n        android:layout_height=\"wrap_content\"\n        android:layout_marginStart=\"8dp\"\n        android:layout_marginLeft=\"8dp\"\n        android:layout_marginEnd=\"8dp\"\n        android:layout_marginRight=\"8dp\"\n        android:text=\"수정\"\n        android:backgroundTint=\"#3F51B5\"\n        android:visibility=\"invisible\"\n        app:layout_constraintBaseline_toBaselineOf=\"@+id/save_Btn\"\n        app:layout_constraintEnd_toStartOf=\"@+id/del_Btn\"\n        app:layout_constraintStart_toStartOf=\"parent\" />\n\n    <Button\n        android:id=\"@+id/del_Btn\"\n        android:layout_width=\"176dp\"\n        android:layout_height=\"wrap_content\"\n        android:layout_marginEnd=\"8dp\"\n        android:layout_marginRight=\"8dp\"\n        android:text=\"삭제\"\n        android:backgroundTint=\"#3F51B5\"\n        android:visibility=\"invisible\"\n        app:layout_constraintBaseline_toBaselineOf=\"@+id/cha_Btn\"\n        app:layout_constraintEnd_toEndOf=\"@+id/save_Btn\"/>\n    <include\n        android:id=\"@+id/app_bar\"\n        layout=\"@layout/appbar\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"match_parent\" />\n\n</androidx.constraintlayout.widget.ConstraintLayout>\n\n    <com.google.android.material.navigation.NavigationView\n        android:id=\"@+id/nav_view\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"match_parent\"\n        android:layout_gravity=\"start\"\n        android:fitsSystemWindows=\"true\"\n        app:headerLayout=\"@layout/header\"\n        app:menu=\"@menu/drawerlayout\" />\n\n</androidx.drawerlayout.widget.DrawerLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_calendar.xml b/app/src/main/res/layout/activity_calendar.xml
+--- a/app/src/main/res/layout/activity_calendar.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/layout/activity_calendar.xml	(date 1683987632035)
+@@ -8,143 +8,167 @@
+     android:fitsSystemWindows="true"
+     tools:openDrawer="start"
+     >
+-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    tools:context=".MainActivity">
++
++    <androidx.constraintlayout.widget.ConstraintLayout
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:background="#fa5352"
++        tools:context=".MainActivity">
+ 
+-    <CalendarView
+-        android:id="@+id/calendarView"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+-        android:layout_marginTop="8dp"
+-        android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.488"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
++        <CalendarView
++            android:id="@+id/calendarView"
++            android:layout_width="336dp"
++            android:layout_height="313dp"
++            android:layout_marginStart="8dp"
++            android:layout_marginTop="65dp"
++            android:layout_marginEnd="8dp"
++            android:background="@drawable/custom_shape"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintHorizontal_bias="0.488"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="@+id/app_bar" />
+ 
+-    <TextView
+-        android:id="@+id/diaryTextView"
+-        android:layout_width="0dp"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+-        android:layout_marginTop="16dp"
+-        android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:gravity="center"
+-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/calendarView" />
++        <TextView
++            android:id="@+id/diaryTextView"
++            android:layout_width="0dp"
++            android:layout_height="wrap_content"
++            android:layout_marginStart="8dp"
++            android:layout_marginEnd="8dp"
++            android:gravity="center"
++            android:textAppearance="@style/TextAppearance.AppCompat.Large"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toBottomOf="@+id/calendarView" />
+ 
+-    <EditText
+-        android:id="@+id/contextEditText"
+-        android:layout_width="0dp"
+-        android:layout_height="116dp"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+-        android:layout_marginTop="16dp"
+-        android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:ems="10"
+-        android:hint="일정 내용을 입력하세요."
+-        android:inputType="textMultiLine"
+-        android:visibility="invisible"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/diaryTextView" />
++        <EditText
++            android:id="@+id/contextEditText"
++            android:layout_width="0dp"
++            android:layout_height="116dp"
++            android:layout_marginStart="18dp"
++            android:layout_marginEnd="18dp"
++            android:background="@drawable/edittext_custom_shape"
++            android:ems="10"
++            android:gravity="center"
++            android:hint="일정 내용을 입력하세요."
++            android:inputType="textMultiLine"
++            android:visibility="invisible"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toBottomOf="@+id/diaryTextView" />
++        />
+ 
+-    <TextView
+-        android:id="@+id/textView2"
+-        android:layout_width="0dp"
+-        android:layout_height="0dp"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+-        android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:visibility="invisible"
+-        app:layout_constraintBottom_toBottomOf="@+id/contextEditText"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="@+id/contextEditText"
+-        app:layout_constraintTop_toTopOf="@+id/contextEditText" />
++        <TextView
++            android:id="@+id/textView2"
++            android:layout_width="376dp"
++            android:layout_height="118dp"
++            android:background="@drawable/edittext_custom_shape"
++            android:gravity="center"
++            android:visibility="invisible"
++            app:layout_constraintBottom_toBottomOf="@+id/contextEditText"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="@+id/contextEditText" />
+ 
+-    <TextView
+-        android:id="@+id/textView3"
+-        android:layout_width="0dp"
+-        android:layout_height="wrap_content"
+-        android:visibility="invisible"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginTop="8dp"
+-        android:layout_marginEnd="8dp"
+-        android:gravity="center"
+-        android:text="달력"
+-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+-        android:textColor="#9E28B3"
+-        android:textSize="24sp"
+-        android:textStyle="bold"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent" />
+-
+-    <Button
+-        android:id="@+id/save_Btn"
+-        android:layout_width="0dp"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+-        android:layout_marginTop="16dp"
+-        android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:layout_marginBottom="20dp"
+-        android:text="저장"
+-        android:backgroundTint="#3F51B5"
+-        android:visibility="invisible"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/contextEditText" />
++        <Button
++            android:id="@+id/save_Btn"
++            android:layout_width="0dp"
++            android:layout_height="wrap_content"
++            android:layout_marginStart="8dp"
++            android:layout_marginTop="8dp"
++            android:layout_marginEnd="8dp"
++            android:backgroundTint="#FFFFFF"
++            android:text="저장"
++            android:textColor="#000000"
++            android:visibility="invisible"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintHorizontal_bias="0.0"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toBottomOf="@+id/contextEditText" />
+ 
+-
+-    <Button
+-        android:id="@+id/cha_Btn"
+-        android:layout_width="180dp"
+-        android:layout_height="wrap_content"
+-        android:layout_marginStart="8dp"
+-        android:layout_marginLeft="8dp"
+-        android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:text="수정"
+-        android:backgroundTint="#3F51B5"
+-        android:visibility="invisible"
+-        app:layout_constraintBaseline_toBaselineOf="@+id/save_Btn"
+-        app:layout_constraintEnd_toStartOf="@+id/del_Btn"
+-        app:layout_constraintStart_toStartOf="parent" />
++        <Button
++            android:id="@+id/cha_Btn"
++            android:layout_width="180dp"
++            android:layout_height="wrap_content"
++            android:layout_marginStart="8dp"
++            android:layout_marginEnd="8dp"
++            android:backgroundTint="#FFFFFF"
++            android:text="수정"
++            android:textColor="#000000"
++            android:visibility="invisible"
++            app:layout_constraintBaseline_toBaselineOf="@+id/save_Btn"
++            app:layout_constraintEnd_toStartOf="@+id/del_Btn"
++            app:layout_constraintStart_toStartOf="parent" />
+ 
+-    <Button
+-        android:id="@+id/del_Btn"
+-        android:layout_width="176dp"
+-        android:layout_height="wrap_content"
+-        android:layout_marginEnd="8dp"
+-        android:layout_marginRight="8dp"
+-        android:text="삭제"
+-        android:backgroundTint="#3F51B5"
+-        android:visibility="invisible"
+-        app:layout_constraintBaseline_toBaselineOf="@+id/cha_Btn"
+-        app:layout_constraintEnd_toEndOf="@+id/save_Btn"/>
+-    <include
+-        android:id="@+id/app_bar"
+-        layout="@layout/appbar"
+-        android:layout_width="match_parent"
+-        android:layout_height="match_parent" />
++        <Button
++            android:id="@+id/del_Btn"
++            android:layout_width="176dp"
++            android:layout_height="wrap_content"
++            android:layout_marginEnd="8dp"
++            android:backgroundTint="#FFFFFF"
++            android:text="삭제"
++            android:textColor="#000000"
++            android:visibility="invisible"
++            app:layout_constraintBaseline_toBaselineOf="@+id/cha_Btn"
++            app:layout_constraintEnd_toEndOf="@+id/save_Btn" />
++
++        <ImageView
++            android:id="@+id/imageView"
++            android:layout_width="406dp"
++            android:layout_height="104dp"
++            android:src="@drawable/bottom_bar"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent" />
++
++        <include
++            android:id="@+id/app_bar"
++            layout="@layout/appbar"
++            android:layout_width="0dp"
++            android:layout_height="0dp"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent" />`
++
++
++        <ImageView
++            android:id="@+id/imageView2"
++            android:layout_width="150dp"
++            android:layout_height="57dp"
++            android:layout_marginEnd="160dp"
++            android:contentDescription="image description"
++            android:src="@drawable/logo_1"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="@+id/app_bar" />
++
++        <ImageView
++            android:id="@+id/imageView4"
++            android:layout_width="22dp"
++            android:layout_height="57dp"
++            android:layout_marginStart="220dp"
++            android:contentDescription="image description"
++            android:src="@drawable/search_icon"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="@+id/app_bar" />
++
++        <ImageView
++            android:id="@+id/imageView3"
++            android:layout_width="25dp"
++            android:layout_height="57dp"
++            android:layout_marginStart="298dp"
++            android:contentDescription="image description"
++            android:src="@drawable/bell"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="@+id/app_bar" />
++
++
+ 
+-</androidx.constraintlayout.widget.ConstraintLayout>
++    </androidx.constraintlayout.widget.ConstraintLayout>
+ 
++
+     <com.google.android.material.navigation.NavigationView
+         android:id="@+id/nav_view"
+         android:layout_width="wrap_content"
+@@ -152,6 +176,12 @@
+         android:layout_gravity="start"
+         android:fitsSystemWindows="true"
+         app:headerLayout="@layout/header"
+-        app:menu="@menu/drawerlayout" />
++        app:menu="@menu/drawerlayout"
++        >
++
++    </com.google.android.material.navigation.NavigationView>
++
++
++
+ 
+ </androidx.drawerlayout.widget.DrawerLayout>
+\ No newline at end of file
+Index: .idea/shelf/2023-05-05_오후_4_47,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]/shelved.patch
+===================================================================
+diff --git a/.idea/shelf/2023-05-05_오후_4_47,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]/shelved.patch b/.idea/shelf/2023-05-05_오후_4_47,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]/shelved.patch
+deleted file mode 100644
+--- a/.idea/shelf/2023-05-05_오후_4_47,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]/shelved.patch	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ /dev/null	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
+@@ -1,294 +0,0 @@
+-Index: app/src/main/java/com/example/myapplication/DataAdapter.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package com.example.myapplication;\r\n\r\nimport android.content.Context;\r\nimport android.database.Cursor;\r\nimport android.database.SQLException;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.util.Log;\r\nimport android.widget.Toast;\r\n\r\nimport java.io.IOException;\r\nimport java.sql.ResultSet;\r\nimport java.sql.Statement;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class DataAdapter {\r\n    protected static final String TAG = \"DataAdapter\";\r\n\r\n    // TODO : TABLE 이름을 명시해야함\r\n    protected static final String TABLE_NAME = \"student\";\r\n\r\n    private final Context mContext;\r\n    private SQLiteDatabase mDb;\r\n    private DataBaseHelper mDbHelper;\r\n\r\n    public DataAdapter(Context context) {\r\n        this.mContext = context;\r\n        mDbHelper = new DataBaseHelper(mContext);\r\n    }\r\n\r\n    public DataAdapter createDatabase() throws SQLException {\r\n        try {\r\n            mDbHelper.createDataBase();\r\n        } catch (IOException mIOException) {\r\n            Log.e(TAG, mIOException.toString() + \"  UnableToCreateDatabase\");\r\n            throw new Error(\"UnableToCreateDatabase\");\r\n        }\r\n        return this;\r\n    }\r\n\r\n    public DataAdapter open() throws SQLException {\r\n        try {\r\n            mDbHelper.openDataBase();\r\n            mDbHelper.close();\r\n            mDb = mDbHelper.getReadableDatabase();\r\n        } catch (SQLException mSQLException) {\r\n            Log.e(TAG, \"open >>\" + mSQLException.toString());\r\n            throw mSQLException;\r\n        }\r\n        return this;\r\n    }\r\n\r\n    public void close() {\r\n        mDbHelper.close();\r\n    }\r\n\r\n    public List getTableData() {\r\n        try {\r\n            // Table 이름 -> antpool_bitcoin 불러오기\r\n            String sql = \"SELECT * FROM \" + TABLE_NAME;\r\n\r\n            // 모델 넣을 리스트 생성\r\n            List userList = new ArrayList();\r\n\r\n            // TODO : 모델 선언\r\n            User user = null;\r\n\r\n            Cursor mCur = mDb.rawQuery(sql, null);\r\n            if (mCur != null) {\r\n                // 칼럼의 마지막까지\r\n                while (mCur.moveToNext()) {\r\n\r\n                    // TODO : 커스텀 모델 생성\r\n                    user = new User();\r\n\r\n                    // TODO : Record 기술\r\n                    // id, name, account, privateKey, secretKey, Comment\r\n                    user.Username(mCur.getString(0));\r\n                    user.Student_id(mCur.getInt(1));\r\n                    user.ID(mCur.getString(2));\r\n                    user.Password(mCur.getString(3));\r\n                    user.Email(mCur.getString(4));\r\n                    user.is_professor(mCur.getInt(5));\r\n                    user.Time(mCur.getInt(6));\r\n                    user.CsCheck(mCur.getInt(7));\r\n\r\n\r\n                    // 리스트에 넣기\r\n                    userList.add(user);\r\n                }\r\n\r\n            }\r\n            return userList;\r\n        } catch (SQLException mSQLException) {\r\n            Log.e(TAG, \"getTestData >>\" + mSQLException.toString());\r\n            throw mSQLException;\r\n        }\r\n    }\r\n\r\n    public boolean authenticateUser(String username, String password) {\r\n        SQLiteDatabase db = mDbHelper.getReadableDatabase();\r\n        Cursor cursor = db.query(TABLE_NAME, new String[]{\"ID\"},\r\n                \"ID = ? AND Password = ?\", new String[]{username, password},\r\n                null, null, null);\r\n\r\n        boolean authenticated = cursor.moveToFirst();\r\n        cursor.close();\r\n        db.close();\r\n\r\n        return authenticated;\r\n    }\r\n\r\npublic void setAccount(String username, String password) {\r\n    SQLiteDatabase db = mDbHelper.getReadableDatabase();\r\n        List<User> LoginUser = new ArrayList<>();\r\n        User user = null;\r\n\r\n        // SQL 쿼리 실행\r\n        String query = \"SELECT * FROM \" + TABLE_NAME +\r\n                \" WHERE ID = ? AND Password = ?\";\r\n        Cursor cursor = db.rawQuery(query, new String[]{username, password});\r\n\r\n        // 결과 처리\r\n        while (cursor.moveToNext()) {\r\n            // User 객체 생성 및 정보 저장\r\n            user = new User();\r\n            user.Username(cursor.getString(0));\r\n            user.Student_id(cursor.getInt(1));\r\n            user.ID(cursor.getString(2));\r\n            user.Password(cursor.getString(3));\r\n            user.Email(cursor.getString(4));\r\n            user.is_professor(cursor.getInt(5));\r\n            user.Time(cursor.getInt(6));\r\n            user.CsCheck(cursor.getInt(7));\r\n            LoginUser.add(user);\r\n        }\r\n\r\n    // 리소스 해제\r\n    cursor.close();\r\n    db.close();\r\n\r\n    User.userList = LoginUser;\r\n    }\r\n}\r\n\r\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/myapplication/DataAdapter.java b/app/src/main/java/com/example/myapplication/DataAdapter.java
+---- a/app/src/main/java/com/example/myapplication/DataAdapter.java	(revision 556ae869855733050a6e9e0b1afb7bb51b703718)
+-+++ b/app/src/main/java/com/example/myapplication/DataAdapter.java	(date 1683090942031)
+-@@ -23,80 +23,148 @@
+-     private SQLiteDatabase mDb;
+-     private DataBaseHelper mDbHelper;
+- 
+--    public DataAdapter(Context context) {
+-+    public DataAdapter(Context context)
+-+    {
+-         this.mContext = context;
+-         mDbHelper = new DataBaseHelper(mContext);
+-     }
+- 
+--    public DataAdapter createDatabase() throws SQLException {
+--        try {
+-+    public DataAdapter createDatabase() throws SQLException
+-+    {
+-+        try
+-+        {
+-             mDbHelper.createDataBase();
+--        } catch (IOException mIOException) {
+-+        }
+-+        catch (IOException mIOException)
+-+        {
+-             Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
+-             throw new Error("UnableToCreateDatabase");
+-         }
+-         return this;
+-     }
+- 
+--    public DataAdapter open() throws SQLException {
+--        try {
+-+    public DataAdapter open() throws SQLException
+-+    {
+-+        try
+-+        {
+-             mDbHelper.openDataBase();
+-             mDbHelper.close();
+-             mDb = mDbHelper.getReadableDatabase();
+--        } catch (SQLException mSQLException) {
+--            Log.e(TAG, "open >>" + mSQLException.toString());
+-+        }
+-+        catch (SQLException mSQLException)
+-+        {
+-+            Log.e(TAG, "open >>"+ mSQLException.toString());
+-             throw mSQLException;
+-         }
+-         return this;
+-     }
+- 
+--    public void close() {
+-+    public void close()
+-+    {
+-         mDbHelper.close();
+-     }
+- 
+--    public List getTableData() {
+--        try {
+--            // Table 이름 -> antpool_bitcoin 불러오기
+--            String sql = "SELECT * FROM " + TABLE_NAME;
+--
+--            // 모델 넣을 리스트 생성
+--            List userList = new ArrayList();
+--
+--            // TODO : 모델 선언
+--            User user = null;
+--
+--            Cursor mCur = mDb.rawQuery(sql, null);
+--            if (mCur != null) {
+--                // 칼럼의 마지막까지
+--                while (mCur.moveToNext()) {
+--
+--                    // TODO : 커스텀 모델 생성
+--                    user = new User();
+-+//    public List getTableData()
+-+//    {
+-+//        try
+-+//        {
+-+//            // Table 이름 -> antpool_bitcoin 불러오기
+-+//            String sql ="SELECT * FROM " + TABLE_NAME;
+-+//
+-+//            // 모델 넣을 리스트 생성
+-+//            List userList = new ArrayList();
+-+//
+-+//            // TODO : 모델 선언
+-+//            User user= null;
+-+//
+-+//            Cursor mCur = mDb.rawQuery(sql, null);
+-+//            if (mCur!=null)
+-+//            {
+-+//                // 칼럼의 마지막까지
+-+//                while( mCur.moveToNext() ) {
+-+//
+-+//                    // TODO : 커스텀 모델 생성
+-+//                    user = new User();
+-+//
+-+//                    // TODO : Record 기술
+-+//                    // id, name, account, privateKey, secretKey, Comment
+-+//                    user.Username(mCur.getString(0));
+-+//                    user.Student_id(mCur.getString(1));
+-+//                    user.ID(mCur.getString(2));
+-+//                    user.Password(mCur.getString(3));
+-+//                    user.Email(mCur.getString(4));
+-+//                    user.is_professor(mCur.getString(5));
+-+//                    user.Time(mCur.getString(6));
+-+//                    user.CsCheck(mCur.getString(7));
+-+//
+-+//
+-+//
+-+//
+-+//                    // 리스트에 넣기
+-+//                    userList.add(user);
+-+//                }
+-+//
+-+//            }
+-+//            return userList;
+-+//        }
+-+//        catch (SQLException mSQLException)
+-+//        {
+-+//            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
+-+//            throw mSQLException;
+-+//        }
+-+//    }
+- 
+--                    // TODO : Record 기술
+--                    // id, name, account, privateKey, secretKey, Comment
+--                    user.Username(mCur.getString(0));
+--                    user.Student_id(mCur.getInt(1));
+--                    user.ID(mCur.getString(2));
+--                    user.Password(mCur.getString(3));
+--                    user.Email(mCur.getString(4));
+--                    user.is_professor(mCur.getInt(5));
+--                    user.Time(mCur.getInt(6));
+--                    user.CsCheck(mCur.getInt(7));
+- 
+- 
+--                    // 리스트에 넣기
+--                    userList.add(user);
+--                }
+--
+--            }
+--            return userList;
+--        } catch (SQLException mSQLException) {
+--            Log.e(TAG, "getTestData >>" + mSQLException.toString());
+--            throw mSQLException;
+--        }
+--    }
+--
+-+//    public void getReadableDatabase()
+-+//    {
+-+//        try
+-+//        {
+-+//            // Table 이름 -> antpool_bitcoin 불러오기
+-+//            String sql ="SELECT * FROM " + TABLE_NAME;
+-+//
+-+//            // 모델 넣을 리스트 생성
+-+//            List userList = new ArrayList();
+-+//
+-+//            // TODO : 모델 선언
+-+//            User user= null;
+-+//
+-+//            Cursor mCur = mDb.rawQuery(sql, null);
+-+//            if (mCur!=null)
+-+//            {
+-+//                // 칼럼의 마지막까지
+-+//                while( mCur.moveToNext() ) {
+-+//
+-+//                    // TODO : 커스텀 모델 생성
+-+//                    user = new User();
+-+//
+-+//                    // TODO : Record 기술
+-+//                    // id, name, account, privateKey, secretKey, Comment
+-+//                    user.Username(mCur.getString(0));
+-+//                    user.Student_id(mCur.getString(1));
+-+//                    user.ID(mCur.getString(2));
+-+//                    user.Password(mCur.getString(3));
+-+//                    user.Email(mCur.getString(4));
+-+//                    user.is_professor(mCur.getString(5));
+-+//                    user.Time(mCur.getString(6));
+-+//                    user.CsCheck(mCur.getString(7));
+-+//
+-+//
+-+//
+-+//
+-+//                    // 리스트에 넣기
+-+//                    userList.add(user);
+-+//                }
+-+//
+-+//            }
+-+//
+-+//        }
+-+//        catch (SQLException mSQLException)
+-+//        {
+-+//            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
+-+//            throw mSQLException;
+-+//        }
+-+//    }
+-     public boolean authenticateUser(String username, String password) {
+-         SQLiteDatabase db = mDbHelper.getReadableDatabase();
+-         Cursor cursor = db.query(TABLE_NAME, new String[]{"ID"},
+-@@ -110,6 +178,7 @@
+-         return authenticated;
+-     }
+- 
+-+
+- public void setAccount(String username, String password) {
+-     SQLiteDatabase db = mDbHelper.getReadableDatabase();
+-         List<User> LoginUser = new ArrayList<>();
+-@@ -143,3 +212,7 @@
+-     }
+- }
+- 
+-+
+-+
+-+
+-+
+-Index: app/src/main/java/com/example/myapplication/MainActivity.java
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package com.example.myapplication;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.annotation.NonNull;\r\n\r\nimport android.Manifest;\r\nimport android.database.Cursor;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.os.Bundle;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.RadioButton;\r\nimport android.widget.RadioGroup;\r\nimport android.widget.TextView;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.database.sqlite.SQLiteOpenHelper;\r\n\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\nimport java.io.IOException;\r\nimport java.io.InputStream;\r\nimport java.io.OutputStream;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.LocationManager;\r\n\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.core.view.GravityCompat;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\n\r\nimport android.util.Log;\r\nimport android.widget.Toast;\r\n\r\nimport com.example.myapplication.GpsTracker;\r\nimport com.google.android.material.navigation.NavigationView;\r\n\r\nimport java.util.List;\r\nimport java.util.Locale;\r\nimport java.util.Timer;\r\nimport java.util.TimerTask;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.view.Menu;\r\n\r\nimport com.google.android.material.snackbar.Snackbar;\r\n\r\nimport androidx.navigation.NavController;\r\nimport androidx.navigation.Navigation;\r\nimport androidx.navigation.ui.AppBarConfiguration;\r\nimport androidx.navigation.ui.NavigationUI;\r\n\r\nimport com.example.myapplication.databinding.ActivityMainBinding;\r\n\r\n\r\npublic class MainActivity extends AppCompatActivity implements View.OnClickListener {\r\n    long mNow;\r\n    Date mDate;\r\n    SimpleDateFormat mFormat = new SimpleDateFormat(\"yyyy-MM-dd hh:mm:ss\");\r\n\r\n    TextView mTextView;\r\n    Button mRefreshBtn;\r\n\r\n    Button button1;\r\n    Button csstart;\r\n\r\n    private Button loginButton;\r\n\r\n\r\n    TextView longitudevie;\r\n    TextView latitudevie;\r\n    TextView Con;\r\n    TextView nlongitudevie;\r\n    TextView nlatitudevie;\r\n    TextView name;\r\n\r\n    static TextView navheader;\r\n\r\n\r\n    RadioGroup radioGroup;\r\n\r\n    RadioButton GSRadioButton;\r\n    RadioButton STRadioButton;\r\n    double latitude;\r\n    double longitude;\r\n    char csCheck;\r\n\r\n    private GpsTracker gpsTracker;\r\n\r\n    private static final int GPS_ENABLE_REQUEST_CODE = 2001;\r\n    private static final int PERMISSIONS_REQUEST_CODE = 100;\r\n    String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};\r\n\r\n    private AppBarConfiguration mAppBarConfiguration;\r\n    private ActivityMainBinding binding;\r\n\r\n    String firstUser = User.getUsername();\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n\r\n        initNavigationMenu();\r\n\r\n//        setHeader();\r\n\r\n        final Bundle bundle = new Bundle();\r\n        Button login_btn = findViewById(R.id.login_btn);    //로그인버튼 선언\r\n        login_btn.setOnClickListener(this);\r\n\r\n\r\n        radibtn();\r\n        loginButton = findViewById(R.id.login_btn);\r\n        loginButton.setOnClickListener(new View.OnClickListener() {     //로그인 페이지 넘김\r\n            @Override\r\n            public void onClick(View v) {\r\n                Intent intent = new Intent(MainActivity.this, LoginActivity.class);\r\n                startActivity(intent);\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    private void initNavigationMenu() {\r\n        //사이드 메뉴바\r\n        binding = ActivityMainBinding.inflate(getLayoutInflater());\r\n        setContentView(binding.getRoot());\r\n\r\n        setSupportActionBar(binding.appBar.toolbar);\r\n        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Snackbar.make(view, \"Replace with your own action\", Snackbar.LENGTH_LONG)\r\n                        .setAction(\"Action\", null).show();\r\n            }\r\n        });\r\n        DrawerLayout drawerLayout = binding.drawerLayout;\r\n        NavigationView navigationView = binding.navView;\r\n\r\n        mAppBarConfiguration = new AppBarConfiguration.Builder(\r\n                R.id.nav_home, R.id.menu_item2, R.id.menu_item3)\r\n                .setOpenableLayout(drawerLayout)\r\n                .build();\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);\r\n        NavigationUI.setupWithNavController(navigationView, navController);\r\n        navigationView.setNavigationItemSelectedListener(\r\n                new NavigationView.OnNavigationItemSelectedListener() {\r\n                    public MenuItem item;\r\n                    public boolean onNavigationItemSelected(MenuItem item) {\r\n                        this.item = item;\r\n                        int id = item.getItemId();\r\n\r\n                        switch (id) {\r\n                            case R.id.nav_home:\r\n                                // nav_home Fragment로 이동\r\n                                Log.d(\"MainActivity\", \"Home menu item clicked\");\r\n                                navController.navigate(R.id.nav_home);\r\n                                break;\r\n                            case R.id.menu_item2:\r\n                                // menu_item2 Fragment로 이동\r\n                                Log.d(\"MainActivity\", \"Gallery menu item clicked\");\r\n                                navController.navigate(R.id.menu_item2);\r\n                                break;\r\n                            case R.id.menu_item3:\r\n                                // menu_item3 Fragment로 이동\r\n                                navController.navigate(R.id.menu_item3);\r\n                                break;\r\n                            case R.id.menu_item4:\r\n                                // menu_item4 Fragment로 이동\r\n                                navController.navigate(R.id.menu_item4);\r\n                                break;\r\n                        }\r\n\r\n                        // Navigation Drawer 닫기\r\n                        drawerLayout.closeDrawer(GravityCompat.START);\r\n                        return true;\r\n                    }\r\n                }\r\n        );\r\n        View headerView = navigationView.getHeaderView(0);\r\n        TextView headerTextView = headerView.findViewById(R.id.header_text);\r\n        headerTextView.setText(firstUser);\r\n    }\r\n\r\n    @Override\r\n    public boolean onCreateOptionsMenu(Menu menu) {\r\n        // Inflate the menu; this adds items to the action bar if it is present.\r\n        getMenuInflater().inflate(R.menu.main, menu);\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public boolean onSupportNavigateUp() {\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n        return NavigationUI.navigateUp(navController, mAppBarConfiguration)\r\n                || super.onSupportNavigateUp();\r\n    }\r\n   /* public void timer(){\r\n        timeCountSettingLV.setVisibility(View.GONE);\r\n        timeCountLV.setVisibility(View.VISIBLE);\r\n\r\n        hourTV.setText(hourET.getText().toString());\r\n        minuteTV.setText(minuteET.getText().toString());\r\n        secondTV.setText(secondET.getText().toString());\r\n\r\n        hour = Integer.parseInt(hourET.getText().toString());\r\n        minute = Integer.parseInt(minuteET.getText().toString());\r\n        second = Integer.parseInt(secondET.getText().toString());\r\n\r\n        Timer timer = new Timer();\r\n        TimerTask timerTask = new TimerTask() {\r\n            @Override\r\n            public void run() {\r\n                // 반복실행할 구문\r\n\r\n                // 0초 이상이면\r\n                if(second != 0) {\r\n                    //1초씩 감소\r\n                    second--;\r\n\r\n                    // 0분 이상이면\r\n                } else if(minute != 0) {\r\n                    // 1분 = 60초\r\n                    second = 60;\r\n                    second--;\r\n                    minute--;\r\n\r\n                    // 0시간 이상이면\r\n                } else if(hour != 0) {\r\n                    // 1시간 = 60분\r\n                    second = 60;\r\n                    minute = 60;\r\n                    second--;\r\n                    minute--;\r\n                    hour--;\r\n                }\r\n\r\n                //시, 분, 초가 10이하(한자리수) 라면\r\n                // 숫자 앞에 0을 붙인다 ( 8 -> 08 )\r\n                if(second <= 9){\r\n                    secondTV.setText(\"0\" + second);\r\n                } else {\r\n                    secondTV.setText(Integer.toString(second));\r\n                }\r\n\r\n                if(minute <= 9){\r\n                    minuteTV.setText(\"0\" + minute);\r\n                } else {\r\n                    minuteTV.setText(Integer.toString(minute));\r\n                }\r\n\r\n                if(hour <= 9){\r\n                    hourTV.setText(\"0\" + hour);\r\n                } else {\r\n                    hourTV.setText(Integer.toString(hour));\r\n                }\r\n\r\n                // 시분초가 다 0이라면 toast를 띄우고 타이머를 종료한다..\r\n                if(hour == 0 && minute == 0 && second == 0) {\r\n                    timer.cancel();//타이머 종료\r\n                    finishTV.setText(\"타이머가 종료되었습니다.\");\r\n                }\r\n            }\r\n        };\r\n    }*/\r\n\r\n    // 마찬가지 삭제 가능한 주석이면 삭제 부탁드립니다 가독성이 떨어집니다\r\n    \r\n    public void radibtn() {\r\n        GSRadioButton = (RadioButton) findViewById(R.id.GSradibtn);\r\n        STRadioButton = (RadioButton) findViewById(R.id.STDradibtn);\r\n       /* GSRadioButton.setOnClickListener(radioButtonClickListener);\r\n        STRadioButton.setOnClickListener(radioButtonClickListener); */\r\n        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);\r\n        radioGroup.setOnCheckedChangeListener(radioGroupButtonChangeListener);\r\n\r\n        button1 = (Button) findViewById(R.id.refreshBtn);\r\n        csstart = (Button) findViewById(R.id.CSstart);\r\n\r\n\r\n    }\r\n   /* View.OnClickListener radioButtonClickListener = new RadioButton.OnClickListener() {\r\n        @Override\r\n\r\n        }\r\n    }; */\r\n\r\n\r\n    RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {\r\n        @Override\r\n        public void onCheckedChanged(RadioGroup radioGroup, int i) {\r\n            if (i == R.id.STDradibtn) {\r\n                stbtns();\r\n            } else if (i == R.id.GSradibtn) {\r\n                gsbtns();\r\n            }\r\n        }\r\n    };\r\n\r\n\r\n    public void gsbtns() {\r\n        button1.setVisibility(View.INVISIBLE);\r\n        csstart.setVisibility(View.VISIBLE);\r\n        btnchange();\r\n    }\r\n\r\n    public void stbtns() {\r\n        button1.setVisibility(View.VISIBLE);\r\n        csstart.setVisibility(View.INVISIBLE);\r\n        btns();\r\n    }\r\n\r\n\r\n    public void btnchange() {\r\n\r\n        Button Btnena = (Button) findViewById(R.id.CSstart);\r\n        Btnena.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View arg0) {\r\n                button1.setEnabled(true);\r\n            }\r\n\r\n        });\r\n    }\r\n\r\n    public List<User> mUserList;\r\n\r\n    private void initLoadDB() {\r\n\r\n        DataAdapter mDbHelper = new DataAdapter(getApplicationContext());\r\n        mDbHelper.createDatabase();\r\n        mDbHelper.open();\r\n\r\n        // db에 있는 값들을 model을 적용해서 넣는다.\r\n        mUserList = mDbHelper.getTableData();\r\n\r\n        // db 닫기\r\n        mDbHelper.close();\r\n    }\r\n\r\n\r\n    int val;\r\n\r\n    void getVal() {\r\n\r\n        //Dbhelper의 읽기모드 객체를 가져와 SQLiteDatabase에 담아 사용준비\r\n        DataBaseHelper helper = new DataBaseHelper(this);\r\n        SQLiteDatabase database = helper.getReadableDatabase();\r\n\r\n\r\n        //Cursor라는 그릇에 목록을 담아주기\r\n        Cursor cursor = database.rawQuery(\"SELECT Student_id FROM student where Username = '김경호'\", null);\r\n\r\n\r\n//        if(cursor != null && cursor.moveToFirst())\r\n        //목록의 개수만큼 순회하여 adapter에 있는 list배열에 add\r\n        while (cursor.moveToNext()) {\r\n            //num 행은 가장 첫번째에 있으니 0번이 되고, name은 1번\r\n            val = cursor.getInt(0);\r\n        }\r\n        name = (TextView) findViewById(R.id.name);\r\n        name.setText(String.valueOf(val));\r\n        cursor.close();\r\n        helper.close();\r\n\r\n\r\n    }\r\n\r\n\r\n    public class prime{\r\n\r\n        double platitude =0;\r\n        double plongtitude = 0;\r\n    }\r\n\r\n    public class dist {\r\n\r\n        double dislat = 0;\r\n        double dislon = 0;\r\n    }\r\n\r\n    public void btns() {\r\n        mTextView = (TextView) findViewById(R.id.textView);\r\n\r\n        mRefreshBtn = (Button) findViewById(R.id.refreshBtn);\r\n\r\n        //bind listener\r\n        mRefreshBtn.setOnClickListener(this::onClick);\r\n\r\n\r\n        longitudevie = (TextView) findViewById(R.id.longitudevie);\r\n        latitudevie = (TextView) findViewById(R.id.latitudevie);\r\n\r\n        Con = (TextView) findViewById(R.id.Con);\r\n\r\n        nlongitudevie = (TextView) findViewById(R.id.nlongitudevie);\r\n        nlatitudevie = (TextView) findViewById(R.id.nlatitudevie);\r\n\r\n        if (!checkLocationServicesStatus()) {\r\n\r\n            showDialogForLocationServiceSetting();\r\n        } else {\r\n\r\n            checkRunTimePermission();\r\n        }\r\n\r\n\r\n        prime pr = new prime();\r\n        dist di = new dist();\r\n\r\n\r\n        pr.platitude = 35.9684;\r\n        pr.plongtitude = 126.9581;\r\n\r\n\r\n        TextView textview_latitude = (TextView) findViewById(R.id.latitudevie);\r\n        TextView textview_longitude = (TextView) findViewById(R.id.longitudevie);\r\n\r\n\r\n        Button ShowLocationButton = (Button) findViewById(R.id.refreshBtn);\r\n        ShowLocationButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View arg0) {\r\n\r\n\r\n                gpsTracker = new GpsTracker(MainActivity.this);\r\n\r\n                latitude = gpsTracker.getLatitude();\r\n                longitude = gpsTracker.getLongitude();\r\n\r\n                if ((Math.abs(latitude) >= Math.abs(pr.platitude)))\r\n                    di.dislat = Math.abs(latitude) - Math.abs(pr.platitude);\r\n                else\r\n                    di.dislat = Math.abs(pr.platitude) - Math.abs(latitude);\r\n\r\n                if ((Math.abs(longitude) >= Math.abs(pr.plongtitude)))\r\n                    di.dislon = Math.abs(longitude) - Math.abs(pr.plongtitude);\r\n                else\r\n                    di.dislon = Math.abs(pr.plongtitude) - Math.abs(longitude);\r\n\r\n                String dilon = String.format(\"%.7f\", di.dislon);\r\n                String dilat = String.format(\"%.7f\", di.dislat);\r\n\r\n\r\n                mTextView.setText(getTime());\r\n                textview_latitude.setText(String.valueOf(latitude));\r\n                textview_longitude.setText(String.valueOf(longitude));\r\n\r\n\r\n                nlongitudevie.setText(dilon);\r\n                nlatitudevie.setText(dilat);\r\n\r\n                if (Math.abs(di.dislat) <= 0.0002 && Math.abs(di.dislon) <= 0.002)\r\n                    csCheck = 'O';\r\n                else\r\n                    csCheck = 'X';\r\n\r\n\r\n                Con.setText(String.valueOf(csCheck));\r\n                initLoadDB();\r\n                getVal();\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n    String getTime() {\r\n        mNow = System.currentTimeMillis();\r\n        mDate = new Date(mNow);\r\n        SimpleDateFormat mFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\");\r\n        return mFormat.format(mDate);\r\n    }\r\n\r\n    public void onClick(View v) {\r\n        switch (v.getId()) {\r\n            case R.id.refreshBtn:\r\n                mTextView.setText(getTime());\r\n                break;\r\n            default:\r\n                break;\r\n        }\r\n    }\r\n\r\n\r\n    public void onRequestPermissionsResult(int permsRequestCode,\r\n                                           @NonNull String[] permissions,\r\n                                           @NonNull int[] grandResults) {\r\n\r\n        super.onRequestPermissionsResult(permsRequestCode, permissions, grandResults);\r\n        if (permsRequestCode == PERMISSIONS_REQUEST_CODE && grandResults.length == REQUIRED_PERMISSIONS.length) {\r\n\r\n            // 요청 코드가 PERMISSIONS_REQUEST_CODE 이고, 요청한 퍼미션 개수만큼 수신되었다면\r\n\r\n            boolean check_result = true;\r\n\r\n\r\n            // 모든 퍼미션을 허용했는지 체크합니다.\r\n\r\n            for (int result : grandResults) {\r\n                if (result != PackageManager.PERMISSION_GRANTED) {\r\n                    check_result = false;\r\n                    break;\r\n                }\r\n            }\r\n\r\n\r\n            if (check_result) {\r\n\r\n                //위치 값을 가져올 수 있음\r\n\r\n            } else {\r\n                // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.\r\n\r\n                if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])\r\n                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {\r\n\r\n                    Toast.makeText(MainActivity.this, \"퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.\", Toast.LENGTH_LONG).show();\r\n                    finish();\r\n\r\n\r\n                } else {\r\n\r\n                    Toast.makeText(MainActivity.this, \"퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. \", Toast.LENGTH_LONG).show();\r\n\r\n                }\r\n            }\r\n\r\n        }\r\n    }\r\n\r\n    void checkRunTimePermission() {\r\n\r\n        //런타임 퍼미션 처리\r\n        // 1. 위치 퍼미션을 가지고 있는지 체크합니다.\r\n        int hasFineLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this,\r\n                Manifest.permission.ACCESS_FINE_LOCATION);\r\n        int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this,\r\n                Manifest.permission.ACCESS_COARSE_LOCATION);\r\n\r\n\r\n        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&\r\n                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {\r\n\r\n            // 2. 이미 퍼미션을 가지고 있다면\r\n            // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)\r\n\r\n\r\n            // 3.  위치 값을 가져올 수 있음\r\n\r\n\r\n        } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.\r\n\r\n            // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는\r\n            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, REQUIRED_PERMISSIONS[0])) {\r\n\r\n                // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.\r\n                Toast.makeText(MainActivity.this, \"이 앱을 실행하려면 위치 접근 권한이 필요합니다.\", Toast.LENGTH_LONG).show();\r\n                // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.\r\n                ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS,\r\n                        PERMISSIONS_REQUEST_CODE);\r\n\r\n\r\n            } else {\r\n                // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.\r\n                // 요청 결과는 onRequestPermissionResult에서 수신됩니다.\r\n                ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS,\r\n                        PERMISSIONS_REQUEST_CODE);\r\n            }\r\n\r\n        }\r\n\r\n    }\r\n\r\n\r\n    public String getCurrentAddress(double latitude, double longitude) {\r\n\r\n        //지오코더... GPS를 주소로 변환\r\n        Geocoder geocoder = new Geocoder(this, Locale.getDefault());\r\n\r\n        List<Address> addresses;\r\n\r\n        try {\r\n\r\n            addresses = geocoder.getFromLocation(\r\n                    latitude,\r\n                    longitude,\r\n                    7);\r\n        } catch (IOException ioException) {\r\n            //네트워크 문제\r\n            Toast.makeText(this, \"지오코더 서비스 사용불가\", Toast.LENGTH_LONG).show();\r\n            return \"지오코더 서비스 사용불가\";\r\n        } catch (IllegalArgumentException illegalArgumentException) {\r\n            Toast.makeText(this, \"잘못된 GPS 좌표\", Toast.LENGTH_LONG).show();\r\n            return \"잘못된 GPS 좌표\";\r\n\r\n        }\r\n\r\n\r\n        if (addresses == null || addresses.size() == 0) {\r\n            Toast.makeText(this, \"주소 미발견\", Toast.LENGTH_LONG).show();\r\n            return \"주소 미발견\";\r\n\r\n        }\r\n\r\n        Address address = addresses.get(0);\r\n        return address.getAddressLine(0).toString() + \"\\n\";\r\n\r\n    }\r\n\r\n\r\n    //여기부터는 GPS 활성화를 위한 메소드들\r\n    private void showDialogForLocationServiceSetting() {\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);\r\n        builder.setTitle(\"위치 서비스 비활성화\");\r\n        builder.setMessage(\"앱을 사용하기 위해서는 위치 서비스가 필요합니다.\\n\"\r\n                + \"위치 설정을 수정하실래요?\");\r\n        builder.setCancelable(true);\r\n        builder.setPositiveButton(\"설정\", new DialogInterface.OnClickListener() {\r\n            @Override\r\n            public void onClick(DialogInterface dialog, int id) {\r\n                Intent callGPSSettingIntent\r\n                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);\r\n                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);\r\n\r\n            }\r\n        });\r\n        builder.setNegativeButton(\"취소\", new DialogInterface.OnClickListener() {\r\n            @Override\r\n            public void onClick(DialogInterface dialog, int id) {\r\n\r\n                dialog.cancel();\r\n            }\r\n        });\r\n        builder.create().show();\r\n    }\r\n\r\n\r\n    @Override\r\n    protected void onActivityResult(int requestCode, int resultCode, Intent data) {\r\n        super.onActivityResult(requestCode, resultCode, data);\r\n\r\n        switch (requestCode) {\r\n\r\n            case GPS_ENABLE_REQUEST_CODE:\r\n\r\n                //사용자가 GPS 활성 시켰는지 검사\r\n                if (checkLocationServicesStatus()) {\r\n                    if (checkLocationServicesStatus()) {\r\n\r\n                        Log.d(\"@@@\", \"onActivityResult : GPS 활성화 되있음\");\r\n                        checkRunTimePermission();\r\n                        return;\r\n                    }\r\n                }\r\n\r\n                break;\r\n        }\r\n    }\r\n\r\n    //id pw입력후 메세지 입력\r\n    public boolean checkLocationServicesStatus() {\r\n        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);\r\n\r\n        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)\r\n                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);\r\n    }\r\n\r\n    public void setHeader() {\r\n        navheader = (TextView)findViewById(R.id.header_text);\r\n        navheader.setText(\"aaa\");\r\n    }\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/app/src/main/java/com/example/myapplication/MainActivity.java b/app/src/main/java/com/example/myapplication/MainActivity.java
+---- a/app/src/main/java/com/example/myapplication/MainActivity.java	(revision 556ae869855733050a6e9e0b1afb7bb51b703718)
+-+++ b/app/src/main/java/com/example/myapplication/MainActivity.java	(date 1683090942036)
+-@@ -334,18 +334,18 @@
+- 
+-     public List<User> mUserList;
+- 
+--    private void initLoadDB() {
+--
+--        DataAdapter mDbHelper = new DataAdapter(getApplicationContext());
+--        mDbHelper.createDatabase();
+--        mDbHelper.open();
+--
+--        // db에 있는 값들을 model을 적용해서 넣는다.
+--        mUserList = mDbHelper.getTableData();
+--
+--        // db 닫기
+--        mDbHelper.close();
+--    }
+-+//    private void initLoadDB() {
+-+//
+-+//        DataAdapter mDbHelper = new DataAdapter(getApplicationContext());
+-+//        mDbHelper.createDatabase();
+-+//        mDbHelper.open();
+-+//
+-+//        // db에 있는 값들을 model을 적용해서 넣는다.
+-+//        mUserList = mDbHelper.getTableData();
+-+//
+-+//        // db 닫기
+-+//        mDbHelper.close();
+-+//    }
+- 
+- 
+-     int val;
+-@@ -466,7 +466,7 @@
+- 
+- 
+-                 Con.setText(String.valueOf(csCheck));
+--                initLoadDB();
+-+                //initLoadDB();
+-                 getVal();
+- 
+-             }
+-Index: build.gradle
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nplugins {\r\n    id 'com.android.application' version '7.3.1' apply false\r\n    id 'com.android.library' version '7.3.1' apply false\r\n}\r\next {\r\n    navigationVersion = '1.0.0-rc02'\r\n}
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+-diff --git a/build.gradle b/build.gradle
+---- a/build.gradle	(revision 556ae869855733050a6e9e0b1afb7bb51b703718)
+-+++ b/build.gradle	(date 1683272785680)
+-@@ -1,7 +1,7 @@
+- // Top-level build file where you can add configuration options common to all sub-projects/modules.
+- plugins {
+--    id 'com.android.application' version '7.3.1' apply false
+--    id 'com.android.library' version '7.3.1' apply false
+-+    id 'com.android.application' version '7.4.2' apply false
+-+    id 'com.android.library' version '7.4.2' apply false
+- }
+- ext {
+-     navigationVersion = '1.0.0-rc02'
+Index: .idea/shelf/2023-05-05__4_47__________.xml
+===================================================================
+diff --git a/.idea/shelf/2023-05-05__4_47__________.xml b/.idea/shelf/2023-05-05__4_47__________.xml
+deleted file mode 100644
+--- a/.idea/shelf/2023-05-05__4_47__________.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ /dev/null	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
+@@ -1,4 +0,0 @@
+-<changelist name="2023-05-05_오후_4_47,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]" date="1683272834467" recycled="true" deleted="true">
+-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/2023-05-05_오후_4_47,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]/shelved.patch" />
+-  <option name="DESCRIPTION" value="2023-05-05 오후 4:47, 체크아웃 전에 커밋되지 않은 변경 내용 [변경]" />
+-</changelist>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_cslist.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:gravity=\"bottom\"\n    android:orientation=\"vertical\"\n    tools:context=\".MainActivity\">\n\n\n        <androidx.constraintlayout.widget.ConstraintLayout\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"76dp\">\n\n                <TextView\n                    android:id=\"@+id/textView3\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginStart=\"36dp\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"학번\"\n                    app:layout_constraintStart_toStartOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n\n                <TextView\n                    android:id=\"@+id/textView4\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginStart=\"124dp\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"이름\"\n                    app:layout_constraintStart_toStartOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n\n                <TextView\n                    android:id=\"@+id/textView5\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_marginEnd=\"144dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"출석 시간\"\n                    app:layout_constraintEnd_toEndOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n\n                <TextView\n                    android:id=\"@+id/textView6\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_marginEnd=\"16dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"출석 여부\"\n                    app:layout_constraintEnd_toEndOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n        </androidx.constraintlayout.widget.ConstraintLayout>\n\n        <ListView\n            android:id=\"@+id/cslistview\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"480dp\"\n            android:gravity=\"center_vertical\"\n            android:weightSum=\"10\" />\n\n        <LinearLayout\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"58dp\"\n            android:orientation=\"horizontal\">\n\n                <Button\n                    android:id=\"@+id/BTNALL\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_weight=\"1\"\n                    android:text=\"전체보기\" />\n\n                <Button\n                    android:id=\"@+id/BTNOK\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_weight=\"1\"\n                    android:text=\"출석자\" />\n\n                <Button\n                    android:id=\"@+id/BTNNO\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_weight=\"1\"\n                    android:text=\"결석자\" />\n        </LinearLayout>\n\n\n</LinearLayout>\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_cslist.xml b/app/src/main/res/layout/activity_cslist.xml
+--- a/app/src/main/res/layout/activity_cslist.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/layout/activity_cslist.xml	(date 1683986804387)
+@@ -93,6 +93,21 @@
+                     android:text="결석자" />
+         </LinearLayout>
+ 
++        <Button
++            android:id="@+id/BT0"
++            android:layout_width="65dp"
++            android:layout_height="86dp"
++            android:background="@android:color/transparent"
++            android:outlineProvider="none"
++            android:stateListAnimator="@null"
++            android:text="투명"
++            android:textColor="#00000000"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintHorizontal_bias="0.022"
++            app:layout_constraintStart_toStartOf="@+id/app_bar"
++            app:layout_constraintTop_toTopOf="@+id/app_bar"
++            app:layout_constraintVertical_bias="1.0" />
+ 
+ </LinearLayout>
+ 
+Index: app/src/main/res/menu/main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\">\n    <item\n        android:id=\"@+id/action_settings\"\n        android:orderInCategory=\"100\"\n        android:title=\"@string/action_settings\"\n        app:showAsAction=\"never\" />\n</menu>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/menu/main.xml b/app/src/main/res/menu/main.xml
+--- a/app/src/main/res/menu/main.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/menu/main.xml	(date 1683806511176)
+@@ -4,6 +4,6 @@
+     <item
+         android:id="@+id/action_settings"
+         android:orderInCategory="100"
+-        android:title="@string/action_settings"
++        android:title="설정"
+         app:showAsAction="never" />
+ </menu>
+\ No newline at end of file
+Index: app/src/main/res/values/themes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources xmlns:tools=\"http://schemas.android.com/tools\">\n    <!-- Base application theme. -->\n    <style name=\"Theme.MyApplication\" parent=\"Theme.MaterialComponents.DayNight.DarkActionBar\">\n        <!-- Primary brand color. -->\n        <item name=\"colorPrimary\">@color/purple_500</item>\n        <item name=\"colorPrimaryVariant\">@color/purple_700</item>\n        <item name=\"colorOnPrimary\">@color/white</item>\n        <!-- Secondary brand color. -->\n        <item name=\"colorSecondary\">@color/teal_200</item>\n        <item name=\"colorSecondaryVariant\">@color/teal_700</item>\n        <item name=\"colorOnSecondary\">@color/black</item>\n        <!-- Status bar color. -->\n        <item name=\"android:statusBarColor\">?attr/colorPrimaryVariant</item>\n        <!-- Customize your theme here. -->\n    </style>\n\n    <style name=\"Theme.MyApplication.NoActionBar\">\n        <item name=\"windowActionBar\">false</item>\n        <item name=\"windowNoTitle\">true</item>\n    </style>\n\n    <style name=\"Theme.MyApplication1.AppBarOverlay\" parent=\"ThemeOverlay.AppCompat.Dark.ActionBar\" />\n\n    <style name=\"Theme.MyApplication1.PopupOverlay\" parent=\"ThemeOverlay.AppCompat.Light\" />\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes.xml
+--- a/app/src/main/res/values/themes.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/values/themes.xml	(date 1683806511178)
+@@ -12,10 +12,22 @@
+         <!-- Status bar color. -->
+         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+         <!-- Customize your theme here. -->
++        <item name="android:windowTranslucentStatus">true</item>
++
++        <!-- 상단바 숨기기 -->
++        <item name="android:windowFullscreen">true</item>
++
++        <item name="windowActionBar">false</item>
++        <item name="windowNoTitle">true</item>
++
++
++
++
++
++
+     </style>
+ 
+     <style name="Theme.MyApplication.NoActionBar">
+-        <item name="windowActionBar">false</item>
+         <item name="windowNoTitle">true</item>
+     </style>
+ 
+Index: app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.ui.QRcode;\n\nimport android.graphics.Bitmap;\nimport android.os.Bundle;\nimport android.view.LayoutInflater;\nimport android.view.View;\nimport android.view.ViewGroup;\nimport android.widget.ImageView;\n\n\nimport com.example.myapplication.R;\nimport com.example.myapplication.User;\nimport com.google.zxing.BarcodeFormat;\nimport com.google.zxing.MultiFormatWriter;\nimport com.google.zxing.common.BitMatrix;\nimport com.journeyapps.barcodescanner.BarcodeEncoder;\n\nimport androidx.annotation.NonNull;\nimport androidx.fragment.app.Fragment;\nimport androidx.lifecycle.ViewModelProvider;\n\nimport com.example.myapplication.databinding.FragmentQrcodeBinding;\n\npublic class QRcodeFragment extends Fragment {\n\n    private FragmentQrcodeBinding binding;\n    private ImageView iv;\n    private String text = User.getStudentId();\n\n    public View onCreateView(@NonNull LayoutInflater inflater,\n                             ViewGroup container, Bundle savedInstanceState) {\n        QRcodeViewModel QrcodeViewModel =\n                new ViewModelProvider(this).get(QRcodeViewModel.class);\n\n        binding = FragmentQrcodeBinding.inflate(inflater, container, false);\n        View root = binding.getRoot();\n\n        iv = (ImageView) root.findViewById(R.id.qrcode);\n\n        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();\n        try {\n            BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);\n            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();\n            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);\n            iv.setImageBitmap(bitmap);\n        } catch (Exception e) {\n            e.printStackTrace();\n        }\n\n        return root;\n    }\n\n    @Override\n    public void onDestroyView() {\n        super.onDestroyView();\n        binding = null;\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java b/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java
+--- a/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java	(date 1683812091806)
+@@ -55,4 +55,5 @@
+         super.onDestroyView();
+         binding = null;
+     }
+-}
+\ No newline at end of file
++}
++
+Index: app/src/main/res/layout/appbar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.coordinatorlayout.widget.CoordinatorLayout\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    tools:context=\".MainActivity\">\n\n    <com.google.android.material.appbar.AppBarLayout\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"wrap_content\">\n\n        <androidx.appcompat.widget.Toolbar\n            android:id=\"@+id/toolbar\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"?attr/actionBarSize\" />\n    </com.google.android.material.appbar.AppBarLayout>\n\n    <include layout=\"@layout/content_main\" />\n\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\n        android:id=\"@+id/fab\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:layout_gravity=\"bottom|end\"\n        android:layout_marginBottom=\"16dp\"\n        android:layout_marginEnd=\"16dp\"\n        app:srcCompat=\"@android:drawable/ic_dialog_email\" />\n\n</androidx.coordinatorlayout.widget.CoordinatorLayout>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/appbar.xml b/app/src/main/res/layout/appbar.xml
+--- a/app/src/main/res/layout/appbar.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/layout/appbar.xml	(date 1683810351263)
+@@ -9,23 +9,18 @@
+ 
+     <com.google.android.material.appbar.AppBarLayout
+         android:layout_width="match_parent"
+-        android:layout_height="wrap_content">
++        android:layout_height="wrap_content"
++        android:background="#fa5352">
++
+ 
+         <androidx.appcompat.widget.Toolbar
+             android:id="@+id/toolbar"
+             android:layout_width="match_parent"
+             android:layout_height="?attr/actionBarSize" />
++
++
+     </com.google.android.material.appbar.AppBarLayout>
+ 
+     <include layout="@layout/content_main" />
+ 
+-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+-        android:id="@+id/fab"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_gravity="bottom|end"
+-        android:layout_marginBottom="16dp"
+-        android:layout_marginEnd="16dp"
+-        app:srcCompat="@android:drawable/ic_dialog_email" />
+-
+ </androidx.coordinatorlayout.widget.CoordinatorLayout>
+Index: app/src/main/res/drawable/edittext_custom_shape.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/edittext_custom_shape.xml b/app/src/main/res/drawable/edittext_custom_shape.xml
+new file mode 100644
+--- /dev/null	(date 1683806511175)
++++ b/app/src/main/res/drawable/edittext_custom_shape.xml	(date 1683806511175)
+@@ -0,0 +1,15 @@
++<?xml version="1.0" encoding="utf-8"?>
++<shape xmlns:android="http://schemas.android.com/apk/res/android"
++    android:shape="rectangle" >
++
++    <corners
++        android:radius="10dp" />
++
++    <solid android:color="@android:color/white" />
++
++    <stroke
++        android:width="2dp"
++        android:color="#000000" />
++
++
++</shape>
+\ No newline at end of file
+Index: app/src/main/res/drawable/custom_shape.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/custom_shape.xml b/app/src/main/res/drawable/custom_shape.xml
+new file mode 100644
+--- /dev/null	(date 1683806511177)
++++ b/app/src/main/res/drawable/custom_shape.xml	(date 1683806511177)
+@@ -0,0 +1,15 @@
++<?xml version="1.0" encoding="utf-8"?>
++<shape xmlns:android="http://schemas.android.com/apk/res/android"
++    android:shape="rectangle" >
++
++    <corners
++        android:radius="50dp" />
++
++    <solid android:color="@android:color/white" />
++
++    <stroke
++        android:width="2dp"
++        android:color="#000000" />
++
++
++</shape>
+Index: app/src/main/res/drawable/ic_baseline_dehaze_48.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><vector android:height=\"48dp\" android:tint=\"#FFFFFF\"\n    android:viewportHeight=\"24\" android:viewportWidth=\"24\"\n    android:width=\"48dp\" xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <path android:fillColor=\"@android:color/white\" android:pathData=\"M3,18h18v-2L3,16v2zM3,13h18v-2L3,11v2zM3,6v2h18L21,6L3,6z\"/>\n</vector>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_baseline_dehaze_48.xml b/app/src/main/res/drawable/ic_baseline_dehaze_48.xml
+--- a/app/src/main/res/drawable/ic_baseline_dehaze_48.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/drawable/ic_baseline_dehaze_48.xml	(date 1683806511180)
+@@ -1,4 +1,4 @@
+-<vector android:height="48dp" android:tint="#FFFFFF"
++<vector android:height="480dp" android:tint="#FFFFFF"
+     android:viewportHeight="24" android:viewportWidth="24"
+     android:width="48dp" xmlns:android="http://schemas.android.com/apk/res/android">
+     <path android:fillColor="@android:color/white" android:pathData="M3,18h18v-2L3,16v2zM3,13h18v-2L3,11v2zM3,6v2h18L21,6L3,6z"/>
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    id 'com.android.application'\n}\n\nandroid {\n    namespace 'com.example.myapplication'\n    compileSdk 33\n\n    defaultConfig {\n        applicationId \"com.example.myapplication\"\n        minSdk 24\n        targetSdk 33\n        versionCode 1\n        versionName \"1.0\"\n\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n        }\n    }\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_1_8\n        targetCompatibility JavaVersion.VERSION_1_8\n    }\n    viewBinding {\n        enabled true\n    }\n    dataBinding{\n        enabled true\n    }\n    buildFeatures {\n        viewBinding true\n    }\n}\n\ndependencies {\n    implementation 'androidx.appcompat:appcompat:1.6.1'\n    implementation 'com.google.android.material:material:1.8.0'\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\n    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'\n    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'\n    implementation 'androidx.navigation:navigation-fragment:2.4.1'\n    implementation 'androidx.navigation:navigation-ui:2.4.1'\n    implementation 'com.google.android.gms:play-services-location:21.0.1'\n    implementation 'com.google.ar.sceneform:filament-android:1.17.1'\n    implementation 'androidx.fragment:fragment:1.4.1'\n    testImplementation 'junit:junit:4.13.2'\n    androidTestImplementation 'androidx.test.ext:junit:1.1.5'\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'\n    implementation 'androidx.drawerlayout:drawerlayout:1.1.1'\n    implementation 'androidx.work:work-runtime:2.7.1'\n    //qr코드\n    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/build.gradle	(date 1683806715929)
+@@ -53,6 +53,8 @@
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+     implementation 'androidx.drawerlayout:drawerlayout:1.1.1'
+     implementation 'androidx.work:work-runtime:2.7.1'
+-    //qr코드
++    //qr 코드
+     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
++    implementation 'com.google.android.material:material:1.3.0'
++
+ }
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Embedded JDK\" project-jdk-type=\"JavaSDK\">\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\n  </component>\n  <component name=\"ProjectType\">\n    <option name=\"id\" value=\"Android\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/.idea/misc.xml	(date 1683978421604)
+@@ -1,7 +1,6 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Embedded JDK" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\">\n\n    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\n    <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />\n\n    <uses-permission android:name=\"android.permission.POST_NOTIFICATIONS\" />\n\n    <application\n        android:allowBackup=\"true\"\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\n        android:fullBackupContent=\"@xml/backup_rules\"\n        android:icon=\"@mipmap/ic_wku\"\n        android:label=\"@string/app_name\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.MyApplication\"\n        tools:targetApi=\"31\">\n        <activity android:name=\".MainActivity\" android:exported=\"true\"/>\n        <activity\n            android:name=\".LoginActivity\"\n            android:exported=\"true\"\n            android:label=\"@string/app_name\"\n            android:theme=\"@style/Theme.MyApplication.NoActionBar\">\n        <intent-filter>\n            <action android:name=\"android.intent.action.MAIN\" />\n\n            <category android:name=\"android.intent.category.LAUNCHER\" />\n        </intent-filter>\n        </activity>\n        <activity android:name=\".menu_java\" />\n        <activity\n            android:name=\".CalendarActivity\"\n            android:exported=\"true\"\n            android:theme=\"@style/Theme.MyApplication.NoActionBar\"/>\n<!--        <activity android:name=\".CsCheck\"/>-->\n        <activity android:name=\".ListOpener\"/>\n        <activity android:name=\".noticeboard.RegisterActivity\" />\n        <activity android:name=\".noticeboard.ListActivity\"/>\n    </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/AndroidManifest.xml	(date 1683806511183)
+@@ -23,7 +23,7 @@
+             android:name=".LoginActivity"
+             android:exported="true"
+             android:label="@string/app_name"
+-            android:theme="@style/Theme.MyApplication.NoActionBar">
++            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+         <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+ 
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:orientation=\"vertical\"\n    android:gravity=\"center\"\n    tools:context=\".MainActivity\">\n\n    <TextView\n        android:id=\"@+id/textView\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"출석시작 버튼\"\n        android:textSize=\"18sp\"\n        android:layout_marginBottom=\"14dp\"\n        />\n\n    <Button\n        android:id=\"@+id/ToCs\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"출석시작 버튼\" />\n\n\n</LinearLayout>\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/layout/activity_main.xml	(date 1683806511185)
+@@ -12,7 +12,6 @@
+         android:id="@+id/textView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+-        android:text="출석시작 버튼"
+         android:textSize="18sp"
+         android:layout_marginBottom="14dp"
+         />
+@@ -21,7 +20,10 @@
+         android:id="@+id/ToCs"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:text="출석시작 버튼" />
++        android:textColor="#00000000"
++        android:text="출석"
++        android:background="#00000000" />
++
+ 
+ 
+ </LinearLayout>
+Index: app/src/main/res/values-night/themes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources xmlns:tools=\"http://schemas.android.com/tools\">\n    <!-- Base application theme. -->\n    <style name=\"Theme.MyApplication\" parent=\"Theme.MaterialComponents.DayNight.DarkActionBar\">\n        <!-- Primary brand color. -->\n        <item name=\"colorPrimary\">@color/purple_200</item>\n        <item name=\"colorPrimaryVariant\">@color/purple_700</item>\n        <item name=\"colorOnPrimary\">@color/black</item>\n        <!-- Secondary brand color. -->\n        <item name=\"colorSecondary\">@color/teal_200</item>\n        <item name=\"colorSecondaryVariant\">@color/teal_200</item>\n        <item name=\"colorOnSecondary\">@color/black</item>\n        <!-- Status bar color. -->\n        <item name=\"android:statusBarColor\">?attr/colorPrimaryVariant</item>\n        <!-- Customize your theme here. -->\n    </style>\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values-night/themes.xml b/app/src/main/res/values-night/themes.xml
+--- a/app/src/main/res/values-night/themes.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/values-night/themes.xml	(date 1683806511186)
+@@ -12,5 +12,14 @@
+         <!-- Status bar color. -->
+         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+         <!-- Customize your theme here. -->
++        <item name="android:windowTranslucentStatus">true</item>
++
++        <item name="windowActionBar">false</item>
++        <item name="windowNoTitle">true</item>
++
++        <item name="android:windowFullscreen">true</item>
++
++
++
+     </style>
+ </resources>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"CompilerConfiguration\">\n    <bytecodeTargetLevel target=\"11\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/.idea/compiler.xml	(date 1683806511188)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="CompilerConfiguration">
+-    <bytecodeTargetLevel target="11" />
++    <bytecodeTargetLevel target="17" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:id=\"@+id/constraintLayout\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\">\n\n    <Button\n        android:id=\"@+id/login_button\"\n        android:layout_width=\"210dp\"\n        android:layout_height=\"49dp\"\n        android:background=\"#AEEA00\"\n        android:text=\"로그인\"\n        app:layout_constraintBottom_toTopOf=\"@+id/join_button\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/passwd_et\" />\n\n    <Button\n        android:id=\"@+id/join_button\"\n        android:layout_width=\"203dp\"\n        android:layout_height=\"45dp\"\n        android:background=\"#FFD600\"\n        android:text=\"회원가입\"\n        app:layout_constraintBottom_toBottomOf=\"parent\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/login_button\" />\n\n    <EditText\n        android:id=\"@+id/userid_et\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:ems=\"10\"\n        android:inputType=\"textPersonName\"\n        android:text=\"\"\n        android:hint=\"아이디를 입력하세요.\"\n        app:layout_constraintBottom_toTopOf=\"@+id/passwd_et\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/textView\" />\n\n    <EditText\n        android:id=\"@+id/passwd_et\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:ems=\"10\"\n        android:hint=\"비밀번호를 입력하세요.\"\n        android:inputType=\"textPassword\"\n        app:layout_constraintBottom_toTopOf=\"@+id/login_button\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/userid_et\" />\n\n    <TextView\n        android:id=\"@+id/textView\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"로그인 페이지\"\n        android:textSize=\"30sp\"\n        app:layout_constraintBottom_toTopOf=\"@+id/userid_et\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toTopOf=\"parent\" />\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_login.xml b/app/src/main/res/layout/activity_login.xml
+--- a/app/src/main/res/layout/activity_login.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/layout/activity_login.xml	(date 1683806511190)
+@@ -9,24 +9,24 @@
+     <Button
+         android:id="@+id/login_button"
+         android:layout_width="210dp"
+-        android:layout_height="49dp"
++        android:layout_height="0dp"
++        android:layout_marginBottom="83dp"
+         android:background="#AEEA00"
+         android:text="로그인"
+         app:layout_constraintBottom_toTopOf="@+id/join_button"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/passwd_et" />
+ 
+     <Button
+         android:id="@+id/join_button"
+         android:layout_width="203dp"
+-        android:layout_height="45dp"
++        android:layout_height="0dp"
++        android:layout_marginBottom="83dp"
+         android:background="#FFD600"
+         android:text="회원가입"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/login_button" />
+ 
+@@ -34,13 +34,13 @@
+         android:id="@+id/userid_et"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_marginBottom="84dp"
+         android:ems="10"
++        android:hint="아이디를 입력하세요."
+         android:inputType="textPersonName"
+         android:text=""
+-        android:hint="아이디를 입력하세요."
+         app:layout_constraintBottom_toTopOf="@+id/passwd_et"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/textView" />
+ 
+@@ -48,12 +48,12 @@
+         android:id="@+id/passwd_et"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_marginBottom="83dp"
+         android:ems="10"
+         android:hint="비밀번호를 입력하세요."
+         android:inputType="textPassword"
+         app:layout_constraintBottom_toTopOf="@+id/login_button"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/userid_et" />
+ 
+@@ -61,11 +61,12 @@
+         android:id="@+id/textView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_marginTop="83dp"
++        android:layout_marginBottom="83dp"
+         android:text="로그인 페이지"
+         android:textSize="30sp"
+         app:layout_constraintBottom_toTopOf="@+id/userid_et"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_join.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:id=\"@+id/linearLayout\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\">\n\n    <Button\n        android:id=\"@+id/join_button\"\n        android:layout_width=\"197dp\"\n        android:layout_height=\"52dp\"\n        android:background=\"#8C9EFF\"\n        android:text=\"회원가입하기\"\n        app:layout_constraintBottom_toBottomOf=\"parent\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/passwd_et\" />\n\n    <EditText\n        android:id=\"@+id/passwd_et\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:ems=\"10\"\n        android:inputType=\"textPassword\"\n        android:hint=\"비밀번호를 입력하세요.\"\n        app:layout_constraintBottom_toTopOf=\"@+id/join_button\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/userid_et\" />\n\n    <EditText\n        android:id=\"@+id/userid_et\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:ems=\"10\"\n        android:inputType=\"textPersonName\"\n        android:text=\"\"\n        android:hint=\"아이디를 입력하세요.\"\n        app:layout_constraintBottom_toTopOf=\"@+id/passwd_et\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toBottomOf=\"@+id/textView\" />\n\n    <TextView\n        android:id=\"@+id/textView\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"회원가입 페이지\"\n        android:textSize=\"30sp\"\n        app:layout_constraintBottom_toTopOf=\"@+id/userid_et\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.5\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toTopOf=\"parent\" />\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_join.xml b/app/src/main/res/layout/activity_join.xml
+--- a/app/src/main/res/layout/activity_join.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/layout/activity_join.xml	(date 1683813622730)
+@@ -23,8 +23,8 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:ems="10"
+-        android:inputType="textPassword"
+         android:hint="비밀번호를 입력하세요."
++        android:inputType="textPassword"
+         app:layout_constraintBottom_toTopOf="@+id/join_button"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.5"
+@@ -36,9 +36,9 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:ems="10"
++        android:hint="아이디를 입력하세요."
+         android:inputType="textPersonName"
+         android:text=""
+-        android:hint="아이디를 입력하세요."
+         app:layout_constraintBottom_toTopOf="@+id/passwd_et"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.5"
+Index: app/src/main/res/layout/fragment_qrcode.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    tools:context=\".ui.QRcode.QRcodeFragment\"\n    android:background=\"@color/white\">\n\n    <ImageView\n        android:id=\"@+id/qrcode\"\n        android:layout_width=\"0dp\"\n        android:layout_height=\"300dp\"\n        android:layout_centerHorizontal=\"true\"\n        android:layout_centerVertical=\"true\"\n        android:layout_margin=\"55dp\"\n        android:layout_marginStart=\"55dp\"\n        android:layout_marginTop=\"36dp\"\n        android:layout_marginEnd=\"55dp\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toTopOf=\"parent\" />\n\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_qrcode.xml b/app/src/main/res/layout/fragment_qrcode.xml
+--- a/app/src/main/res/layout/fragment_qrcode.xml	(revision 3cc5d5d46d7792b571c6e84e7f24eef0c76a37bd)
++++ b/app/src/main/res/layout/fragment_qrcode.xml	(date 1683813520611)
+@@ -4,6 +4,7 @@
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
++    android:id="@+id/fafa"
+     tools:context=".ui.QRcode.QRcodeFragment"
+     android:background="@color/white">
+ 

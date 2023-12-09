@@ -1,0 +1,370 @@
+Index: app/src/main/res/layout/fragment_qrcode.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:id=\"@+id/fafa\"\r\n    tools:context=\".ui.QRcode.QRcodeFragment\"\r\n    android:background=\"#fa5352\">\r\n\r\n\r\n    <ImageView\r\n        android:id=\"@+id/qrcode_user2\"\r\n        android:layout_width=\"440dp\"\r\n        android:layout_height=\"700dp\"\r\n        android:layout_marginStart=\"41.7dp\"\r\n        android:contentDescription=\"image description\"\r\n        android:src=\"@drawable/user2\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <ImageView\r\n        android:id=\"@+id/qrcode\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"300dp\"\r\n        android:layout_centerHorizontal=\"true\"\r\n        android:layout_centerVertical=\"true\"\r\n        android:layout_marginStart=\"65dp\"\r\n        android:layout_marginTop=\"100dp\"\r\n        android:layout_marginEnd=\"65dp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_qrcode.xml b/app/src/main/res/layout/fragment_qrcode.xml
+--- a/app/src/main/res/layout/fragment_qrcode.xml	(revision 16d967fce116e0f4c12a3015f317ef7b1961295d)
++++ b/app/src/main/res/layout/fragment_qrcode.xml	(date 1684138801903)
+@@ -2,12 +2,11 @@
+ <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/fafa"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+-    android:id="@+id/fafa"
+-    tools:context=".ui.QRcode.QRcodeFragment"
+-    android:background="#fa5352">
+-
++    android:background="#fa5352"
++    tools:context=".ui.QRcode.QRcodeFragment">
+ 
+     <ImageView
+         android:id="@+id/qrcode_user2"
+Index: app/src/main/java/com/example/myapplication/CalendarActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.CalendarView;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.view.GravityCompat;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\nimport androidx.navigation.NavController;\r\nimport androidx.navigation.Navigation;\r\nimport androidx.navigation.ui.AppBarConfiguration;\r\nimport androidx.navigation.ui.NavigationUI;\r\n\r\nimport com.example.myapplication.R;\r\nimport com.example.myapplication.databinding.ActivityCalendarBinding;\r\nimport com.google.android.material.navigation.NavigationView;\r\nimport com.google.android.material.snackbar.Snackbar;\r\n\r\nimport java.io.FileInputStream;\r\nimport java.io.FileOutputStream;\r\n\r\npublic class CalendarActivity extends AppCompatActivity\r\n{\r\n    public String readDay = null;\r\n    public String str = null;\r\n    public CalendarView calendarView;\r\n    public Button cha_Btn, del_Btn, save_Btn;\r\n    public TextView diaryTextView, textView2, textView3;\r\n    public EditText contextEditText;\r\n\r\n\r\n    public static final int PERMISSION_PROFESSOR = 1;\r\n    public static final int PERMISSION_STUDENT = 0;\r\n\r\n    String studentIdStr = User.getStudentId();\r\n    int studentId = Integer.parseInt(studentIdStr);\r\n    String firstUser = String.valueOf(studentId);   //사이드 이름/학번\r\n    // 권한 변수 추가\r\n    public int permission = 0;\r\n\r\n    private ActivityCalendarBinding binding;\r\n    private AppBarConfiguration mAppBarConfiguration;\r\n\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState)\r\n    {\r\n        super.onCreate(savedInstanceState);\r\n\r\n        initNavigationMenu();\r\n\r\n        calendarView = findViewById(R.id.calendarView);\r\n        diaryTextView = findViewById(R.id.diaryTextView);\r\n        save_Btn = findViewById(R.id.save_Btn);\r\n        del_Btn = findViewById(R.id.del_Btn);\r\n        cha_Btn = findViewById(R.id.cha_Btn);\r\n        textView2 = findViewById(R.id.textView2);\r\n        textView3 = findViewById(R.id.textView3);\r\n        contextEditText = findViewById(R.id.contextEditText);\r\n        NavigationView navigationView = findViewById(R.id.nav_view);\r\n        View headerLayout = navigationView.getHeaderView(0);\r\n        Button logoutButton = headerLayout.findViewById(R.id.logout_button);\r\n        logoutButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                // 로그인 액티비티로 이동하는 인텐트 생성\r\n                Intent intent = new Intent(CalendarActivity.this, LoginActivity.class);\r\n                // 모든 액티비티 종료 및 로그인 액티비티 호출\r\n                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);\r\n                startActivity(intent);\r\n            }\r\n        });\r\n        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener()\r\n        {\r\n            @Override\r\n            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {\r\n                diaryTextView.setVisibility(View.VISIBLE);\r\n                save_Btn.setVisibility(View.VISIBLE);\r\n                contextEditText.setVisibility(View.VISIBLE);\r\n                textView2.setVisibility(View.INVISIBLE);\r\n                cha_Btn.setVisibility(View.INVISIBLE);\r\n                del_Btn.setVisibility(View.INVISIBLE);\r\n                diaryTextView.setText(String.format(\"%d / %d / %d\", year, month + 1, dayOfMonth));\r\n                contextEditText.setText(\"\");\r\n                checkDay(year, month, dayOfMonth);\r\n\r\n                if (User.is_professor()) {\r\n                    diaryTextView.setEnabled(true);\r\n                    save_Btn.setEnabled(true);\r\n                    del_Btn.setEnabled(true);\r\n                    cha_Btn.setEnabled(true);\r\n                } else {\r\n                    save_Btn.setEnabled(false);\r\n                    del_Btn.setEnabled(false);\r\n                    cha_Btn.setEnabled(false);\r\n                    contextEditText.setVisibility(View.INVISIBLE);\r\n                    save_Btn.setVisibility(View.INVISIBLE);\r\n                    del_Btn.setVisibility(View.INVISIBLE);\r\n                    cha_Btn.setVisibility(View.INVISIBLE);\r\n                }\r\n            }\r\n        });\r\n        save_Btn.setOnClickListener(new View.OnClickListener()\r\n        {\r\n            @Override\r\n            public void onClick(View view)\r\n            {\r\n                saveDiary(readDay);\r\n                str = contextEditText.getText().toString();\r\n                textView2.setText(str);\r\n                save_Btn.setVisibility(View.INVISIBLE);\r\n                cha_Btn.setVisibility(View.VISIBLE);\r\n                del_Btn.setVisibility(View.VISIBLE);\r\n                contextEditText.setVisibility(View.INVISIBLE);\r\n                textView2.setVisibility(View.VISIBLE);\r\n\r\n            }\r\n        });\r\n\r\n\r\n    }\r\n\r\n    public void checkDay(int cYear, int cMonth, int cDay)\r\n    {\r\n        readDay = \"\" + cYear + \"-\" + (cMonth + 1) + \"\" + \"-\" + cDay + \".txt\";\r\n        FileInputStream fis;\r\n\r\n        try\r\n        {\r\n            fis = openFileInput(readDay);\r\n\r\n            byte[] fileData = new byte[fis.available()];\r\n            fis.read(fileData);\r\n            fis.close();\r\n\r\n            str = new String(fileData);\r\n\r\n            contextEditText.setVisibility(View.INVISIBLE);\r\n            textView2.setVisibility(View.VISIBLE);\r\n            textView2.setText(str);\r\n\r\n            save_Btn.setVisibility(View.INVISIBLE);\r\n            cha_Btn.setVisibility(View.VISIBLE);\r\n            del_Btn.setVisibility(View.VISIBLE);\r\n\r\n\r\n            cha_Btn.setOnClickListener(new View.OnClickListener()\r\n            {\r\n                @Override\r\n                public void onClick(View view)\r\n                {\r\n                    contextEditText.setVisibility(View.VISIBLE);\r\n                    textView2.setVisibility(View.INVISIBLE);\r\n                    contextEditText.setText(str);\r\n\r\n                    save_Btn.setVisibility(View.VISIBLE);\r\n                    cha_Btn.setVisibility(View.INVISIBLE);\r\n                    del_Btn.setVisibility(View.INVISIBLE);\r\n                    textView2.setText(contextEditText.getText());\r\n                }\r\n\r\n            });\r\n            del_Btn.setOnClickListener(new View.OnClickListener()\r\n            {\r\n                @Override\r\n                public void onClick(View view)\r\n                {\r\n                    textView2.setVisibility(View.INVISIBLE);\r\n                    contextEditText.setText(\"\");\r\n                    contextEditText.setVisibility(View.VISIBLE);\r\n                    save_Btn.setVisibility(View.VISIBLE);\r\n                    cha_Btn.setVisibility(View.INVISIBLE);\r\n                    del_Btn.setVisibility(View.INVISIBLE);\r\n                    removeDiary(readDay);\r\n                }\r\n            });\r\n            if (textView2.getText() == null)\r\n            {\r\n                textView2.setVisibility(View.INVISIBLE);\r\n                diaryTextView.setVisibility(View.VISIBLE);\r\n                save_Btn.setVisibility(View.VISIBLE);\r\n                cha_Btn.setVisibility(View.INVISIBLE);\r\n                del_Btn.setVisibility(View.INVISIBLE);\r\n                contextEditText.setVisibility(View.VISIBLE);\r\n            }\r\n\r\n        }\r\n        catch (Exception e)\r\n        {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    @SuppressLint(\"WrongConstant\")\r\n    public void removeDiary(String readDay)\r\n    {\r\n        FileOutputStream fos;\r\n        try\r\n        {\r\n            fos = openFileOutput(readDay, MODE_NO_LOCALIZED_COLLATORS);\r\n            String content = \"\";\r\n            fos.write((content).getBytes());\r\n            fos.close();\r\n\r\n        }\r\n        catch (Exception e)\r\n        {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    @SuppressLint(\"WrongConstant\")\r\n    public void saveDiary(String readDay)\r\n    {\r\n        FileOutputStream fos;\r\n        try\r\n        {\r\n            fos = openFileOutput(readDay, MODE_NO_LOCALIZED_COLLATORS);\r\n            String content = contextEditText.getText().toString();\r\n            fos.write((content).getBytes());\r\n            fos.close();\r\n        }\r\n        catch (Exception e)\r\n        {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    private void initNavigationMenu() {\r\n        //사이드 메뉴바\r\n        binding = ActivityCalendarBinding.inflate(getLayoutInflater());\r\n        setContentView(binding.getRoot());\r\n\r\n        setSupportActionBar(binding.appBar.toolbar);\r\n        DrawerLayout drawerLayout = binding.drawerLayout;\r\n        NavigationView navigationView = binding.navView;\r\n\r\n        mAppBarConfiguration = new AppBarConfiguration.Builder(\r\n                R.id.nav_home, R.id.menu_item2, R.id.menu_item3)\r\n                .setOpenableLayout(drawerLayout)\r\n                .build();\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);\r\n        NavigationUI.setupWithNavController(navigationView, navController);\r\n        navigationView.setNavigationItemSelectedListener(\r\n                new NavigationView.OnNavigationItemSelectedListener() {\r\n                    public MenuItem item;\r\n                    public boolean onNavigationItemSelected(MenuItem item) {\r\n                        this.item = item;\r\n                        int id = item.getItemId();\r\n\r\n                        switch (id) {\r\n                            case R.id.nav_home:\r\n                                // nav_home Fragment 로 이동\r\n                                navController.navigate(R.id.nav_home);\r\n                                diaryTextView.setEnabled(true);\r\n                                save_Btn.setEnabled(true);\r\n                                del_Btn.setEnabled(true);\r\n                                cha_Btn.setEnabled(true);\r\n                                break;\r\n                            case R.id.menu_item2:\r\n                                // menu_item2 Fragment 로 이동\r\n                                navController.navigate(R.id.menu_item2);\r\n                                contextEditText.setVisibility(View.INVISIBLE);\r\n                                save_Btn.setVisibility(View.INVISIBLE);\r\n                                del_Btn.setVisibility(View.INVISIBLE);\r\n                                cha_Btn.setVisibility(View.INVISIBLE);\r\n                                break;\r\n                            case R.id.menu_item3:\r\n                                // menu_item3 Fragment 로 이동\r\n                                navController.navigate(R.id.menu_item3);\r\n                                contextEditText.setVisibility(View.INVISIBLE);\r\n                                save_Btn.setVisibility(View.INVISIBLE);\r\n                                del_Btn.setVisibility(View.INVISIBLE);\r\n                                cha_Btn.setVisibility(View.INVISIBLE);\r\n                                break;\r\n                            case R.id.menu_item4:\r\n                                // menu_item4 Fragment 로 이동\r\n                                navController.navigate(R.id.menu_item4);\r\n                                contextEditText.setVisibility(View.INVISIBLE);\r\n                                save_Btn.setVisibility(View.INVISIBLE);\r\n                                del_Btn.setVisibility(View.INVISIBLE);\r\n                                cha_Btn.setVisibility(View.INVISIBLE);\r\n                                break;\r\n                        }\r\n\r\n                        // Navigation Drawer 닫기\r\n                        drawerLayout.closeDrawer(GravityCompat.START);\r\n                        return true;\r\n                    }\r\n                }\r\n        );\r\n        View headerView = navigationView.getHeaderView(0);\r\n        TextView headerTextView = headerView.findViewById(R.id.header_text);\r\n        if (User.is_professor()) {\r\n            headerTextView.setText(String.format(\"%s 교수님\", User.getUsername()));\r\n        } else {\r\n            String studentIdStr = User.getStudentId();\r\n            int studentId = Integer.parseInt(studentIdStr);\r\n            headerTextView.setText(String.format(\"%s 학생님\\n(%s)\", User.getUsername(), studentId));\r\n        }\r\n\r\n    }\r\n\r\n\r\n\r\n    @Override\r\n    public boolean onCreateOptionsMenu(Menu menu) {\r\n        // Inflate the menu; this adds items to the action bar if it is present.\r\n        getMenuInflater().inflate(R.menu.main, menu);\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public boolean onSupportNavigateUp() {\r\n        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n        return NavigationUI.navigateUp(navController, mAppBarConfiguration)\r\n                || super.onSupportNavigateUp();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/CalendarActivity.java b/app/src/main/java/com/example/myapplication/CalendarActivity.java
+--- a/app/src/main/java/com/example/myapplication/CalendarActivity.java	(revision 16d967fce116e0f4c12a3015f317ef7b1961295d)
++++ b/app/src/main/java/com/example/myapplication/CalendarActivity.java	(date 1684139356166)
+@@ -262,6 +262,13 @@
+                         this.item = item;
+                         int id = item.getItemId();
+ 
++                        disableButtons();
++                        diaryTextView.setEnabled(false);
++                        contextEditText.setVisibility(View.INVISIBLE);
++                        save_Btn.setVisibility(View.INVISIBLE);
++                        del_Btn.setVisibility(View.INVISIBLE);
++                        cha_Btn.setVisibility(View.INVISIBLE);
++
+                         switch (id) {
+                             case R.id.nav_home:
+                                 // nav_home Fragment 로 이동
+@@ -281,19 +288,20 @@
+                                 break;
+                             case R.id.menu_item3:
+                                 // menu_item3 Fragment 로 이동
++                                calendarView.setClickable(false);
+                                 navController.navigate(R.id.menu_item3);
+-                                contextEditText.setVisibility(View.INVISIBLE);
+-                                save_Btn.setVisibility(View.INVISIBLE);
+-                                del_Btn.setVisibility(View.INVISIBLE);
+-                                cha_Btn.setVisibility(View.INVISIBLE);
++                                save_Btn.setEnabled(false);
++                                del_Btn.setEnabled(false);
++                                cha_Btn.setEnabled(false);
+                                 break;
+                             case R.id.menu_item4:
+                                 // menu_item4 Fragment 로 이동
++                                calendarView.setClickable(false);
+                                 navController.navigate(R.id.menu_item4);
+-                                contextEditText.setVisibility(View.INVISIBLE);
+-                                save_Btn.setVisibility(View.INVISIBLE);
+-                                del_Btn.setVisibility(View.INVISIBLE);
+-                                cha_Btn.setVisibility(View.INVISIBLE);
++                                save_Btn.setEnabled(false);
++                                del_Btn.setEnabled(false);
++                                cha_Btn.setEnabled(false);
++
+                                 break;
+                         }
+ 
+@@ -330,4 +338,20 @@
+         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                 || super.onSupportNavigateUp();
+     }
++    private void disableButtons() {
++        save_Btn.setEnabled(false);
++        del_Btn.setEnabled(false);
++        cha_Btn.setEnabled(false);
++    }
++    @Override
++    protected void onPause() {
++        super.onPause();
++        disableButtons();
++        diaryTextView.setEnabled(false);
++        contextEditText.setVisibility(View.INVISIBLE);
++        save_Btn.setVisibility(View.INVISIBLE);
++        del_Btn.setVisibility(View.INVISIBLE);
++        cha_Btn.setVisibility(View.INVISIBLE);
++
++    }
+ }
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_calendar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n\r\n\r\n<!-- 완료 -->\r\n\r\n\r\n<androidx.drawerlayout.widget.DrawerLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/drawer_layout\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:fitsSystemWindows=\"true\"\r\n    tools:openDrawer=\"start\"\r\n    >\r\n\r\n    <androidx.constraintlayout.widget.ConstraintLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:background=\"#fa5352\"\r\n        tools:context=\".MainActivity\">\r\n\r\n        <CalendarView\r\n            android:id=\"@+id/calendarView\"\r\n            android:layout_width=\"336dp\"\r\n            android:layout_height=\"313dp\"\r\n            android:layout_marginStart=\"8dp\"\r\n            android:layout_marginTop=\"92dp\"\r\n            android:layout_marginEnd=\"8dp\"\r\n            android:background=\"@drawable/custom_shape\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintHorizontal_bias=\"0.491\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"@+id/app_bar\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/diaryTextView\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginStart=\"8dp\"\r\n            android:layout_marginEnd=\"8dp\"\r\n            android:gravity=\"center\"\r\n            android:textAppearance=\"@style/TextAppearance.AppCompat.Large\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toBottomOf=\"@+id/calendarView\" />\r\n\r\n        <EditText\r\n            android:id=\"@+id/contextEditText\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"116dp\"\r\n            android:layout_marginStart=\"18dp\"\r\n            android:layout_marginEnd=\"18dp\"\r\n            android:background=\"@drawable/edittext_custom_shape2\"\r\n            android:ems=\"10\"\r\n            android:gravity=\"center\"\r\n            android:hint=\"일정 내용을 입력하세요.\"\r\n            android:inputType=\"textMultiLine\"\r\n            android:visibility=\"invisible\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toBottomOf=\"@+id/diaryTextView\" />\r\n        />\r\n\r\n        <TextView\r\n            android:id=\"@+id/textView2\"\r\n            android:layout_width=\"376dp\"\r\n            android:layout_height=\"118dp\"\r\n            android:background=\"@drawable/edittext_custom_shape2\"\r\n            android:gravity=\"center\"\r\n            android:visibility=\"invisible\"\r\n            app:layout_constraintBottom_toBottomOf=\"@+id/contextEditText\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toBottomOf=\"@+id/diaryTextView\" />\r\n\r\n        <Button\r\n            android:id=\"@+id/save_Btn\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginStart=\"8dp\"\r\n            android:layout_marginEnd=\"8dp\"\r\n            android:layout_marginTop=\"10dp\"\r\n            android:background=\"@drawable/edittext_custom_shape2\"\r\n            android:text=\"저장\"\r\n            android:textColor=\"#000000\"\r\n            android:visibility=\"invisible\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintHorizontal_bias=\"0.0\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toBottomOf=\"@+id/contextEditText\" />\r\n\r\n        <Button\r\n            android:id=\"@+id/cha_Btn\"\r\n            android:layout_width=\"180dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginStart=\"8dp\"\r\n            android:layout_marginEnd=\"8dp\"\r\n            android:layout_marginTop=\"10dp\"\r\n            android:background=\"@drawable/edittext_custom_shape2\"\r\n            android:text=\"수정\"\r\n            android:textColor=\"#000000\"\r\n            android:visibility=\"invisible\"\r\n            app:layout_constraintBaseline_toBaselineOf=\"@+id/save_Btn\"\r\n            app:layout_constraintEnd_toStartOf=\"@+id/del_Btn\"\r\n            app:layout_constraintStart_toStartOf=\"parent\" />\r\n\r\n        <Button\r\n            android:id=\"@+id/del_Btn\"\r\n            android:layout_width=\"176dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginEnd=\"8dp\"\r\n            android:layout_marginTop=\"10dp\"\r\n            android:background=\"@drawable/edittext_custom_shape2\"\r\n            android:text=\"삭제\"\r\n            android:textColor=\"#000000\"\r\n            android:visibility=\"invisible\"\r\n            app:layout_constraintBaseline_toBaselineOf=\"@+id/cha_Btn\"\r\n            app:layout_constraintEnd_toEndOf=\"@+id/save_Btn\" />\r\n\r\n\r\n        <include\r\n            android:id=\"@+id/app_bar\"\r\n            layout=\"@layout/appbar\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"0dp\"\r\n            app:layout_constraintBottom_toBottomOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"parent\" />`\r\n\r\n\r\n        <ImageView\r\n            android:id=\"@+id/imageView2\"\r\n            android:layout_width=\"150dp\"\r\n            android:layout_height=\"57dp\"\r\n            android:layout_marginEnd=\"160dp\"\r\n            android:contentDescription=\"image description\"\r\n            android:src=\"@drawable/logo_1\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"@+id/app_bar\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/imageView4\"\r\n            android:layout_width=\"22dp\"\r\n            android:layout_height=\"57dp\"\r\n            android:layout_marginStart=\"220dp\"\r\n            android:contentDescription=\"image description\"\r\n            android:src=\"@drawable/search_icon\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"@+id/app_bar\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/imageView3\"\r\n            android:layout_width=\"25dp\"\r\n            android:layout_height=\"57dp\"\r\n            android:layout_marginStart=\"298dp\"\r\n            android:contentDescription=\"image description\"\r\n            android:src=\"@drawable/bell\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"@+id/app_bar\" />\r\n\r\n\r\n\r\n    </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n\r\n    <com.google.android.material.navigation.NavigationView\r\n        android:id=\"@+id/nav_view\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"match_parent\"\r\n        android:layout_gravity=\"start\"\r\n        android:fitsSystemWindows=\"true\"\r\n        app:headerLayout=\"@layout/header\"\r\n        app:menu=\"@menu/drawerlayout\"\r\n        >\r\n\r\n    </com.google.android.material.navigation.NavigationView>\r\n\r\n\r\n\r\n\r\n</androidx.drawerlayout.widget.DrawerLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_calendar.xml b/app/src/main/res/layout/activity_calendar.xml
+--- a/app/src/main/res/layout/activity_calendar.xml	(revision 16d967fce116e0f4c12a3015f317ef7b1961295d)
++++ b/app/src/main/res/layout/activity_calendar.xml	(date 1684136125463)
+@@ -12,7 +12,7 @@
+     android:layout_height="match_parent"
+     android:fitsSystemWindows="true"
+     tools:openDrawer="start"
+-    >
++    >ㅂ
+ 
+     <androidx.constraintlayout.widget.ConstraintLayout
+         android:layout_width="match_parent"
+Index: app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.ui.QRcode;\r\n\r\nimport android.graphics.Bitmap;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\n\r\n\r\nimport com.example.myapplication.R;\r\nimport com.example.myapplication.User;\r\nimport com.google.zxing.BarcodeFormat;\r\nimport com.google.zxing.MultiFormatWriter;\r\nimport com.google.zxing.common.BitMatrix;\r\nimport com.journeyapps.barcodescanner.BarcodeEncoder;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.lifecycle.ViewModelProvider;\r\n\r\nimport com.example.myapplication.databinding.FragmentQrcodeBinding;\r\n\r\npublic class QRcodeFragment extends Fragment {\r\n\r\n    private FragmentQrcodeBinding binding;\r\n    private ImageView iv;\r\n    private String text = User.getStudentId();\r\n\r\n    public View onCreateView(@NonNull LayoutInflater inflater,\r\n                             ViewGroup container, Bundle savedInstanceState) {\r\n        QRcodeViewModel QrcodeViewModel =\r\n                new ViewModelProvider(this).get(QRcodeViewModel.class);\r\n\r\n        binding = FragmentQrcodeBinding.inflate(inflater, container, false);\r\n        View root = binding.getRoot();\r\n\r\n        iv = (ImageView) root.findViewById(R.id.qrcode);\r\n\r\n        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();\r\n        try {\r\n            BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);\r\n            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();\r\n            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);\r\n            iv.setImageBitmap(bitmap);\r\n        } catch (Exception e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        return root;\r\n    }\r\n\r\n    @Override\r\n    public void onDestroyView() {\r\n        super.onDestroyView();\r\n        binding = null;\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java b/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java
+--- a/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java	(revision 16d967fce116e0f4c12a3015f317ef7b1961295d)
++++ b/app/src/main/java/com/example/myapplication/ui/QRcode/QRcodeFragment.java	(date 1684139074311)
+@@ -5,6 +5,7 @@
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.CalendarView;
+ import android.widget.ImageView;
+ 
+ 
+Index: app/src/main/java/com/example/myapplication/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport static com.example.myapplication.R.layout.login_activity;\r\n\r\nimport android.app.Activity;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.core.view.GravityCompat;\r\nimport androidx.drawerlayout.widget.DrawerLayout;\r\nimport androidx.navigation.NavController;\r\nimport androidx.navigation.Navigation;\r\nimport androidx.navigation.ui.AppBarConfiguration;\r\nimport androidx.navigation.ui.NavigationUI;\r\n\r\nimport com.example.myapplication.databinding.ActivityMainBinding;\r\nimport com.google.android.material.navigation.NavigationView;\r\nimport com.google.android.material.snackbar.Snackbar;\r\n\r\npublic class LoginActivity extends Activity {\r\n    private EditText editText_id, editText_password;\r\n    private Button button_login;\r\n    private AppBarConfiguration mAppBarConfiguration;\r\n    private ActivityMainBinding binding;\r\n\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(login_activity);\r\n        setContentView(R.layout.login_activity);\r\n//        initNavigationMenu();\r\n\r\n\r\n\r\n        editText_id = findViewById(R.id.editText_id);\r\n        editText_password = findViewById(R.id.editText_password);\r\n        button_login = findViewById(R.id.button_login);\r\n\r\n        button_login.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                String id = editText_id.getText().toString();\r\n                String pw = editText_password.getText().toString();\r\n\r\n                // ID와 PW가 입력되었는지 검증\r\n                if (id.isEmpty() || pw.isEmpty()) {\r\n                    Toast.makeText(LoginActivity.this, \"ID와 비밀번호를 입력해주세요.\", Toast.LENGTH_SHORT).show();\r\n                    return;\r\n                }\r\n\r\n                // DataAdapter를 이용해 사용자 인증\r\n                DataAdapter dataAdapter = new DataAdapter(LoginActivity.this);\r\n                dataAdapter.createDatabase();\r\n                dataAdapter.open();\r\n                boolean isAuthenticated = dataAdapter.authenticateUser(id, pw);\r\n                dataAdapter.close();\r\n\r\n                // 인증 실패 시 처리\r\n                if (!isAuthenticated) {\r\n                    Toast.makeText(LoginActivity.this, \"아이디 또는 비밀번호가 일치하지 않습니다.\", Toast.LENGTH_SHORT).show();\r\n                    return;\r\n                }\r\n                // 인증 성공 시 계정정보 저장 후 MainActivity로 이동\r\n                dataAdapter.setAccount(id, pw);\r\n                String firstUser = User.getUsername();\r\n\r\n                Toast.makeText(LoginActivity.this,firstUser,Toast.LENGTH_SHORT).show();\r\n\r\n                Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);\r\n                Toast.makeText(LoginActivity.this,\"로그인 성공\",Toast.LENGTH_SHORT).show();\r\n                startActivity(intent);\r\n                finish();\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n//    private void initNavigationMenu() {\r\n//        //사이드 메뉴바\r\n//        binding = ActivityMainBinding.inflate(getLayoutInflater());\r\n//        setContentView(binding.getRoot());\r\n//\r\n//        setSupportActionBar(binding.appBar.toolbar);\r\n//        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {\r\n//            @Override\r\n//            public void onClick(View view) {\r\n//                Snackbar.make(view, \"Replace with your own action\", Snackbar.LENGTH_LONG)\r\n//                        .setAction(\"Action\", null).show();\r\n//            }\r\n//        });\r\n//        DrawerLayout drawerLayout = binding.drawerLayout;\r\n//        NavigationView navigationView = binding.navView;\r\n//\r\n//        mAppBarConfiguration = new AppBarConfiguration.Builder(\r\n//                R.id.nav_home, R.id.menu_item2, R.id.menu_item3)\r\n//                .setOpenableLayout(drawerLayout)\r\n//                .build();\r\n//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);\r\n//        NavigationUI.setupWithNavController(navigationView, navController);\r\n//        navigationView.setNavigationItemSelectedListener(\r\n//                new NavigationView.OnNavigationItemSelectedListener() {\r\n//                    public MenuItem item;\r\n//\r\n//                    public boolean onNavigationItemSelected(MenuItem item) {\r\n//                        this.item = item;\r\n//                        int id = item.getItemId();\r\n//\r\n//                        switch (id) {\r\n//                            case R.id.nav_home:\r\n//                                // nav_home Fragment로 이동\r\n//                                Log.d(\"MainActivity\", \"Home menu item clicked\");\r\n//                                navController.navigate(R.id.nav_home);\r\n//                                break;\r\n//                            case R.id.menu_item2:\r\n//                                // menu_item2 Fragment로 이동\r\n//                                Log.d(\"MainActivity\", \"Gallery menu item clicked\");\r\n//                                navController.navigate(R.id.menu_item2);\r\n//                                break;\r\n//                            case R.id.menu_item3:\r\n//                                // menu_item3 Fragment로 이동\r\n//                                navController.navigate(R.id.menu_item3);\r\n//                                break;\r\n//                            case R.id.menu_item4:\r\n//                                // menu_item4 Fragment로 이동\r\n//                                navController.navigate(R.id.menu_item4);\r\n//                                break;\r\n//                        }\r\n//\r\n//                        // Navigation Drawer 닫기\r\n//                        drawerLayout.closeDrawer(GravityCompat.START);\r\n//                        return true;\r\n//                    }\r\n//                }\r\n//        );\r\n//        View headerView = navigationView.getHeaderView(0);\r\n//        TextView headerTextView = headerView.findViewById(R.id.header_text);\r\n//        headerTextView.setText(firstUser);\r\n//    }\r\n//\r\n//    @Override\r\n//    public boolean onCreateOptionsMenu(Menu menu) {\r\n//        // Inflate the menu; this adds items to the action bar if it is present.\r\n//        getMenuInflater().inflate(R.menu.main, menu);\r\n//        return true;\r\n//    }\r\n//\r\n//    @Override\r\n//    public boolean onSupportNavigateUp() {\r\n//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);\r\n//        return NavigationUI.navigateUp(navController, mAppBarConfiguration)\r\n//                || super.onSupportNavigateUp();\r\n//    }\r\n//\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/LoginActivity.java b/app/src/main/java/com/example/myapplication/LoginActivity.java
+--- a/app/src/main/java/com/example/myapplication/LoginActivity.java	(revision 16d967fce116e0f4c12a3015f317ef7b1961295d)
++++ b/app/src/main/java/com/example/myapplication/LoginActivity.java	(date 1684136269841)
+@@ -39,7 +39,6 @@
+         super.onCreate(savedInstanceState);
+         setContentView(login_activity);
+         setContentView(R.layout.login_activity);
+-//        initNavigationMenu();
+ 
+ 
+ 
+@@ -84,84 +83,4 @@
+             }
+         });
+     }
+-
+-
+-//    private void initNavigationMenu() {
+-//        //사이드 메뉴바
+-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
+-//        setContentView(binding.getRoot());
+-//
+-//        setSupportActionBar(binding.appBar.toolbar);
+-//        binding.appBar.fab.setOnClickListener(new View.OnClickListener() {
+-//            @Override
+-//            public void onClick(View view) {
+-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+-//                        .setAction("Action", null).show();
+-//            }
+-//        });
+-//        DrawerLayout drawerLayout = binding.drawerLayout;
+-//        NavigationView navigationView = binding.navView;
+-//
+-//        mAppBarConfiguration = new AppBarConfiguration.Builder(
+-//                R.id.nav_home, R.id.menu_item2, R.id.menu_item3)
+-//                .setOpenableLayout(drawerLayout)
+-//                .build();
+-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+-//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+-//        NavigationUI.setupWithNavController(navigationView, navController);
+-//        navigationView.setNavigationItemSelectedListener(
+-//                new NavigationView.OnNavigationItemSelectedListener() {
+-//                    public MenuItem item;
+-//
+-//                    public boolean onNavigationItemSelected(MenuItem item) {
+-//                        this.item = item;
+-//                        int id = item.getItemId();
+-//
+-//                        switch (id) {
+-//                            case R.id.nav_home:
+-//                                // nav_home Fragment로 이동
+-//                                Log.d("MainActivity", "Home menu item clicked");
+-//                                navController.navigate(R.id.nav_home);
+-//                                break;
+-//                            case R.id.menu_item2:
+-//                                // menu_item2 Fragment로 이동
+-//                                Log.d("MainActivity", "Gallery menu item clicked");
+-//                                navController.navigate(R.id.menu_item2);
+-//                                break;
+-//                            case R.id.menu_item3:
+-//                                // menu_item3 Fragment로 이동
+-//                                navController.navigate(R.id.menu_item3);
+-//                                break;
+-//                            case R.id.menu_item4:
+-//                                // menu_item4 Fragment로 이동
+-//                                navController.navigate(R.id.menu_item4);
+-//                                break;
+-//                        }
+-//
+-//                        // Navigation Drawer 닫기
+-//                        drawerLayout.closeDrawer(GravityCompat.START);
+-//                        return true;
+-//                    }
+-//                }
+-//        );
+-//        View headerView = navigationView.getHeaderView(0);
+-//        TextView headerTextView = headerView.findViewById(R.id.header_text);
+-//        headerTextView.setText(firstUser);
+-//    }
+-//
+-//    @Override
+-//    public boolean onCreateOptionsMenu(Menu menu) {
+-//        // Inflate the menu; this adds items to the action bar if it is present.
+-//        getMenuInflater().inflate(R.menu.main, menu);
+-//        return true;
+-//    }
+-//
+-//    @Override
+-//    public boolean onSupportNavigateUp() {
+-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+-//        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+-//                || super.onSupportNavigateUp();
+-//    }
+-//
+-
+ }
+Index: app/src/main/java/com/example/myapplication/ListOpener.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.database.Cursor;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.ListView;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\n\r\npublic class ListOpener extends AppCompatActivity {\r\n\r\n    ListView listView;\r\n    Button BTNall;\r\n    Button BTNOK;\r\n    Button BTNNO;\r\n\r\n    //CsCheck cs = new CsCheck();\r\n    protected void onCreate(Bundle savedInstanceState){\r\n        super.onCreate(savedInstanceState);\r\n\r\n        setContentView(R.layout.activity_cslist);\r\n        CSLIST cslist = new CSLIST();\r\n        listView = (ListView)findViewById(R.id.cslistview);\r\n\r\n        initLoad();\r\n        BTNall = findViewById(R.id.BTNALL);\r\n        BTNOK = findViewById(R.id.BTNOK);\r\n        BTNNO = findViewById(R.id.BTNNO);\r\n\r\n        BTNall.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n\r\n                initLoad();\r\n            }\r\n        });\r\n        BTNOK.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n\r\n                CsokinitLoad();\r\n            }\r\n        });\r\n        BTNNO.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n\r\n                CsnoinitLoad();\r\n            }\r\n        });\r\n    }\r\n\r\n    public void initLoad() {\r\n\r\n        DataBaseHelper dbhelper =new DataBaseHelper(this);\r\n        SQLiteDatabase db = dbhelper.getReadableDatabase();\r\n        Cursor cursor = db.rawQuery(\"SELECT * FROM student WHERE is_professor = '0'\",null);\r\n        CSLIST cslist = new CSLIST();\r\n\r\n        String va1=\"\";\r\n        String va2=\"\";\r\n        String va3=\"\";\r\n        String va4=\"\";\r\n        while(cursor.moveToNext()){\r\n            cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));\r\n//            va1 = cursor.getString(1);\r\n//            va2 = cursor.getString(0);\r\n//            va3 = cursor.getString(6);\r\n//            va4= cursor.getString(7);\r\n        }\r\n//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();\r\n\r\n        listView.setAdapter(cslist);\r\n        dbhelper.close();\r\n        db.close();\r\n    }\r\n//\r\n\r\n\r\n\r\n    public void CsokinitLoad() {\r\n\r\n        DataBaseHelper dbhelper =new DataBaseHelper(this);\r\n        SQLiteDatabase db = dbhelper.getReadableDatabase();\r\n        Cursor cursor = db.rawQuery(\"SELECT * FROM student WHERE Cs = 'O' AND is_professor = '0' \",null);\r\n        CSLIST cslist = new CSLIST();\r\n\r\n        String va1=\"\";\r\n        String va2=\"\";\r\n        String va3=\"\";\r\n        String va4=\"\";\r\n        while(cursor.moveToNext()){\r\n            cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));\r\n//            va1 = cursor.getString(1);\r\n//            va2 = cursor.getString(0);\r\n//            va3 = cursor.getString(6);\r\n//            va4= cursor.getString(7);\r\n        }\r\n//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();\r\n\r\n        listView.setAdapter(cslist);\r\n        dbhelper.close();\r\n        db.close();\r\n    }\r\n\r\n    public void CsnoinitLoad() {\r\n\r\n        DataBaseHelper dbhelper =new DataBaseHelper(this);\r\n        SQLiteDatabase db = dbhelper.getReadableDatabase();\r\n        Cursor cursor = db.rawQuery(\"SELECT * FROM student WHERE Cs = 'X' AND is_professor = '0'\",null);\r\n        CSLIST cslist = new CSLIST();\r\n\r\n        String va1=\"\";\r\n        String va2=\"\";\r\n        String va3=\"\";\r\n        String va4=\"\";\r\n        while(cursor.moveToNext()){\r\n            cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));\r\n//            va1 = cursor.getString(1);\r\n//            va2 = cursor.getString(0);\r\n//            va3 = cursor.getString(6);\r\n//            va4= cursor.getString(7);\r\n        }\r\n//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();\r\n\r\n        listView.setAdapter(cslist);\r\n        dbhelper.close();\r\n        db.close();\r\n    }\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/ListOpener.java b/app/src/main/java/com/example/myapplication/ListOpener.java
+--- a/app/src/main/java/com/example/myapplication/ListOpener.java	(revision 16d967fce116e0f4c12a3015f317ef7b1961295d)
++++ b/app/src/main/java/com/example/myapplication/ListOpener.java	(date 1684136191295)
+@@ -17,7 +17,6 @@
+     Button BTNOK;
+     Button BTNNO;
+ 
+-    //CsCheck cs = new CsCheck();
+     protected void onCreate(Bundle savedInstanceState){
+         super.onCreate(savedInstanceState);
+ 
+@@ -66,18 +65,12 @@
+         String va4="";
+         while(cursor.moveToNext()){
+             cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
+-//            va1 = cursor.getString(1);
+-//            va2 = cursor.getString(0);
+-//            va3 = cursor.getString(6);
+-//            va4= cursor.getString(7);
+         }
+-//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
+ 
+         listView.setAdapter(cslist);
+         dbhelper.close();
+         db.close();
+     }
+-//
+ 
+ 
+ 
+@@ -94,12 +87,7 @@
+         String va4="";
+         while(cursor.moveToNext()){
+             cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
+-//            va1 = cursor.getString(1);
+-//            va2 = cursor.getString(0);
+-//            va3 = cursor.getString(6);
+-//            va4= cursor.getString(7);
+         }
+-//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
+ 
+         listView.setAdapter(cslist);
+         dbhelper.close();
+@@ -119,12 +107,7 @@
+         String va4="";
+         while(cursor.moveToNext()){
+             cslist.addItemToList(cursor.getString(1),cursor.getString(0),cursor.getString(6),cursor.getString(7));
+-//            va1 = cursor.getString(1);
+-//            va2 = cursor.getString(0);
+-//            va3 = cursor.getString(6);
+-//            va4= cursor.getString(7);
+         }
+-//        Toast.makeText(getApplicationContext(),va3,Toast.LENGTH_LONG).show();
+ 
+         listView.setAdapter(cslist);
+         dbhelper.close();
+Index: app/src/main/java/com/example/myapplication/DataBaseHelper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication;\r\n\r\nimport android.content.ContentValues;\r\nimport android.content.Context;\r\nimport android.database.SQLException;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.database.sqlite.SQLiteOpenHelper;\r\nimport android.util.Log;\r\n\r\nimport java.io.File;\r\nimport java.io.FileOutputStream;\r\nimport java.io.IOException;\r\nimport java.io.InputStream;\r\nimport java.io.OutputStream;\r\n\r\npublic class DataBaseHelper extends SQLiteOpenHelper{\r\n    private final static String TAG = \"DataBaseHelper\"; // Logcat에 출력할 태그이름\r\n    // database 의 파일 경로\r\n    private static String DB_PATH = \"\";\r\n    private static String DB_NAME = \"student_db.db\";\r\n    private SQLiteDatabase mDataBase;\r\n    private Context mContext;\r\n\r\n    public static  final String TABLE_NAME = \"student\";\r\n\r\n    public static final String Col1 = \"Time\";\r\n\r\n    public static final String Col2 = \"Cs\";\r\n\r\n\r\n\r\n    public DataBaseHelper(Context context) {\r\n        super(context,DB_NAME,null,1);\r\n\r\n\r\n        if(android.os.Build.VERSION.SDK_INT >= 17){\r\n            DB_PATH = context.getApplicationInfo().dataDir + \"/databases/\";\r\n        }\r\n        else\r\n        {\r\n            DB_PATH = \"/data/data/\" + context.getPackageName() + \"/databases/\";\r\n        }\r\n\r\n\r\n        this.mContext = context;\r\n\r\n    }\r\n\r\n    public void createDataBase() throws IOException\r\n    {\r\n        //데이터베이스가 없으면 asset폴더에서 복사해온다.\r\n        boolean mDataBaseExist = checkDataBase();\r\n        if(!mDataBaseExist)\r\n        {\r\n            this.getReadableDatabase();\r\n            this.close();\r\n            try\r\n            {\r\n                //Copy the database from assests\r\n                copyDataBase();\r\n                Log.e(TAG, \"createDatabase database created\");\r\n            }\r\n            catch (IOException mIOException)\r\n            {\r\n                throw new Error(\"ErrorCopyingDataBase\");\r\n            }\r\n        }\r\n    }\r\n\r\n    ///data/data/your package/databases/Da Name <-이 경로에서 데이터베이스가 존재하는지 확인한다\r\n    private boolean checkDataBase()\r\n    {\r\n        File dbFile = new File(DB_PATH + DB_NAME);\r\n        //Log.v(\"dbFile\", dbFile + \"   \"+ dbFile.exists());\r\n        return dbFile.exists();\r\n    }\r\n\r\n    //assets폴더에서 데이터베이스를 복사한다.\r\n    private void copyDataBase() throws IOException\r\n    {\r\n        InputStream mInput = mContext.getAssets().open(DB_NAME);\r\n        String outFileName = DB_PATH + DB_NAME;\r\n        OutputStream mOutput = new FileOutputStream(outFileName);\r\n        byte[] mBuffer = new byte[1024];\r\n        int mLength;\r\n        while ((mLength = mInput.read(mBuffer))>0)\r\n        {\r\n            mOutput.write(mBuffer, 0, mLength);\r\n        }\r\n        mOutput.flush();\r\n        mOutput.close();\r\n        mInput.close();\r\n    }\r\n\r\n    //데이터베이스를 열어서 쿼리를 쓸수있게만든다.\r\n    public boolean openDataBase() throws SQLException\r\n    {\r\n        String mPath = DB_PATH + DB_NAME;\r\n        //Log.v(\"mPath\", mPath);\r\n        mDataBase = SQLiteDatabase.openDatabase(mPath, null, SQLiteDatabase.CREATE_IF_NECESSARY);\r\n        //mDataBase = SQLiteDatabase.openDatabase(mPath, null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);\r\n        return mDataBase != null;\r\n    }\r\n\r\n    @Override\r\n    public synchronized void close()\r\n    {\r\n        if(mDataBase != null)\r\n            mDataBase.close();\r\n        super.close();\r\n    }\r\n\r\n    @Override\r\n    public void onCreate(SQLiteDatabase sqLiteDatabase) {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {\r\n        sqLiteDatabase.execSQL(\"DROP TABLE IF EXISTS \"+ TABLE_NAME);\r\n        onCreate(sqLiteDatabase);\r\n    }\r\n\r\n//    public void insertData(String time, String cscheck){\r\n//        SQLiteDatabase db = this.getWritableDatabase();\r\n//        ContentValues contentValues = new ContentValues();\r\n//        contentValues.put(Col1,time);\r\n//        contentValues.put(Col2,cscheck);\r\n//        long result = db.insert(TABLE_NAME,\"Time\", contentValues);\r\n//        if(result == -1)\r\n//            Toast.makeText(mContext,\"출석값 입력 실패\",Toast.LENGTH_LONG).show();\r\n//       else\r\n//            Toast.makeText(mContext,\"출석값 입력 완료\",Toast.LENGTH_LONG).show();\r\n//\r\n//    }\r\n//    public void insertTimeData(String time, String Username){\r\n//        SQLiteDatabase db = this.getWritableDatabase();\r\n//        ContentValues contentValues = new ContentValues();\r\n//        contentValues.put(Col1,time);\r\n//        db.update(TABLE_NAME,contentValues,\"Username=?\",new String[]{Username});\r\n//\r\n//    }\r\n//    public void insertCSData(String CsCheck, String Username){\r\n//        SQLiteDatabase db = this.getWritableDatabase();\r\n//        ContentValues contentValues = new ContentValues();\r\n//        contentValues.put(Col2,CsCheck);\r\n//        db.update(TABLE_NAME,contentValues,\"Username=?\",new String[]{Username});\r\n//\r\n//    }\r\n    public void insertData(String time,String cscheck, String Username){\r\n        SQLiteDatabase db = this.getWritableDatabase();\r\n        ContentValues contentValues = new ContentValues();\r\n        contentValues.put(Col1,time);\r\n        contentValues.put(Col2,cscheck);\r\n        db.update(TABLE_NAME,contentValues,\"Username=?\",new String[]{Username});\r\n\r\n    }\r\n\r\n    public void DoCopyDB()throws IOException{\r\n        this.getReadableDatabase();\r\n        this.close();\r\n        try\r\n        {\r\n            //Copy the database from assests\r\n            copyDataBase();\r\n            Log.e(TAG, \"createDatabase database created\");\r\n        }\r\n        catch (IOException mIOException)\r\n        {\r\n            throw new Error(\"ErrorCopyingDataBase\");\r\n        }\r\n    }\r\n\r\n\r\n//    public void UpdateData(String time, String cscheck){\r\n//        SQLiteDatabase db = this.getWritableDatabase();\r\n//        ContentValues contentValues = new ContentValues();\r\n//        contentValues.put(Col1,time);\r\n//        contentValues.put(Col2,cscheck);\r\n//        long result = db.insert(TABLE_NAME,null, contentValues);\r\n//        if(result == -1)\r\n//            Toast.makeText(mContext,\"출석값 입력 실패\",Toast.LENGTH_LONG).show();\r\n//        else\r\n//            Toast.makeText(mContext,\"출석값 입력 완료\",Toast.LENGTH_LONG).show();\r\n//    }\r\n\r\n\r\n\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/DataBaseHelper.java b/app/src/main/java/com/example/myapplication/DataBaseHelper.java
+--- a/app/src/main/java/com/example/myapplication/DataBaseHelper.java	(revision 16d967fce116e0f4c12a3015f317ef7b1961295d)
++++ b/app/src/main/java/com/example/myapplication/DataBaseHelper.java	(date 1684136125466)
+@@ -121,32 +121,6 @@
+         onCreate(sqLiteDatabase);
+     }
+ 
+-//    public void insertData(String time, String cscheck){
+-//        SQLiteDatabase db = this.getWritableDatabase();
+-//        ContentValues contentValues = new ContentValues();
+-//        contentValues.put(Col1,time);
+-//        contentValues.put(Col2,cscheck);
+-//        long result = db.insert(TABLE_NAME,"Time", contentValues);
+-//        if(result == -1)
+-//            Toast.makeText(mContext,"출석값 입력 실패",Toast.LENGTH_LONG).show();
+-//       else
+-//            Toast.makeText(mContext,"출석값 입력 완료",Toast.LENGTH_LONG).show();
+-//
+-//    }
+-//    public void insertTimeData(String time, String Username){
+-//        SQLiteDatabase db = this.getWritableDatabase();
+-//        ContentValues contentValues = new ContentValues();
+-//        contentValues.put(Col1,time);
+-//        db.update(TABLE_NAME,contentValues,"Username=?",new String[]{Username});
+-//
+-//    }
+-//    public void insertCSData(String CsCheck, String Username){
+-//        SQLiteDatabase db = this.getWritableDatabase();
+-//        ContentValues contentValues = new ContentValues();
+-//        contentValues.put(Col2,CsCheck);
+-//        db.update(TABLE_NAME,contentValues,"Username=?",new String[]{Username});
+-//
+-//    }
+     public void insertData(String time,String cscheck, String Username){
+         SQLiteDatabase db = this.getWritableDatabase();
+         ContentValues contentValues = new ContentValues();
+@@ -170,22 +144,5 @@
+             throw new Error("ErrorCopyingDataBase");
+         }
+     }
+-
+-
+-//    public void UpdateData(String time, String cscheck){
+-//        SQLiteDatabase db = this.getWritableDatabase();
+-//        ContentValues contentValues = new ContentValues();
+-//        contentValues.put(Col1,time);
+-//        contentValues.put(Col2,cscheck);
+-//        long result = db.insert(TABLE_NAME,null, contentValues);
+-//        if(result == -1)
+-//            Toast.makeText(mContext,"출석값 입력 실패",Toast.LENGTH_LONG).show();
+-//        else
+-//            Toast.makeText(mContext,"출석값 입력 완료",Toast.LENGTH_LONG).show();
+-//    }
+-
+-
+-
+-
+ }
+ 

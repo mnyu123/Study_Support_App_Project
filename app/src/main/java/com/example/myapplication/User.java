@@ -1,20 +1,24 @@
 package com.example.myapplication;
 
+import java.util.List;
+
 public class User {
-    public String Username;
-    public int Student_id;
-    public String ID;
-    public String Password;
-    public String Email;
-    public int is_professor;
-    public int Time;
-    public int CsCheck;
+    private String Username;
+    private String Student_id;
+    private String ID;
+    private String Password;
+    private String Email;
+    private String is_professor;
+    private String Time;
+    private String CsCheck;
+
+    public static List<User> userList;
 
     public void Username(String username) {
         this.Username = username;
     }
 
-    public void Student_id(int sid) {
+    public void Student_id(String sid) {
         this.Student_id = sid;
     }
 
@@ -30,26 +34,80 @@ public class User {
         this.Email = email;
     }
 
-    public void is_professor(int isp) {
+    public void is_professor(String isp) {
         this.is_professor = isp;
     }
 
-    public void Time(int time) {
+    public void Time(String time) {
         this.Time = time;
     }
 
-    public void CsCheck(int csc) {
+    public void CsCheck(String csc) {
         this.CsCheck = csc;
     }
 
-   /* public User(String Username,int Student_id,String ID,String Password,String Email,int is_professor,int Time,int CsCheck){
-        this.Username =Username;
-        this.Student_id=Student_id;
-        this.ID=ID;
-        this.Password=Password;
-        this.Email=Email;
-        this.is_professor=is_professor;
-        this.Time=Time;
-        this.CsCheck=CsCheck;
-    }*/
+    // get 메소드
+    public static String getUsername() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Username;
+        }
+        return null;
+    }
+
+    public static String getStudentId() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Student_id;
+        }
+        return null;
+    }
+
+    public static String getID() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).ID;
+        }
+        return null;
+    }
+
+    public static String getPassword() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Password;
+        }
+        return null;
+    }
+
+    public static String getEmail() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Email;
+        }
+        return null;
+    }
+
+    public static String getpro() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).is_professor;
+        }
+        return null;
+    }
+    public static boolean is_professor() {
+        if (!userList.isEmpty() && userList.get(0).is_professor.equals("1")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public static String getTime() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).Time;
+        }
+        return null;
+    }
+
+    public static String getCsCheck() {
+        if (!userList.isEmpty()) {
+            return userList.get(0).CsCheck;
+        }
+        return null;
+    }
 }

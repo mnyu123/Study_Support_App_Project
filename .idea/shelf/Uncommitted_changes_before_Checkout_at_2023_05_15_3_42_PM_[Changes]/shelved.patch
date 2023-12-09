@@ -1,0 +1,49 @@
+Index: app/src/main/res/layout/activity_cslist.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    android:gravity=\"bottom\"\n    android:orientation=\"vertical\"\n    tools:context=\".MainActivity\"\n    android:background=\"#fa5352\">\n\n\n        <androidx.constraintlayout.widget.ConstraintLayout\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"76dp\"\n            android:background=\"@drawable/edittext_custom_shape2\">\n\n                <TextView\n                    android:id=\"@+id/textView3\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginStart=\"36dp\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"학번\"\n                    app:layout_constraintStart_toStartOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n\n                <TextView\n                    android:id=\"@+id/textView4\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginStart=\"124dp\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"이름\"\n                    app:layout_constraintStart_toStartOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n\n                <TextView\n                    android:id=\"@+id/textView5\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_marginEnd=\"144dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"출석 시간\"\n                    app:layout_constraintEnd_toEndOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n\n                <TextView\n                    android:id=\"@+id/textView6\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_marginTop=\"28dp\"\n                    android:layout_marginEnd=\"16dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"출석 여부\"\n                    app:layout_constraintEnd_toEndOf=\"parent\"\n                    app:layout_constraintTop_toTopOf=\"parent\" />\n        </androidx.constraintlayout.widget.ConstraintLayout>\n\n        <ListView\n            android:id=\"@+id/cslistview\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"480dp\"\n            android:gravity=\"center_vertical\"\n            android:weightSum=\"10\"\n            android:background=\"@drawable/edittext_custom_shape2\" />\n\n        <LinearLayout\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"58dp\"\n            android:orientation=\"horizontal\">\n\n                <Button\n                    android:id=\"@+id/BTNALL\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_weight=\"1\"\n                    android:background=\"@drawable/edittext_custom_shape2\"\n                    android:text=\"전체보기\" />\n\n                <Button\n                    android:id=\"@+id/BTNOK\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_weight=\"1\"\n                    android:background=\"@drawable/edittext_custom_shape2\"\n                    android:text=\"출석자\" />\n\n                <Button\n                    android:id=\"@+id/BTNNO\"\n                    android:layout_width=\"wrap_content\"\n                    android:layout_height=\"wrap_content\"\n                    android:layout_weight=\"1\"\n                    android:background=\"@drawable/edittext_custom_shape2\"\n                    android:text=\"결석자\" />\n        </LinearLayout>\n\n        <Button\n            android:id=\"@+id/BT0\"\n            android:layout_width=\"65dp\"\n            android:layout_height=\"86dp\"\n            android:background=\"@android:color/transparent\"\n            android:outlineProvider=\"none\"\n            android:stateListAnimator=\"@null\"\n            android:text=\"투명\"\n            android:textColor=\"#00000000\"\n            app:layout_constraintBottom_toBottomOf=\"parent\"\n            app:layout_constraintEnd_toEndOf=\"parent\"\n            app:layout_constraintHorizontal_bias=\"0.022\"\n            app:layout_constraintStart_toStartOf=\"@+id/app_bar\"\n            app:layout_constraintTop_toTopOf=\"@+id/app_bar\"\n            app:layout_constraintVertical_bias=\"1.0\" />\n\n</LinearLayout>\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_cslist.xml b/app/src/main/res/layout/activity_cslist.xml
+--- a/app/src/main/res/layout/activity_cslist.xml	(revision a6ac0d8292bb9c2fd0a03160350ad8a24e9a66c5)
++++ b/app/src/main/res/layout/activity_cslist.xml	(date 1684132761460)
+@@ -12,9 +12,12 @@
+ 
+ 
+         <androidx.constraintlayout.widget.ConstraintLayout
+-            android:layout_width="match_parent"
++            android:layout_width="400dp"
+             android:layout_height="76dp"
+-            android:background="@drawable/edittext_custom_shape2">
++            android:background="@drawable/edittext_custom_shape2"
++
++            android:layout_gravity="center"
++            >
+ 
+                 <TextView
+                     android:id="@+id/textView3"
+@@ -63,16 +66,20 @@
+ 
+         <ListView
+             android:id="@+id/cslistview"
+-            android:layout_width="match_parent"
+-            android:layout_height="480dp"
++            android:layout_width="380dp"
++            android:layout_height="523dp"
+             android:gravity="center_vertical"
++            android:layout_gravity="center"
++            android:layout_marginTop="16dp"
+             android:weightSum="10"
+             android:background="@drawable/edittext_custom_shape2" />
+ 
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="58dp"
+-            android:orientation="horizontal">
++            android:orientation="horizontal"
++            android:layout_marginTop="26dp"
++            android:layout_marginBottom="-70dp">
+ 
+                 <Button
+                     android:id="@+id/BTNALL"

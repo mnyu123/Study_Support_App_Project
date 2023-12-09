@@ -4,28 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.QRcode.QRcodeFragment">
+    tools:context=".ui.QRcode.QRcodeFragment"
+    android:background="#fa5352">
 
-    <View
-        android:id="@+id/view"
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/white"/>
-
-    <TextView
-        android:id="@+id/text_qrcode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="붕어 Fragment"
-        android:textAlignment="center"
-        android:textSize="32sp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/qrcode_user2"
+        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/qrcode_user2"
+        android:layout_width="440dp"
+        android:layout_height="700dp"
+        android:layout_marginStart="41.7dp"
+        android:contentDescription="image description"
+        android:src="@drawable/user2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/qrcode"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="65dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
